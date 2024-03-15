@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, firestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 import { messaging } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js';
 
@@ -19,6 +19,7 @@ const database = getDatabase(app);
 
 function writeToDatabase(text) {
     push(ref(database, "chats"), text);
+    console.log(push(ref(database, "chats"), text));
 }
 
 function readFromDatabase() {
