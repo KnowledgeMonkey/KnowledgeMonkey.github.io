@@ -1,4 +1,4 @@
-import { initializeApp, firebase } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
 import { getFirestore, getDocs, collection } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js'
 import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
 
@@ -18,9 +18,16 @@ const database = getDatabase(app);
 const firestore = getFirestore();
 console.log(firestore);
 
-
-
-
+firestore.collection("users").add({
+    name: "John Doe",
+    age: 30
+})
+.then((docRef) => {
+    console.log("Document written with ID: ", docRef.id);
+})
+.catch((error) => {
+    console.error("Error adding document: ", error);
+});
 
 function writeToDatabase(text) {
     push(ref(database, "chats"), text);
