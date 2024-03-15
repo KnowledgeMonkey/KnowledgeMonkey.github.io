@@ -1,7 +1,6 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore, firestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-import { messaging } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js';
+import { initializeApp, firebase } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+import { getFirestore, getDocs, collection } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js'
+import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAW-ZeUlzcKMoQYOhryWKXaL5uybNea3Yk",
@@ -16,10 +15,26 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+const firestore = getFirestore();
+console.log(firestore);
+
+
+
+
 
 function writeToDatabase(text) {
     push(ref(database, "chats"), text);
     console.log(push(ref(database, "chats"), text));
+    firestore.collection("users").add({
+        name: "John Doe",
+        age: 30
+    })
+    .then((docRef) => {
+        console.log("Document written with ID: ", docRef.id);
+    })
+    .catch((error) => {
+        console.error("Error adding document: ", error);
+    });
 }
 
 function readFromDatabase() {
@@ -32,7 +47,7 @@ function readFromDatabase() {
     });
 }
 
-writeToDatabase();
+writeToDatabase("testing this string");
 readFromDatabase();
 //console.log(writeToDatabase(postData));
 //console.log(readFromDatabase());
