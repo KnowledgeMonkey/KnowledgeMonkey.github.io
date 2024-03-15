@@ -3,21 +3,46 @@
   <head>
     <meta charset="utf-8">
     <title>Noxxed </title>
-    <!-- Google fonts. -->
-    <link href='https://fonts.googleapis.com/css?family=Bungee Outline' rel='stylesheet'/>
-    <link href='https://fonts.googleapis.com/css?family=Varela Round' rel='stylesheet'/>
-    <!-- Use font awesome icons. -->
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-    <!-- Use firebase app and database. -->
-    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
-
-    <!-- The CSS and JS file must be declared after the things above-->
-    <link rel="stylesheet" href="index.css"/>
-    <script type="text/javascript" src="index.js"></script>
-    <script src="https://kit.fontawesome.com/047ad75dfd.js" crossorigin="anonymous"></script>
-
+    <script type="module" src="script.js"></script>
+    <input type="text" id="inputField">
+    <button>button</button>
+    <p>test</p>
   </head>
   <body>
   </body>
 </html>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh; /* Ensures the body takes up at least the full viewport height */
+    }
+
+    input {
+        background-color: rgba(75, 12, 75, 0.774);
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        font-size: 24px; /* Enlarge the font size */
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+        border-color: #66afe9;
+    }
+
+    button {
+        border: none;
+        background-color: rgba(75, 12, 75, 0.774);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        margin-left: 10px; /* Add some spacing between the input and button */
+        cursor: pointer;
+    }
+  </style>
