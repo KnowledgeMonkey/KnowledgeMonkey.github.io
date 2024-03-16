@@ -16,7 +16,7 @@ const button = document.getElementById("button");
 const inputname = document.getElementById("inputField2");
 const inputtext = document.getElementById("inputField");
 let chatContainer; // Define chatContainer variable
-const maxMessages = 50; // Maximum number of displayed messages
+const maxMessages = 10; // Maximum number of displayed messages
 
 button.addEventListener("click", () => {
     let inputnameval = inputname.value;
@@ -31,23 +31,6 @@ const database = getDatabase(app);
 document.addEventListener("DOMContentLoaded", function() {
     chatContainer = document.getElementById("chatContainer");
 
-    // Function to display messages in the chat area
-    function displayMessage(name, message) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message');
-        messageDiv.innerHTML = `<strong>${name}:</strong> <span>${message}</span>`;
-        chatContainer.appendChild(messageDiv);
-
-        // Scroll to the bottom of the chat container after new messages are added
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-
-        // Check if the number of messages exceeds the maximum
-        if (chatContainer.children.length > maxMessages) {
-            // Remove the oldest message
-            chatContainer.removeChild(chatContainer.children[0]);
-        }
-    }
-
     // Listen for new messages in the database and display them
     onValue(ref(database, 'chat'), (snapshot) => {
         chatContainer.innerHTML = ''; // Clear existing messages
@@ -57,8 +40,24 @@ document.addEventListener("DOMContentLoaded", function() {
             const text = message.message;
             displayMessage(name, text);
         });
+
+        // Scroll to the bottom of the chat container after new messages are added
+        chatContainer.scrollTop = chatContainer.scrollHeight;
     });
 });
+
+function displayMessage(name, message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message');
+    messageDiv.innerHTML = `<strong>${name}:</strong> <span>${message}</span>`;
+    chatContainer.appendChild(messageDiv);
+
+    // Check if the number of messages exceeds the maximum
+    if (chatContainer.children.length > maxMessages) {
+        // Remove the oldest message
+        chatContainer.removeChild(chatContainer.children[0]);
+    }
+}
 
 function sendMessage(name, message) {
     const messageRef = push(ref(database, 'chat'));
