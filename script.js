@@ -12,6 +12,9 @@ const firebaseConfig = {
     measurementId: "G-36W00TY9GQ"
 };
 
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
 const button = document.getElementById("button");
 const inputname = document.getElementById("inputField2");
 const inputtext = document.getElementById("inputField");
@@ -23,9 +26,6 @@ button.addEventListener("click", () => {
     let inputtextval = inputtext.value;
     sendMessage(inputnameval, inputtextval);
 });
-
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
 
 // Wait for the DOM to load before accessing chatContainer
 document.addEventListener("DOMContentLoaded", function() {
@@ -77,3 +77,15 @@ function sendMessage(name, message) {
     inputname.value = '';
     inputtext.value = '';
 }
+
+// Dynamically adjust the width of the input field
+inputtext.addEventListener('input', function() {
+    // Get the current text value
+    const text = inputtext.value;
+
+    // Set the input field's width to auto to allow text wrapping
+    inputtext.style.width = 'auto';
+
+    // Set the input field's width to its scroll width if it's greater than the minimum width
+    inputtext.style.width = Math.max(inputtext.scrollWidth, 150) + 'px';
+});
