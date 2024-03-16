@@ -22,9 +22,15 @@ let chatContainer; // Define chatContainer variable
 const maxMessages = 15; // Maximum number of displayed messages
 
 button.addEventListener("click", () => {
-    let inputnameval = inputname.value;
-    let inputtextval = inputtext.value;
-    sendMessage(inputnameval, inputtextval);
+    let inputnameval = inputname.value.trim(); // Trim whitespace from name input
+    let inputtextval = inputtext.value.trim(); // Trim whitespace from message input
+
+    // Check if name and message are not empty
+    if (inputnameval !== '' && inputtextval !== '') {
+        sendMessage(inputnameval, inputtextval);
+    } else {
+        alert("Please enter your name and message."); // Show alert if fields are empty
+    }
 });
 
 // Wait for the DOM to load before accessing chatContainer
@@ -74,9 +80,5 @@ function sendMessage(name, message) {
     update(ref(database), updates);
 
     // Clear input fields after sending message
-    inputname.value = '';
-    inputtext.value = '';
 
-    // Reset input text area width
-    inputtext.style.width = 'auto';
 }
