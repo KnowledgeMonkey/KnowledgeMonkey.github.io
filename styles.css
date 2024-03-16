@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #6c5ce7, #4bcffa);
+    background: linear-gradient(135deg, #d02090, #6a11cb);
     color: #fff;
 }
 
@@ -13,6 +13,17 @@ body {
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    /* Adding glowing effect */
+    animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 10px rgba(102, 51, 153, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(102, 51, 153, 0.8);
+    }
 }
 
 input[type="text"],
@@ -33,13 +44,13 @@ input[type="text"]::placeholder {
 
 button {
     cursor: pointer;
-    background: linear-gradient(135deg, #f6d365, #fda085);
+    background: linear-gradient(135deg, #ff6a00, #ee0979);
     border: 1px solid transparent;
     transition: all 0.3s ease;
 }
 
 button:hover {
-    background: linear-gradient(135deg, #fda085, #f6d365);
+    background: linear-gradient(135deg, #ee0979, #ff6a00);
 }
 
 .message-container {
@@ -51,7 +62,7 @@ button:hover {
 .message {
     padding: 10px;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    background: linear-gradient(135deg, #ff6a00, #ee0979);
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
