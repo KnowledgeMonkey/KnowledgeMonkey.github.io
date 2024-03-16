@@ -2,57 +2,13 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Noxxed </title>
+    <title>Noxxed</title>
     <script type="module" src="script.js"></script>
   </head>
   <body>
-    <div class="input-button-container">
-      <input type="text" id="inputField">
-      <button>button</button>
-    </div>
+    <div id="chatContainer"></div>
+    <input type="text" id="inputField2" placeholder="Name">
+    <input type="text" id="inputField" placeholder="Message">
+    <button id="button">Send</button>
   </body>
 </html>
-
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between; /* Add this line */
-        min-height: 100vh; /* Ensures the body takes up at least the full viewport height */
-    }
-
-    .input-button-container {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 10px;
-    }
-
-    input {
-        background-color: rgba(75, 12, 75, 0.774);
-        border: 2px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        padding: 10px;
-        font-size: 24px; /* Enlarge the font size */
-        outline: none;
-        transition: border-color 0.3s ease;
-    }
-
-    input:focus {
-        border-color: #66afe9;
-    }
-
-    button {
-        border: none;
-        background-color: rgba(75, 12, 75, 0.774);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        margin-left: 10px; /* Add some spacing between the input and button */
-        cursor: pointer;
-    }
-</style>
