@@ -33,23 +33,12 @@ document.addEventListener("DOMContentLoaded", function() {
     // Function to display messages in the chat area
     function displayMessage(name, message) {
         const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
         messageDiv.innerHTML = `<strong>${name}:</strong> <span>${message}</span>`;
-        
-        // Style the message container
-        messageDiv.style.marginBottom = '10px';
-        messageDiv.style.padding = '5px';
-        messageDiv.style.backgroundColor = '#f3f3f3';
-        messageDiv.style.borderRadius = '5px';
-
-        // Style the name
-        const nameElement = messageDiv.querySelector('strong');
-        nameElement.style.fontWeight = 'bold';
-
-        // Style the message text
-        const messageText = messageDiv.querySelector('span');
-        messageText.style.marginLeft = '5px';
-
         chatContainer.appendChild(messageDiv);
+
+        // Scroll to the bottom of the chat container after new messages are added
+        chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
     // Listen for new messages in the database and display them
@@ -77,4 +66,8 @@ function sendMessage(name, message) {
     updates['/chat/' + messageKey] = newMessage;
 
     update(ref(database), updates);
+
+    // Clear input fields after sending message
+    inputname.value = '';
+    inputtext.value = '';
 }
