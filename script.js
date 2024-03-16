@@ -19,7 +19,7 @@ const button = document.getElementById("button");
 const inputname = document.getElementById("inputField2");
 const inputtext = document.getElementById("inputField");
 let chatContainer; // Define chatContainer variable
-const maxMessages = 15; // Maximum number of displayed messages
+const maxMessages = 13; // Maximum number of displayed messages
 
 button.addEventListener("click", () => {
     let inputnameval = inputname.value.trim(); // Trim whitespace from name input
@@ -80,5 +80,5 @@ function sendMessage(name, message) {
     update(ref(database), updates);
 
     // Clear input fields after sending message
-
+    inputtext.value = '';
 }
