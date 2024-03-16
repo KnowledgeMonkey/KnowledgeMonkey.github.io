@@ -1,77 +1,63 @@
 body {
-    margin: 0;
-    padding: 0;
+    background-color: #f0f0f0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #d02090, #6a11cb);
-    color: #fff;
 }
 
 .container {
-    max-width: 600px;
-    margin: 50px auto;
+    width: 80%;
+    margin: 0 auto;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    /* Adding glowing effect */
-    animation: glow 1.5s ease-in-out infinite alternate;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(128, 0, 128, 0.5); /* slight purple glow effect */
+    background-color: #ffffff;
 }
 
-@keyframes glow {
-    0% {
-        box-shadow: 0 0 10px rgba(102, 51, 153, 0.8);
-    }
-    100% {
-        box-shadow: 0 0 20px rgba(102, 51, 153, 0.8);
-    }
+h1 {
+    color: #800080; /* purple */
+    text-align: center;
 }
 
-input[type="text"],
-button {
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #800080; /* purple */
+    border-radius: 5px;
+}
+
+input[type="submit"] {
+    width: 100%;
     padding: 10px;
     margin: 5px 0;
     border: none;
     border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    font-size: 16px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-input[type="text"]::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-button {
+    background-color: #800080; /* purple */
+    color: #ffffff;
     cursor: pointer;
-    background: linear-gradient(135deg, #ff6a00, #ee0979);
-    border: 1px solid transparent;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
-button:hover {
-    background: linear-gradient(135deg, #ee0979, #ff6a00);
+input[type="submit"]:hover {
+    background-color: #6a0d6a; /* slightly darker purple on hover */
 }
 
-.message-container {
+.chat {
     margin-top: 20px;
-    overflow-y: auto;
-    max-height: 400px;
 }
 
 .message {
     padding: 10px;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, #ff6a00, #ee0979);
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid #cccccc;
+    border-radius: 5px;
 }
 
-.message strong {
-    font-weight: bold;
-    color: #6c5ce7;
-}
-
-.message span {
-    margin-left: 10px;
+.message p {
+    margin: 0;
 }
