@@ -18,10 +18,11 @@ const database = getDatabase(app);
 const firestore = getFirestore();
 console.log(firestore);
 
-firestore.collection("users").add({
+collection("users").add({
     name: "John Doe",
     age: 30
 })
+
 .then((docRef) => {
     console.log("Document written with ID: ", docRef.id);
 })
@@ -32,7 +33,7 @@ firestore.collection("users").add({
 function writeToDatabase(text) {
     push(ref(database, "chats"), text);
     console.log(push(ref(database, "chats"), text));
-    firestore.collection("users").add({
+    collection("users").add({
         name: "John Doe",
         age: 30
     })
