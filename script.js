@@ -27,7 +27,11 @@ button.addEventListener("click", () => {
 
     // Check if name and message are not empty
     if (inputnameval !== '' && inputtextval !== '') {
-        sendMessage(inputnameval, inputtextval);
+        if (/^[a-zA-Z]+$/.test(inputnameval)) { // Check if name contains only letters
+            sendMessage(inputnameval, inputtextval);
+        } else {
+            alert("Please enter a valid name with only letters (A-Z, a-z)."); // Show alert if name contains invalid characters
+        }
     } else {
         alert("Please enter your name and message."); // Show alert if fields are empty
     }
