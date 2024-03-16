@@ -33,14 +33,14 @@ input[type="text"], textarea {
     background-color: #333333; /* Dark gray-blue input background */
     color: #ffffff; /* White text */
     box-shadow: 0 0 5px rgba(128, 0, 128, 0.5); /* Purple glow effect */
-    overflow: auto; /* Add scrollbars when content overflows */
+    overflow-y: auto; /* Add vertical scrollbar when content overflows */
     word-wrap: break-word; /* Break lines when content exceeds the width */
 }
 
 input[type="submit"] {
     width: 100%;
-    padding: 10px;
-    margin: 5px 0;
+    padding: 12px; /* Increased padding */
+    margin: 10px 0; /* Increased margin */
     border: none;
     border-radius: 5px;
     background-color: #800080; /* Purple button background */
@@ -49,12 +49,14 @@ input[type="submit"] {
     transition: background-color 0.3s ease;
     font-size: 16px; /* Larger font size */
     text-transform: uppercase; /* Uppercase text */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Improved shadow */
 }
 
 input[type="submit"]:hover {
-    background-color: #6a0d6a; /* slightly darker purple on hover */
-    transform: scale(1.05); /* Slightly scale up on hover */
+    background-color: #6a0d6a; /* Slightly darker purple on hover */
+    transform: translateY(-2px); /* Lift the button slightly on hover */
 }
+
 
 .chat {
     margin-top: 20px;
