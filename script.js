@@ -16,6 +16,7 @@ const button = document.getElementById("button");
 const inputname = document.getElementById("inputField2");
 const inputtext = document.getElementById("inputField");
 let chatContainer; // Define chatContainer variable
+const maxMessages = 50; // Maximum number of displayed messages
 
 button.addEventListener("click", () => {
     let inputnameval = inputname.value;
@@ -39,6 +40,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Scroll to the bottom of the chat container after new messages are added
         chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        // Check if the number of messages exceeds the maximum
+        if (chatContainer.children.length > maxMessages) {
+            // Remove the oldest message
+            chatContainer.removeChild(chatContainer.children[0]);
+        }
     }
 
     // Listen for new messages in the database and display them
