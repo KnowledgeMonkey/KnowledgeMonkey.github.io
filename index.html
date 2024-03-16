@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <title>Noxxed </title>
     <script type="module" src="script.js"></script>
-    <input type="text" id="inputField">
-    <button>button</button>
-    <p>test</p>
   </head>
   <body>
+    <div class="input-button-container">
+      <input type="text" id="inputField">
+      <button>button</button>
+    </div>
   </body>
 </html>
 
@@ -18,7 +19,16 @@
         padding: 0;
         display: flex;
         flex-direction: column;
+        justify-content: space-between; /* Add this line */
         min-height: 100vh; /* Ensures the body takes up at least the full viewport height */
+    }
+
+    .input-button-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
     }
 
     input {
@@ -45,4 +55,4 @@
         margin-left: 10px; /* Add some spacing between the input and button */
         cursor: pointer;
     }
-  </style>
+</style>

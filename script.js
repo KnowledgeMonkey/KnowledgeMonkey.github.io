@@ -1,6 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import { getFirestore, getDocs, collection } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js'
-import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+import { getDatabase, ref, push, update, onValue } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAW-ZeUlzcKMoQYOhryWKXaL5uybNea3Yk",
@@ -13,75 +12,69 @@ const firebaseConfig = {
     measurementId: "G-36W00TY9GQ"
 };
 
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
-const firestore = getFirestore();
-console.log(firestore);
-
-collection("users").add({
-    name: "John Doe",
-    age: 30
-})
-
-.then((docRef) => {
-    console.log("Document written with ID: ", docRef.id);
-})
-.catch((error) => {
-    console.error("Error adding document: ", error);
-});
-
-function writeToDatabase(text) {
-    push(ref(database, "chats"), text);
-    console.log(push(ref(database, "chats"), text));
-    collection("users").add({
-        name: "John Doe",
-        age: 30
-    })
-    .then((docRef) => {
-        console.log("Document written with ID: ", docRef.id);
-    })
-    .catch((error) => {
-        console.error("Error adding document: ", error);
-    });
-}
-
-function readFromDatabase() {
-    const dbRef = ref(database, 'posts');
-    onValue(dbRef, (snapshot) => {
-        const data = snapshot.val();
-        console.log(data);
-    }, {
-        onlyOnce: true,
-    });
-}
-
-writeToDatabase("testing this string");
-readFromDatabase();
-//console.log(writeToDatabase(postData));
-//console.log(readFromDatabase());
-
-const input = document.getElementById('inputField');
-const button = document.querySelector('button');
-const p = document.querySelector('p');
+const button = document.getElementById("button");
+const inputname = document.getElementById("inputField2");
+const inputtext = document.getElementById("inputField");
+let chatContainer; // Define chatContainer variable
 
 button.addEventListener("click", () => {
-    const value = input.value;
-    console.log(value);
-    writeToDatabase(value);
+    let inputnameval = inputname.value;
+    let inputtextval = inputtext.value;
+    sendMessage(inputnameval, inputtextval);
 });
 
-messaging.onMessage((text) => {
-    p.textContent = text.notification.body;
-})
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
-function recieveMessage(text) {
-  const dbRef = ref(database, 'chats');
-  onValue(dbRef, (snapshot) => {
-      const data = snapshot.val();
-      console.log(data);
+// Wait for the DOM to load before accessing chatContainer
+document.addEventListener("DOMContentLoaded", function() {
+    chatContainer = document.getElementById("chatContainer");
+
+    // Function to display messages in the chat area
+    function displayMessage(name, message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.innerHTML = `<strong>${name}:</strong> <span>${message}</span>`;
+        
+        // Style the message container
+        messageDiv.style.marginBottom = '10px';
+        messageDiv.style.padding = '5px';
+        messageDiv.style.backgroundColor = '#f3f3f3';
+        messageDiv.style.borderRadius = '5px';
+
+        // Style the name
+        const nameElement = messageDiv.querySelector('strong');
+        nameElement.style.fontWeight = 'bold';
+
+        // Style the message text
+        const messageText = messageDiv.querySelector('span');
+        messageText.style.marginLeft = '5px';
+
+        chatContainer.appendChild(messageDiv);
+    }
+
+    // Listen for new messages in the database and display them
+    onValue(ref(database, 'chat'), (snapshot) => {
+        chatContainer.innerHTML = ''; // Clear existing messages
+        snapshot.forEach((childSnapshot) => {
+            const message = childSnapshot.val();
+            const name = message.name;
+            const text = message.message;
+            displayMessage(name, text);
+        });
     });
-    p.textContent = data;
-};
+});
 
+function sendMessage(name, message) {
+    const messageRef = push(ref(database, 'chat'));
+    const messageKey = messageRef.key;
 
-recieveMessage();
+    const newMessage = {
+        name: name,
+        message: message
+    };
+
+    const updates = {};
+    updates['/chat/' + messageKey] = newMessage;
+
+    update(ref(database), updates);
+}
