@@ -76,16 +76,7 @@ function sendMessage(name, message) {
     // Clear input fields after sending message
     inputname.value = '';
     inputtext.value = '';
-}
 
-// Dynamically adjust the width of the input field
-inputtext.addEventListener('input', function() {
-    // Get the current text value
-    const text = inputtext.value;
-
-    // Set the input field's width to auto to allow text wrapping
+    // Reset input text area width
     inputtext.style.width = 'auto';
-
-    // Set the input field's width to its scroll width if it's greater than the minimum width
-    inputtext.style.width = Math.max(inputtext.scrollWidth, 150) + 'px';
-});
+}
