@@ -1,21 +1,24 @@
 body {
-    background-color: #121212; /* Darker background */
-    color: #ffffff; /* White text */
+    background-color: #121212;
+    color: #ffffff;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
     width: 80%;
-    margin: 0 auto;
+    margin: 50px auto;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(128, 0, 128, 0.5); /* slight purple glow effect */
-    background-color: #212121; /* Darker container background */
+    box-shadow: 0 0 20px rgba(128, 0, 128, 0.5);
+    background-color: #292929;
 }
 
 h1 {
-    color: #800080; /* Purple heading */
+    color: #800080;
     text-align: center;
+    margin-top: 0;
 }
 
 form {
@@ -25,49 +28,70 @@ form {
 }
 
 input[type="text"], textarea {
-    width: calc(100% - 20px); /* Adjusted width to account for padding */
+    width: calc(100% - 20px);
     padding: 10px;
     margin: 5px 0;
     border: none;
     border-radius: 5px;
-    background-color: #333333; /* Dark gray-blue input background */
-    color: #ffffff; /* White text */
-    box-shadow: 0 0 5px rgba(128, 0, 128, 0.5); /* Purple glow effect */
-    overflow-y: auto; /* Add vertical scrollbar when content overflows */
-    word-wrap: break-word; /* Break lines when content exceeds the width */
-    resize: none; /* Disable textarea resizing */
+    background-color: #333333;
+    color: #ffffff;
+    resize: none;
+}
+
+input[type="text"].input-focused, textarea.input-focused {
+    box-shadow: none;
+}
+
+input[type="text"] {
+    margin-bottom: 10px;
+}
+
+input[type="text"]:focus, textarea:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(128, 0, 128, 0.5);
 }
 
 #button {
-    width: 100%;
-    padding: 12px 20px; /* Padding for the button */
-    margin: 10px 0; /* Increased margin */
+    width: calc(100% - 20px);
+    padding: 12px 20px;
+    margin-top: 10px;
     border: none;
     border-radius: 5px;
-    background-color: #800080; /* Purple button background */
-    color: #ffffff; /* White text */
-    font-size: 16px; /* Font size */
-    text-transform: uppercase; /* Uppercase text */
+    background-color: #800080;
+    color: #ffffff;
+    font-size: 16px;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease; /* Smooth transition */
+    transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 #button:hover {
-    background-color: #6a0d6a; /* Darker purple on hover */
-    transform: scale(1.05); /* Slightly scale up on hover */
+    background-color: #6a0d6a;
+    transform: scale(1.05);
 }
 
 .chat {
     margin-top: 20px;
+    padding: 10px;
+    background-color: #333333;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(128, 0, 128, 0.5);
+    max-height: none; /* Remove max height */
+    overflow: hidden; /* Ensure no scrollbars */
+}
+
+.timestamp {
+    color: #666666; /* Dark gray */
+    margin-top: 5px;
+    font-size: 12px;
 }
 
 .message {
-    padding: 10px;
     margin-bottom: 10px;
-    border: 1px solid #cccccc;
+    padding: 5px;
     border-radius: 5px;
-    overflow: auto;
-    word-break: break-all;
+    background-color: #333333; /* Purple message background */
+    color: #ffffff; /* White text */
 }
 
 .message p {

@@ -15,74 +15,99 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-const button = document.getElementById("button");
-const inputname = document.getElementById("inputField2");
-const inputtext = document.getElementById("inputField");
-let chatContainer; // Define chatContainer variable
-const maxMessages = 13; // Maximum number of displayed messages
-
-button.addEventListener("click", () => {
-    let inputnameval = inputname.value.trim(); // Trim whitespace from name input
-    let inputtextval = inputtext.value.trim(); // Trim whitespace from message input
-
-    // Check if name and message are not empty
-    if (inputnameval !== '' && inputtextval !== '') {
-        if (/^[a-zA-Z]+$/.test(inputnameval)) { // Check if name contains only letters
-            sendMessage(inputnameval, inputtextval);
-        } else {
-            alert("Please enter a valid name with only letters (A-Z, a-z)."); // Show alert if name contains invalid characters
-        }
-    } else {
-        alert("Please enter your name and message."); // Show alert if fields are empty
-    }
-});
-
-// Wait for the DOM to load before accessing chatContainer
 document.addEventListener("DOMContentLoaded", function() {
-    chatContainer = document.getElementById("chatContainer");
+    const inputName = document.getElementById("inputField2");
+    const inputText = document.getElementById("inputField");
 
-    // Listen for new messages in the database and display them
+    inputName.addEventListener("input", function() {
+        inputName.classList.remove("input-focused");
+    });
+
+    inputText.addEventListener("input", function() {
+        inputText.classList.remove("input-focused");
+    });
+
+    const button = document.getElementById("button");
+    const chatContainer = document.getElementById("chatContainer");
+    const maxMessages = 10; // Maximum number of displayed messages
+    const messagesQueue = [];
+
+    button.addEventListener("click", () => {
+        let inputNameVal = inputName.value.trim();
+        let inputTextVal = inputText.value.trim();
+
+        if (inputNameVal !== '' && inputTextVal !== '') {
+            if (/^[a-zA-Z]+$/.test(inputNameVal)) {
+                sendMessage(inputNameVal, inputTextVal);
+            } else {
+                alert("Please enter a valid name with only letters (A-Z, a-z).");
+            }
+        } else {
+            alert("Please enter your name and message.");
+        }
+    });
+
     onValue(ref(database, 'chat'), (snapshot) => {
-        chatContainer.innerHTML = ''; // Clear existing messages
+        messagesQueue.length = 0; // Clear messages queue
         snapshot.forEach((childSnapshot) => {
             const message = childSnapshot.val();
             const name = message.name;
             const text = message.message;
-            displayMessage(name, text);
+            const timestamp = message.timestamp;
+            messagesQueue.push({ name, text, timestamp });
         });
-
-        // Scroll to the bottom of the chat container after new messages are added
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+        displayMessages();
     });
+
+    function displayMessages() {
+        chatContainer.innerHTML = '';
+        if (messagesQueue.length === 0) return; // Exit if there are no messages
+        const startIndex = Math.max(0, messagesQueue.length - maxMessages);
+        for (let i = startIndex; i < messagesQueue.length; i++) {
+            const message = messagesQueue[i];
+            displayMessage(message.name, message.text, message.timestamp);
+        }
+    }
+
+    function displayMessage(name, message, timestamp) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        const timestampString = new Date(timestamp).toLocaleTimeString();
+        messageDiv.innerHTML = `<div class="message-text"><strong>${name}:</strong> <span>${message}</span></div><div class="timestamp">${timestampString}</div>`;
+        chatContainer.appendChild(messageDiv);
+    }
+
+    function sendMessage(name, message) {
+        const messageRef = push(ref(database, 'chat'));
+        const messageKey = messageRef.key;
+
+        const newMessage = {
+            name: name,
+            message: message,
+            timestamp: Date.now()
+        };
+
+        const updates = {};
+        updates['/chat/' + messageKey] = newMessage;
+
+        update(ref(database), updates);
+
+        inputText.value = '';
+    }
 });
 
-function displayMessage(name, message) {
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message');
-    messageDiv.innerHTML = `<strong>${name}:</strong> <span>${message}</span>`;
-    chatContainer.appendChild(messageDiv);
 
-    // Check if the number of messages exceeds the maximum
-    if (chatContainer.children.length > maxMessages) {
-        // Remove the oldest message
-        chatContainer.removeChild(chatContainer.children[0]);
-    }
-}
 
-function sendMessage(name, message) {
-    const messageRef = push(ref(database, 'chat'));
-    const messageKey = messageRef.key;
 
-    const newMessage = {
-        name: name,
-        message: message
-    };
 
-    const updates = {};
-    updates['/chat/' + messageKey] = newMessage;
 
-    update(ref(database), updates);
 
-    // Clear input fields after sending message
-    inputtext.value = '';
-}
+
+        const updates = {};
+        updates['/chat/' + messageKey] = newMessage;
+
+        update(ref(database), updates);
+
+        inputText.value = '';
+    
+
