@@ -3,20 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noxxed</title>
+    <title>Nyx - Your Discord Bot</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://kit.fontawesome.com/df5372a497.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Noxxed</h1>
-        <div id="chatContainer" class="chat-container"></div>
-        <div class="input-container">
-            <input type="text" id="inputField2" class="name-input" placeholder="Your Name">
-            <textarea id="inputField" class="message-input" placeholder="Type your message..."></textarea>
-            <button id="button" class="send-button">Send <i class="fas fa-paper-plane"></i></button>
+    <div id="age-verification" class="overlay">
+        <div class="verification-content">
+            <h1>Age Verification</h1>
+            <p>You must be 18 or older to access this site.</p>
+            <button id="confirm-age">I am 18 or older</button>
+            <button id="deny-age">I am under 18</button>
         </div>
     </div>
-    <script type="module" src="script.js"></script>
+    <div id="content" class="container">
+        <div class="main-content">
+            <div class="avatar">
+                <img src="/NyxWebsote/standard (4).gif" alt="Nyx Avatar">
+            </div>
+            <h1>Nyx</h1>
+            <p class="description">Nyx is your go-to Discord bot for sending high-quality NSFW hentai content directly from our API. Add Nyx to your server and enjoy a wide variety of NSFW anime content with easy-to-use commands. Note: This bot is intended for mature audiences only.</p>
+            <button id="add-bot-btn">Add Nyx to Your Server</button>
+        </div>
+        <div class="commands">
+            <h2>Commands</h2>
+            <p><strong>Prefix:</strong> h!</p>
+            <ul>
+                <li><strong>h!hentai:</strong> Sends a hentai image.</li>
+                <li><strong>h!hentairep:</strong> Sends multiple hentai images continuously.</li>
+                <li><strong>h!milf:</strong> Sends a MILF hentai image.</li>
+                <li><strong>h!milfrep:</strong> Sends multiple MILF hentai images continuously.</li>
+                <li><strong>h!paizuri:</strong> Sends a paizuri hentai image.</li>
+                <li><strong>h!paizurirep:</strong> Sends multiple paizuri hentai images continuously.</li>
+                <li><strong>h!oral:</strong> Sends an oral hentai image.</li>
+                <li><strong>h!oralrep:</strong> Sends multiple oral hentai images continuously.</li>
+                <li><strong>h!help:</strong> Provides a list of all commands.</li>
+            </ul>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>

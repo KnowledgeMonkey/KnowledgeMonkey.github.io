@@ -1,99 +1,142 @@
 body {
-    background-color: #121212;
-    color: #ffffff;
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
+    background-color: #1e1e1e;
+    color: #cfcfcf;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     margin: 0;
-    padding: 0;
+    overflow: hidden;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(30, 30, 30, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.verification-content {
+    background: #2e2e2e;
+    padding: 20px 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.verification-content h1 {
+    color: #fff;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+.verification-content p {
+    color: #cfcfcf;
+    margin-bottom: 15px;
+    font-size: 1em;
+}
+
+.verification-content button {
+    background-color: #7289da;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 0.9em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 5px;
+}
+
+.verification-content button:hover {
+    background-color: #5b6eae;
 }
 
 .container {
-    width: 80%;
-    margin: 50px auto;
-    padding: 20px;
+    background-color: #2e2e2e;
+    padding: 15px 20px;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(128, 0, 128, 0.5);
-    background-color: #292929;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    max-width: 400px;
+    filter: blur(10px);
+    transition: filter 0.3s;
+    display: none; /* Hidden initially */
+}
+
+.container.active {
+    filter: none;
+    display: block; /* Show after age verification */
+}
+
+.avatar img {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    border: 3px solid #7289da;
 }
 
 h1 {
-    color: #800080;
-    text-align: center;
-    margin-top: 0;
+    font-size: 2em;
+    margin: 15px 0;
+    color: #fff;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.description {
+    font-size: 1em;
+    color: #cfcfcf;
+    margin: 15px 0;
 }
 
-input[type="text"], textarea {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin: 5px 0;
+button#add-bot-btn {
+    background-color: #7289da;
+    color: white;
     border: none;
+    padding: 12px 25px;
+    font-size: 1em;
     border-radius: 5px;
-    background-color: #333333;
-    color: #ffffff;
-    resize: none;
-}
-
-input[type="text"].input-focused, textarea.input-focused {
-    box-shadow: none;
-}
-
-input[type="text"] {
-    margin-bottom: 10px;
-}
-
-input[type="text"]:focus, textarea:focus {
-    outline: none;
-    box-shadow: 0 0 5px rgba(128, 0, 128, 0.5);
-}
-
-#button {
-    width: calc(100% - 20px);
-    padding: 12px 20px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #800080;
-    color: #ffffff;
-    font-size: 16px;
-    text-transform: uppercase;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
+    transition: background-color 0.3s;
+    margin-bottom: 15px;
 }
 
-#button:hover {
-    background-color: #6a0d6a;
-    transform: scale(1.05);
+button#add-bot-btn:hover {
+    background-color: #5b6eae;
 }
 
-.chat {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #333333;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(128, 0, 128, 0.5);
-    max-height: none; /* Remove max height */
-    overflow: hidden; /* Ensure no scrollbars */
+.main-content {
+    margin-bottom: 20px;
 }
 
-.timestamp {
-    color: #666666; /* Dark gray */
-    margin-top: 5px;
-    font-size: 12px;
+.commands {
+    background-color: #333;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    text-align: left;
 }
 
-.message {
+.commands h2 {
+    color: #fff;
     margin-bottom: 10px;
-    padding: 5px;
-    border-radius: 5px;
-    background-color: #333333; /* Purple message background */
-    color: #ffffff; /* White text */
+    font-size: 1.5em;
+    border-bottom: 2px solid #7289da;
+    padding-bottom: 8px;
 }
 
-.message p {
-    margin: 0;
+.commands ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.commands li {
+    margin: 8px 0;
+    font-size: 0.9em;
 }
