@@ -2,19 +2,22 @@
 body, html {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     height: 100%;
-    background: linear-gradient(to bottom right, #FFA500, #FFD700); /* Gradient from orange to yellow */
+    background: linear-gradient(135deg, #FFB74D, #FFC107); /* Modern gradient from orange to yellow */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     text-align: center;
-    color: #333;
+    max-width: 600px;
+    padding: 30px;
+    width: 90%;
 }
 
 header {
@@ -22,21 +25,26 @@ header {
 }
 
 .logo {
-    width: 200px; /* Adjust size as needed */
+    width: 180px; /* Adjust size as needed */
     height: auto;
+    margin: 0 auto;
+    display: block;
 }
 
 main {
-    margin: 20px;
+    margin: 20px 0;
 }
 
 h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
+    font-size: 2.8em;
+    margin-bottom: 15px;
+    color: #333;
 }
 
 p {
     font-size: 1.2em;
+    color: #555;
+    margin-bottom: 20px;
 }
 
 .download-btn {
@@ -44,17 +52,59 @@ p {
     padding: 15px 30px;
     font-size: 1.2em;
     color: #fff;
-    background-color: #FF4500; /* Bright orange for button */
+    background: linear-gradient(135deg, #FF5722, #FF9800); /* Modern gradient for button */
     text-decoration: none;
-    border-radius: 5px;
-    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-bottom: 30px;
 }
 
 .download-btn:hover {
-    background-color: #FF6347; /* Lighter orange on hover */
+    background: linear-gradient(135deg, #FF7043, #FFB74D); /* Lighter gradient on hover */
+    transform: translateY(-2px);
+}
+
+.tutorial {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    margin: 20px auto;
+    max-width: 80%;
+}
+
+.tutorial h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.tutorial p {
+    font-size: 1.1em;
+    color: #666;
+}
+
+.tutorial ol {
+    font-size: 1.1em;
+    color: #444;
+    margin-top: 10px;
+    padding-left: 20px;
+    text-align: left;
+}
+
+.tutorial a {
+    color: #FF5722;
+    text-decoration: none;
+}
+
+.tutorial a:hover {
+    text-decoration: underline;
 }
 
 footer {
     margin-top: 20px;
     font-size: 0.9em;
+    color: #888;
 }
