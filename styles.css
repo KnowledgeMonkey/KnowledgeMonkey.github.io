@@ -1,0 +1,60 @@
+/* Reset some default styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+    background: linear-gradient(to bottom right, #FFA500, #FFD700); /* Gradient from orange to yellow */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    color: #333;
+}
+
+header {
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 200px; /* Adjust size as needed */
+    height: auto;
+}
+
+main {
+    margin: 20px;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1.2em;
+}
+
+.download-btn {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    color: #fff;
+    background-color: #FF4500; /* Bright orange for button */
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.download-btn:hover {
+    background-color: #FF6347; /* Lighter orange on hover */
+}
+
+footer {
+    margin-top: 20px;
+    font-size: 0.9em;
+}
