@@ -18,6 +18,7 @@ body, html {
     max-width: 600px;
     padding: 30px;
     width: 90%;
+    animation: fadeIn 1s ease-in-out;
 }
 
 header {
@@ -47,7 +48,7 @@ p {
     margin-bottom: 20px;
 }
 
-.download-btn {
+.download-btn, .faq-btn {
     display: inline-block;
     padding: 15px 30px;
     font-size: 1.2em;
@@ -60,7 +61,7 @@ p {
     margin-bottom: 30px;
 }
 
-.download-btn:hover {
+.download-btn:hover, .faq-btn:hover {
     background: linear-gradient(135deg, #FF7043, #FFB74D); /* Lighter gradient on hover */
     transform: translateY(-2px);
 }
@@ -73,6 +74,7 @@ p {
     text-align: left;
     margin: 20px auto;
     max-width: 80%;
+    animation: slideIn 1s ease-in-out;
 }
 
 .tutorial h2 {
@@ -104,7 +106,30 @@ p {
 }
 
 footer {
-    margin-top: 20px;
-    font-size: 0.9em;
-    color: #888;
+    background: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 1s ease-in-out;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
