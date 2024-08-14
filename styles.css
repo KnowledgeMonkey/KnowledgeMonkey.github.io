@@ -1,152 +1,68 @@
-/* Reset some default styling */
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
-    height: 100%;
-    background: linear-gradient(135deg, #FFB74D, #FFC107); /* Modern gradient from orange to yellow */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
 }
 
-.container {
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    max-width: 2000px;
-    padding: 30px;
-    width: 150%;
-    animation: fadeIn 1s ease-in-out;
+.wrapper {
+  max-width: 75%;
+  margin: auto;
 }
 
-header {
-    margin-bottom: 20px;
+.wrapper > p,
+.wrapper > h1 {
+  margin: 1.5rem 0;
+  text-align: center;
 }
 
-.logo {
-    width: 180px; /* Adjust size as needed */
-    height: auto;
-    margin: 0 auto;
-    display: block;
+.wrapper > h1 {
+  letter-spacing: 3px;
 }
 
-main {
-    margin: 20px 0;
+.accordion {
+  background-color: white;
+  color: rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  font-size: 1.2rem;
+  width: 100%;
+  padding: 2rem 2.5rem;
+  border: none;
+  outline: none;
+  transition: 0.4s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
 }
 
-h1 {
-    font-size: 2.8em;
-    margin-bottom: 15px;
-    color: #333;
+.accordion i {
+  font-size: 1.6rem;
 }
 
-p {
-    font-size: 1.2em;
-    color: #555;
-    margin-bottom: 20px;
+.active,
+.accordion:hover {
+  background-color: #f1f7f5;
+}
+.pannel {
+  padding: 0 2rem 2.5rem 2rem;
+  background-color: white;
+  overflow: hidden;
+  background-color: #f1f7f5;
+  display: none;
+}
+.pannel p {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 1.2rem;
+  line-height: 1.4;
 }
 
-.download-btn, .faq-btn {
-    display: inline-block;
-    padding: 15px 30px;
-    font-size: 1.2em;
-    color: #fff;
-    background: linear-gradient(135deg, #FF5722, #FF9800); /* Modern gradient for button */
-    text-decoration: none;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: background 0.3s ease, transform 0.2s ease;
-    margin-bottom: 30px;
+.faq {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin: 10px 0;
+}
+.faq.active {
+  border: none;
 }
 
-.download-btn:hover, .faq-btn:hover {
-    background: linear-gradient(135deg, #FF7043, #FFB74D); /* Lighter gradient on hover */
-    transform: translateY(-2px);
-}
-
-.tutorial {
-    margin: 20px auto;
-    max-width: 80%;
-}
-
-.guide-box {
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    animation: slideIn 1s ease-in-out;
-}
-
-.tutorial h2 {
-    font-size: 2em;
-    margin-bottom: 10px;
-    color: #333;
-}
-
-.tutorial p, .guide-box p {
-    font-size: 1.1em;
-    color: #666;
-}
-
-.tutorial ol {
-    font-size: 1.1em;
-    color: #444;
-    margin-top: 10px;
-    padding-left: 20px;
-    text-align: left;
-}
-
-.tutorial a {
-    color: #FF5722;
-    text-decoration: none;
-}
-
-.tutorial a:hover {
-    text-decoration: underline;
-}
-
-
-
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideIn {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes fadeInUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-.faq-box {
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    animation: slideIn 1s ease-in-out;
-}
-
-.back-btn {
-    display: inline-block;
-    padding: 15px 30px;
-    font-size: 1.2em;
-    color: #fff;
-    background: linear-gradient(135deg, #FF5722, #FF9800); /* Modern gradient for button */
-    text-decoration: none;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: background 0.3s ease, transform 0.2s ease;
-    margin-top: 20px;
-}
-
-.back-btn:hover {
-    background: linear-gradient(135deg, #FF7043, #FFB74D); /* Lighter gradient on hover */
-    transform: translateY(-2px);
-}
