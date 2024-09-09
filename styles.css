@@ -1,0 +1,165 @@
+/* General body styling */
+body {
+    background-color: #FCE4EC;
+    font-family: 'Comic Sans MS', 'Cursive', sans-serif;
+    color: #6A1B9A;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Section styling */
+.sectionLeft {
+    float: left;
+    width: 75%;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.sectionRight {
+    float: right;
+    width: 25%;
+    height: 100vh;
+    padding: 20px;
+    background-color: #F8BBD0;
+    border-radius: 20px 0px 0px 20px;
+    box-shadow: 0px 0px 10px #FF4081;
+    overflow-y: auto; /* Only vertical scroll allowed */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* Score container styling */
+.scoreContainer {
+    background-color: rgba(255, 192, 203, 0.8);
+    width: 60%;
+    padding: 15px;
+    border-radius: 15px;
+    font-size: 26px;
+    font-weight: bold;
+    color: #D81B60;
+    box-shadow: 0px 0px 10px #FF4081;
+    border: 2px solid #E91E63;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Clicker container styling */
+.clickerContainer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.clickerContainer img {
+    width: 80%;
+    max-width: 350px;
+    border: 5px solid #FF4081;
+    border-radius: 20px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 0px 15px #FF4081;
+}
+
+.clickerContainer img:hover {
+    transform: scale(1.10);
+}
+
+.clickerContainer img:active {
+    transform: scale(1.05);
+    box-shadow: 0px 0px 20px #E91E63;
+}
+
+/* Shop button styling */
+.shopButton {
+    background-color: #FF80AB;
+    border-radius: 15px;
+    margin: 15px 0px;
+    padding: 10px;
+    box-shadow: 0px 0px 10px #E91E63;
+    transition: all 0.3s ease-in-out;
+    width: 100%; /* Ensure the button takes full width */
+    display: table;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.shopButton:hover {
+    background-color: #FF4081;
+}
+
+.shopButton img {
+    border: 3px solid #FCE4EC;
+    border-radius: 10px;
+    width: 50px;
+    height: 50px;
+}
+
+.shopButton td {
+    vertical-align: middle;
+}
+
+.shopButton #image {
+    width: 25%;
+    text-align: center;
+}
+
+.shopButton #nameAndCost {
+    width: 50%;
+    text-align: left;
+}
+
+.shopButton #nameAndCost p {
+    color: #880E4F;
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.shopButton #nameAndCost p:first-of-type {
+    font-size: 20px;
+}
+
+.shopButton #amount {
+    font-size: 30px;
+    color: #4A148C;
+    font-family: 'Comic Sans MS', cursive;
+    width: 25%;
+    text-align: right;
+}
+
+/* Unselectable text */
+.unselectable {
+    user-select: none;
+}
+
+/* Footer styling */
+.sectionFooter {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'Comic Sans MS', sans-serif;
+    color: #880E4F;
+}
+
+.sectionFooter h5 {
+    color: #D81B60;
+    font-size: 20px;
+}
+
+.sectionFooter button {
+    background-color: #FF80AB;
+    color: white;
+    font-size: 14px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px #FF4081;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.sectionFooter button:hover {
+    background-color: #FF4081;
+}
