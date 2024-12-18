@@ -1,68 +1,31 @@
-<html>
-    <head>
-        <title>Neko Clicker</title>
-        <script src="script.js"></script>
-        <link rel="stylesheet" href="styles.css">
-    </head>
-
-    <body>
-        <div class="sectionLeft">
-            <center>
-                <div class="scoreContainer unselectable">
-                    <span id="score">0</span> Neko's<br>
-                    <span id ="scorepersecond">0</span> Neko's per second
-                </div>
-                <br>
-                <div class="clickerContainer unselectable">
-                    <img src="Images/catgirl.png" height="356px" width="410px" id="SkinImage" onclick="addToScore(clickingPower); playMeow();">
-                </div>
-            </center>
-        </div>
-        
-        <div class="sectionRight unselectable">
-            <table class="shopButton unselectable" onclick="buyCursor()">
-                <tr>
-                    <td id="image"><img src="Images/cursor.png"></td>
-                    <td id="nameAndCost">
-                        <p>Cursor</p>
-                        <p><span id="cursorcost">15</span>Neko's</p>
-                    </td>
-                    <td id="amount"><span id="cursors">0</span></td>
-                </tr>
-            </table>
-    
-            <table class="shopButton unselectable" onclick="buyGrandma()">
-                <tr>
-                    <td id="image"><img src="Images/grandma.png"></td>
-                    <td id="nameAndCost">
-                        <p>Neko Grandma</p>
-                        <p><span id="grandmacost">100</span>Neko's</p>
-                    </td>
-                    <td id="amount"><span id="grandmas">0</span></td>
-                </tr>
-            </table>
-    
-            <table class="shopButton unselectable" onclick="buyButler()">
-                <tr>
-                    <td id="image"><img src="Images/butler.jpg"></td>
-                    <td id="nameAndCost">
-                        <p>Neko Butler</p>
-                        <p><span id="butlercost">500</span>Neko's</p>
-                    </td>
-                    <td id="amount"><span id="butlers">0</span></td>
-                </tr>
-            </table>
-    
-            <!-- Footer -->
-            <div class="sectionFooter">
-                <h5>Neko Clicker</h5>
-                <button onclick="resetGame();">Reset Game</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dan's Bio Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="background"></div>
+    <div class="glass-card">
+        <div class="profile">
+            <div class="avatar"></div>
+            <h2>dan</h2>
+            <div class="icons">
+                ❄️ 😎 🌙 🖱️
             </div>
         </div>
-    
-        <!-- Adding audio element -->
-        <audio id="meowSound" src="Sounds/nya.mp3"></audio>
-    </body>
-    
-    
+        <div class="stats">
+            <span>👁️ 2.727</span>
+            <span>📍 Moldova</span>
+        </div>
+        <div class="action">
+            <button>
+                <img src="send-icon.png" alt="Send" />
+            </button>
+        </div>
+    </div>
+    <script src="scripts.js"></script>
+</body>
 </html>
