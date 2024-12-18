@@ -11,6 +11,22 @@ const createSnowflakes = () => {
     }
 };
 
+document.addEventListener("mousemove", (e) => {
+    const parallaxLayers = document.querySelectorAll(".layer");
+
+    const mouseX = e.clientX / window.innerWidth; // Horizontal mouse position (normalized)
+    const mouseY = e.clientY / window.innerHeight; // Vertical mouse position (normalized)
+
+    parallaxLayers.forEach((layer, index) => {
+        const moveX = (mouseX - 0.5) * (10 * (index + 1)); // Varies based on layer depth
+        const moveY = (mouseY - 0.5) * (10 * (index + 1));
+
+        layer.style.transform = `translate(${moveX}px, ${moveY}px)`; // Apply movement
+    });
+});
+
+
+
 // CSS for snowflakes
 const style = document.createElement('style');
 style.innerHTML = `
