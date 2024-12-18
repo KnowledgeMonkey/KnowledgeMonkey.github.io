@@ -26,25 +26,31 @@ body, html {
     height: 100%;
     background-size: cover;
     background-position: center;
-    animation: parallaxMove infinite linear;
+    animation: parallaxMove linear infinite;
 }
 
 .layer1 {
-    background: url('layer1.png') no-repeat;
+    background: url('nebnulawetstart.png') no-repeat center center;
     z-index: 1;
-    animation-duration: 60s;
+    animation-duration: 50s;
 }
 
 .layer2 {
-    background: url('layer2.png') no-repeat;
+    background: url('nebula2.png') no-repeat center center;
     z-index: 2;
-    animation-duration: 80s;
+    animation-duration: 70s;
 }
 
 .layer3 {
-    background: url('layer3.png') no-repeat;
+    background: url('nebuladrystars.png') no-repeat center center;
     z-index: 3;
-    animation-duration: 100s;
+    animation-duration: 90s;
+}
+
+.layer4 {
+    background: url('nebulaset_0.png') no-repeat center center;
+    z-index: 4;
+    animation-duration: 120s;
 }
 
 @keyframes parallaxMove {
