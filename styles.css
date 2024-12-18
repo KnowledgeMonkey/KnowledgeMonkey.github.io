@@ -15,10 +15,11 @@ body, html {
 
 /* Parallax Effect */
 .parallax {
-    position: relative; /* Change to relative to contain layers */
+    position: absolute;
     width: 100%;
-    height: 100vh; /* Makes the parallax container the height of the viewport */
-    overflow: hidden; /* Prevents layers from overflowing */
+    height: 100%;
+    overflow: visible; /* Allow snowflakes to be visible outside the container */
+    pointer-events: none; /* Optional: Prevent parallax layers from interfering with mouse events */
 }
 
 .parallax .layer {
