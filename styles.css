@@ -15,19 +15,22 @@ body, html {
 
 /* Parallax Effect */
 .parallax {
-    position: absolute;
+    position: relative; /* Change to relative to contain layers */
     width: 100%;
-    height: 100%;
-    overflow: hidden;
+    height: 100vh; /* Makes the parallax container the height of the viewport */
+    overflow: hidden; /* Prevents layers from overflowing */
 }
 
 .parallax .layer {
-    position: absolute;
+    position: absolute; /* Keep layers absolutely positioned for the effect */
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     background-size: cover;
     background-position: center;
-    transition: transform 0.2s ease-out; /* Smooth mouse-based movement */
+    transition: transform 0.2s ease-out; /* Smooth movement */
+    pointer-events: none; /* Prevents the layers from blocking interactions */
 }
 
 .layer1 {
