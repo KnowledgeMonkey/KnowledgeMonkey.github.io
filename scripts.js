@@ -4,9 +4,9 @@ const createSnowflakes = () => {
         const snowflake = document.createElement('div');
         snowflake.className = 'snowflake';
         snowflake.style.left = `${Math.random() * 100}vw`;
-        snowflake.style.animationDuration = `${Math.random() * 5 + 5}s`;
-        snowflake.style.animationDelay = `${Math.random() * 5}s`;
-        snowflake.style.width = snowflake.style.height = `${Math.random() * 4 + 2}px`;
+        snowflake.style.animationDuration = `${Math.random() * 5 + 5}s`; // Snowflake falling speed
+        snowflake.style.animationDelay = `${Math.random() * 5}s`; // Delay for randomness
+        snowflake.style.width = snowflake.style.height = `${Math.random() * 4 + 2}px`; // Random size
         body.appendChild(snowflake);
     }
 };
@@ -24,8 +24,6 @@ document.addEventListener("mousemove", (e) => {
         layer.style.transform = `translate(${moveX}px, ${moveY}px)`; // Apply movement
     });
 });
-
-
 
 // CSS for snowflakes
 const style = document.createElement('style');
