@@ -10,4 +10,26 @@ const createSnowflakes = () => {
         body.appendChild(snowflake);
     }
 };
+
+// CSS for snowflakes
+const style = document.createElement('style');
+style.innerHTML = `
+.snowflake {
+    position: absolute;
+    top: -10px;
+    width: 5px;
+    height: 5px;
+    background-color: #fff;
+    border-radius: 50%;
+    animation: snowfall linear infinite;
+    opacity: 0.7;
+}
+
+@keyframes snowfall {
+    0% { transform: translateY(-100vh); }
+    100% { transform: translateY(100vh); }
+}
+`;
+document.head.appendChild(style);
+
 createSnowflakes();
