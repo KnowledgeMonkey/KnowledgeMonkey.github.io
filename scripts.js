@@ -13,17 +13,28 @@ const createSnowflakes = () => {
 
 document.addEventListener("mousemove", (e) => {
     const parallaxLayers = document.querySelectorAll(".layer");
+    const snowflakes = document.querySelectorAll(".snowflake"); // Select snowflakes
 
-    const mouseX = e.clientX / window.innerWidth; // Horizontal mouse position (normalized)
-    const mouseY = e.clientY / window.innerHeight; // Vertical mouse position (normalized)
+    const mouseX = e.clientX / window.innerWidth;
+    const mouseY = e.clientY / window.innerHeight;
 
+    // Apply parallax effect to the layers
     parallaxLayers.forEach((layer, index) => {
-        const moveX = (mouseX - 0.5) * (10 * (index + 1)); // Varies based on layer depth
+        const moveX = (mouseX - 0.5) * (10 * (index + 1));
         const moveY = (mouseY - 0.5) * (10 * (index + 1));
 
-        layer.style.transform = `translate(${moveX}px, ${moveY}px)`; // Apply movement
+        layer.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    });
+
+    // Apply mouse-based movement to snowflakes
+    snowflakes.forEach((snowflake) => {
+        const moveX = (mouseX - 0.5) * 5;  // Adjust the multiplier for effect
+        const moveY = (mouseY - 0.5) * 5;
+
+        snowflake.style.transform = `translate(${moveX}px, ${moveY}px)`;
     });
 });
+
 
 // CSS for snowflakes
 const style = document.createElement('style');
