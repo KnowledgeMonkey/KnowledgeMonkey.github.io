@@ -13,26 +13,40 @@ body, html {
     background: #000;
 }
 
-/* Parallax Effect */
-
-/* Ensure the profile card is on top of everything */
-.glass-card {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
-    padding: 20px;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    color: #fff;
-    z-index: 20; /* Ensure it stays on top of parallax layers */
+/* "Click to Enter" Screen */
+#enter-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; /* Ensure this is on top of everything */
+    backdrop-filter: blur(8px); /* Apply blur effect */
+    transition: opacity 0.5s ease;
 }
 
-/* Parallax layers, ensure they stay behind the profile card */
+/* Content inside the overlay */
+.overlay-content {
+    text-align: center;
+    font-size: 2rem;
+}
+
+.overlay-content h2 {
+    font-weight: bold;
+}
+
+/* Hide content under the overlay */
+body.loaded #enter-screen {
+    opacity: 0;
+    pointer-events: none; /* Prevent interactions when hidden */
+}
+
+/* Parallax Effect */
 .parallax {
     position: absolute;
     width: 100%;
@@ -52,8 +66,6 @@ body, html {
     transition: transform 0.2s ease-out;
     z-index: 1; /* Ensure layers are behind the profile */
 }
-
-
 
 .layer1 {
     background: url('nebnulawetstart.png') no-repeat center center;
@@ -80,19 +92,35 @@ body, html {
 }
 
 /* Glass Card */
+.glass-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    padding: 20px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: #fff;
+    z-index: 20; /* Ensure it stays on top of parallax layers */
+}
 
-
+/* Profile Avatar */
 .profile .avatar {
     width: 80px;
     height: 80px;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.3);
     margin: 0 auto 10px;
-    background-image: url('pfp.gif'); /* Add your image URL here */
+    background-image: url('pfp.gif'); /* Your avatar image */
     background-size: cover; /* Ensures the image covers the div without distortion */
     background-position: center; /* Centers the image */
 }
 
+/* Profile Information */
 h2 {
     font-weight: 600;
     margin-bottom: 10px;
