@@ -35,6 +35,13 @@ document.addEventListener("mousemove", (e) => {
     });
 });
 
+// When the user clicks to enter, hide the overlay and start the music
+document.getElementById('enter-screen').addEventListener('click', () => {
+    document.body.classList.add('loaded');  // Adds the class to hide the overlay
+    const music = document.getElementById('background-music');
+    music.play(); // Start playing the background music
+});
+
 // Add CSS for snowflakes
 const style = document.createElement('style');
 style.innerHTML = `
