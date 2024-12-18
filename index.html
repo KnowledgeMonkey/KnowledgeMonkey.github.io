@@ -7,7 +7,14 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="background"></div>
+    <!-- Parallax Layers -->
+    <div class="parallax">
+        <div class="layer layer1"></div>
+        <div class="layer layer2"></div>
+        <div class="layer layer3"></div>
+    </div>
+
+    <!-- Glass Card -->
     <div class="glass-card">
         <div class="profile">
             <div class="avatar"></div>
@@ -25,6 +32,13 @@
             </button>
         </div>
     </div>
+
+    <!-- Background Music -->
+    <audio autoplay loop>
+        <source src="background-music.mp3" type="audio/mp3">
+        Your browser does not support the audio tag.
+    </audio>
+    
     <script src="scripts.js"></script>
 </body>
 </html>
