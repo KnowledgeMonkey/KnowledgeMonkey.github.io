@@ -36,11 +36,47 @@ document.addEventListener("mousemove", (e) => {
 });
 
 // When the user clicks to enter, hide the overlay and start the music
-document.getElementById('enter-screen').addEventListener('click', () => {
-    document.body.classList.add('loaded');  // Adds the class to hide the overlay
-    const music = document.getElementById('background-music');
-    music.play(); // Start playing the background music
+// Play background music
+const audio = document.querySelector('audio');
+audio.volume = 0.2; // Set initial volume to 20% (you can adjust this value)
+
+document.addEventListener("mousemove", (e) => {
+    const parallaxLayers = document.querySelectorAll(".layer");
+
+    const mouseX = e.clientX / window.innerWidth;
+    const mouseY = e.clientY / window.innerHeight;
+
+    parallaxLayers.forEach((layer, index) => {
+        const moveX = (mouseX - 0.5) * (10 * (index + 1)); 
+        const moveY = (mouseY - 0.5) * (10 * (index + 1));
+
+        layer.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    });
 });
+
+// "Click to Enter" functionality
+const enterScreen = document.getElementById('enter-screen');
+enterScreen.addEventListener('click', () => {
+    document.body.classList.add('loaded');
+    audio.play(); // Start music after entering
+});
+
+// Mute button functionality
+const muteButton = document.createElement('button');
+muteButton.classList.add('mute-button');
+muteButton.innerText = 'Mute Music';
+document.body.appendChild(muteButton);
+
+muteButton.addEventListener('click', () => {
+    if (audio.muted) {
+        audio.muted = false;
+        muteButton.innerText = 'Mute Music';
+    } else {
+        audio.muted = true;
+        muteButton.innerText = 'Unmute Music';
+    }
+});
+
 
 // Add CSS for snowflakes
 const style = document.createElement('style');
