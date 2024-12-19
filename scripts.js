@@ -64,16 +64,16 @@ enterScreen.addEventListener('click', () => {
 // Mute button functionality
 const muteButton = document.createElement('button');
 muteButton.classList.add('mute-button');
-muteButton.innerText = 'Mute Music';
+muteButton.innerText = '🔊';
 document.body.appendChild(muteButton);
 
 muteButton.addEventListener('click', () => {
     if (audio.muted) {
         audio.muted = false;
-        muteButton.innerText = '🔊t';
+        muteButton.innerText = '🔊';
     } else {
         audio.muted = true;
-        muteButton.innerText = '🔇t';
+        muteButton.innerText = '🔇';
     }
 });
 
