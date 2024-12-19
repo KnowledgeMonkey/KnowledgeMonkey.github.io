@@ -8,55 +8,65 @@
 /* Body Styling */
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+    background: linear-gradient(135deg, #3b0a45, #6a0dad);
     color: white;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
+    background-size: cover;
+    animation: backgroundAnimation 6s ease infinite;
 }
 
 /* Container Styling */
 .container {
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 50px;
+    border-radius: 30px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
     text-align: center;
+    backdrop-filter: blur(8px);
+    animation: floatAnimation 3s ease infinite;
 }
 
+/* Title Styling */
 .page-title {
     font-size: 3rem;
     font-weight: bold;
     margin-bottom: 20px;
-    color: #fff;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    color: #d8a1f0;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 255, 255, 0.2);
+    animation: titleGlow 2s infinite alternate;
 }
 
+/* Links Container */
 .links-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 25px;
 }
 
+/* Link Styling */
 .link {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #feb47b;
+    color: #9b59b6;
     text-decoration: none;
-    padding: 12px 30px;
-    border: 2px solid #feb47b;
-    border-radius: 30px;
+    padding: 15px 35px;
+    border: 3px solid #9b59b6;
+    border-radius: 50px;
     background-color: transparent;
     transition: all 0.3s ease;
     position: relative;
     display: inline-block;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
+/* Hover Effect for Links */
 .link:hover {
-    background-color: #feb47b;
-    color: #333;
+    background-color: #9b59b6;
+    color: #fff;
     transform: scale(1.1);
 }
 
@@ -66,7 +76,7 @@ body {
     width: 100%;
     height: 100%;
     background-color: #fff;
-    border-radius: 30px;
+    border-radius: 50px;
     top: 0;
     left: 0;
     z-index: -1;
@@ -80,9 +90,44 @@ body {
     transform-origin: left;
 }
 
+/* Animations for the Trippy Effects */
+@keyframes backgroundAnimation {
+    0% {
+        background: linear-gradient(135deg, #3b0a45, #6a0dad);
+    }
+    50% {
+        background: linear-gradient(135deg, #5e3b8a, #9123d5);
+    }
+    100% {
+        background: linear-gradient(135deg, #3b0a45, #6a0dad);
+    }
+}
+
+@keyframes titleGlow {
+    0% {
+        text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 255, 255, 0.5);
+    }
+    100% {
+        text-shadow: 3px 3px 20px rgba(0, 0, 0, 0.8), 0 0 50px rgba(255, 255, 255, 0.5), 0 0 100px rgba(255, 255, 255, 0.6);
+    }
+}
+
+@keyframes floatAnimation {
+    0% {
+        transform: translateY(-10px);
+    }
+    50% {
+        transform: translateY(10px);
+    }
+    100% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Responsive Design for Smaller Screens */
 @media (max-width: 768px) {
     .container {
-        padding: 20px;
+        padding: 25px;
     }
 
     .page-title {
