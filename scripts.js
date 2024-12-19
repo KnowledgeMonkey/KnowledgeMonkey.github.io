@@ -70,10 +70,10 @@ document.body.appendChild(muteButton);
 muteButton.addEventListener('click', () => {
     if (audio.muted) {
         audio.muted = false;
-        muteButton.innerText = 'Mute Music';
+        muteButton.innerText = '🔊';
     } else {
         audio.muted = true;
-        muteButton.innerText = 'Unmute Music';
+        muteButton.innerText = '🔇';
     }
 });
 
