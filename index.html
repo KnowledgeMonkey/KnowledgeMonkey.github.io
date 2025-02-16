@@ -3,33 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suscord - Your Discord Clone</title>
+  <title>Negacord - Cyberpunk Chat</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <h1>Negacord</h1>
-    <p>Eierlecken leicht gemacht</p>
-  </header>
+  <div id="welcomeMessage">
+    <p>Welcome to Negacord. Type your message below.</p>
+  </div>
 
   <!-- Chat Section -->
-  <section id="chat">
+  <div id="chat">
     <div class="messages" id="messages">
       <!-- Messages will appear here -->
     </div>
     <div class="input-area">
-      <input type="text" id="usernameInput" placeholder="Enter your username" />
+      <input type="text" id="usernameInput" placeholder="Enter your username" maxlength="20" />
       <input type="text" id="messageInput" placeholder="Type a message..." />
+      <input type="text" id="imageInput" placeholder="Enter an image URL (optional)" />
       <button id="sendBtn">Send</button>
     </div>
-  </section>
+  </div>
 
   <!-- Firebase Script -->
   <script type="module">
     // Import Firebase SDK modules from the CDN
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 
     // Your Firebase configuration
@@ -63,18 +63,22 @@
     async function sendMessage() {
       const messageInput = document.getElementById("messageInput");
       const usernameInput = document.getElementById("usernameInput");
+      const imageInput = document.getElementById("imageInput");
       const message = messageInput.value;
       const username = usernameInput.value.trim() || "Anonymous"; // Default to "Anonymous" if no username
+      const imageUrl = imageInput.value.trim(); // Get the image URL if provided
 
-      if (message.trim() !== "") {
+      if (message.trim() !== "" || imageUrl !== "") {
         try {
           await addDoc(collection(db, "messages"), {
             username: username,
             text: message,
+            imageUrl: imageUrl || null,
             timestamp: new Date()
           });
           console.log("Message sent!");
           messageInput.value = ""; // Clear input after sending
+          imageInput.value = ""; // Clear image URL input
         } catch (e) {
           console.error("Error adding message: ", e);
         }
@@ -86,7 +90,7 @@
 
     // Fetch and display messages from Firestore
     async function loadMessages() {
-      const q = query(collection(db, "messages"), orderBy("timestamp"));
+      const q = query(collection(db, "messages"), orderBy("timestamp"), limit(10)); // Fetch only 10 messages
       const querySnapshot = await getDocs(q);
       const messagesDiv = document.getElementById("messages");
       messagesDiv.innerHTML = ""; // Clear existing messages
@@ -95,9 +99,20 @@
         const data = doc.data();
         const messageElement = document.createElement("div");
         messageElement.classList.add("message");
-        messageElement.innerHTML = `<strong>${data.username}:</strong> ${data.text}`;
+
+        let messageContent = `<span>${data.username}:</span> <span>${data.text}</span>`;
+        
+        // Check if there's an image URL and display it
+        if (data.imageUrl) {
+          messageContent += `<br><img src="${data.imageUrl}" alt="image" class="message-image" />`;
+        }
+
+        messageElement.innerHTML = messageContent;
         messagesDiv.appendChild(messageElement);
       });
+
+      // Scroll to the bottom of the chat
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
     // Load messages every 2 seconds
