@@ -7,8 +7,34 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Welcome Message -->
   <div id="welcomeMessage">
     <p>Welcome to Negacord. Type your message below.</p>
+  </div>
+
+  <!-- Admin Menu (Hidden by default) -->
+  <div id="adminMenu" style="display: block;">
+    <input type="password" id="adminPasswordInput" placeholder="Enter admin password" />
+    <button id="adminLoginBtn">Login</button>
+  </div>
+
+  <!-- Admin Controls (Hidden by default) -->
+  <div id="adminControls" style="display: none;">
+    <input type="text" id="customHtmlInput" placeholder="Enter custom HTML" />
+    <select id="messageColor" class="adminSelect">
+      <option value="green">Green</option>
+      <option value="red">Red</option>
+      <option value="blue">Blue</option>
+      <option value="yellow">Yellow</option>
+      <option value="white">White</option>
+    </select>
+    <select id="messageEffect" class="adminSelect">
+      <option value="none">None</option>
+      <option value="glow">Glow</option>
+      <option value="blink">Blink</option>
+    </select>
+    <button id="sendAdminMessage">Send Admin Message</button>
+    <button id="adminLogoutBtn">Logout</button>
   </div>
 
   <!-- Chat Section -->
@@ -26,13 +52,11 @@
 
   <!-- Firebase Script -->
   <script type="module">
-    // Import Firebase SDK modules from the CDN
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 
-    // Your Firebase configuration
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyBLy2gvRiznyE-3a6xsT53X0tJg3aGR8O8",
       authDomain: "suscord-65558.firebaseapp.com",
@@ -46,7 +70,6 @@
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const db = getFirestore(app);
     const auth = getAuth(app);
 
@@ -59,24 +82,28 @@
         console.error("Error signing in anonymously", error);
       });
 
-    // Function to send message
+    // Function to send messages
     async function sendMessage() {
       const messageInput = document.getElementById("messageInput");
       const usernameInput = document.getElementById("usernameInput");
       const imageInput = document.getElementById("imageInput");
       const message = messageInput.value;
       const username = usernameInput.value.trim() || "Anonymous"; // Default to "Anonymous" if no username
-      const imageUrl = imageInput.value.trim(); // Get the image URL if provided
 
-      if (message.trim() !== "" || imageUrl !== "") {
+      let messageContent = message;
+      if (imageInput.value.trim() !== "") {
+        messageContent = `<img src="${imageInput.value.trim()}" alt="Image" />`;
+      }
+
+      if (message.trim() !== "") {
         try {
           await addDoc(collection(db, "messages"), {
             username: username,
-            text: message,
-            imageUrl: imageUrl || null,
-            timestamp: new Date()
+            text: messageContent,
+            timestamp: new Date(),
+            color: "green", // Default color
+            effect: "none" // Default effect
           });
-          console.log("Message sent!");
           messageInput.value = ""; // Clear input after sending
           imageInput.value = ""; // Clear image URL input
         } catch (e) {
@@ -85,12 +112,55 @@
       }
     }
 
-    // Event listener for Send button
+    // Admin send message
+    async function sendAdminMessage() {
+      const customHtmlInput = document.getElementById("customHtmlInput");
+      const messageColor = document.getElementById("messageColor").value;
+      const messageEffect = document.getElementById("messageEffect").value;
+      const messageContent = customHtmlInput.value;
+
+      if (messageContent.trim() !== "") {
+        try {
+          await addDoc(collection(db, "messages"), {
+            username: "Admin",
+            text: messageContent,
+            timestamp: new Date(),
+            color: messageColor,
+            effect: messageEffect
+          });
+          customHtmlInput.value = ""; // Clear input after sending
+        } catch (e) {
+          console.error("Error adding admin message: ", e);
+        }
+      }
+    }
+
+    // Event listener for sending messages
     document.getElementById("sendBtn").addEventListener("click", sendMessage);
 
-    // Fetch and display messages from Firestore
+    // Event listener for admin login
+    document.getElementById("adminLoginBtn").addEventListener("click", function() {
+      const password = document.getElementById("adminPasswordInput").value;
+      if (password === "nox1234") {
+        document.getElementById("adminControls").style.display = "block";
+        document.getElementById("adminMenu").style.display = "none";
+      } else {
+        alert("Incorrect password!");
+      }
+    });
+
+    // Event listener for admin logout
+    document.getElementById("adminLogoutBtn").addEventListener("click", function() {
+      document.getElementById("adminControls").style.display = "none";
+      document.getElementById("adminMenu").style.display = "block";
+    });
+
+    // Event listener for sending admin messages
+    document.getElementById("sendAdminMessage").addEventListener("click", sendAdminMessage);
+
+    // Fetch and display messages from Firestore (with colors and effects)
     async function loadMessages() {
-      const q = query(collection(db, "messages"), orderBy("timestamp"), limit(10)); // Fetch only 10 messages
+      const q = query(collection(db, "messages"), orderBy("timestamp"), limit(10)); // Limit to 10 messages
       const querySnapshot = await getDocs(q);
       const messagesDiv = document.getElementById("messages");
       messagesDiv.innerHTML = ""; // Clear existing messages
@@ -99,24 +169,24 @@
         const data = doc.data();
         const messageElement = document.createElement("div");
         messageElement.classList.add("message");
-
-        let messageContent = `<span>${data.username}:</span> <span>${data.text}</span>`;
         
-        // Check if there's an image URL and display it
-        if (data.imageUrl) {
-          messageContent += `<br><img src="${data.imageUrl}" alt="image" class="message-image" />`;
+        // Apply effects and colors
+        messageElement.style.color = data.color;
+        if (data.effect === "glow") {
+          messageElement.classList.add("glow-effect");
         }
-
-        messageElement.innerHTML = messageContent;
+        if (data.effect === "blink") {
+          messageElement.classList.add("blink-effect");
+        }
+        
+        messageElement.innerHTML = `<strong>${data.username}:</strong> ${data.text}`;
         messagesDiv.appendChild(messageElement);
       });
-
-      // Scroll to the bottom of the chat
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
     // Load messages every 2 seconds
     setInterval(loadMessages, 2000);
+
   </script>
 </body>
 </html>
