@@ -1,0 +1,162 @@
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: #121212;
+  color: #00ff99;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+  background-image: url('https://www.transparenttextures.com/patterns/circuit-board.png');
+  background-size: cover;
+}
+
+/* Header Styling */
+header {
+  text-align: center;
+  color: #00ff99;
+  font-size: 2.5em;
+  padding: 20px;
+  text-shadow: 0 0 10px #00ff99, 0 0 20px #00ff99, 0 0 30px #00ff99;
+  width: 100%;
+}
+
+h1 {
+  margin-bottom: 0.2em;
+}
+
+p {
+  font-size: 1.2em;
+  text-shadow: 0 0 5px #00ff99;
+}
+
+/* Chat Section */
+#chat {
+  width: 80%;
+  max-width: 700px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 255, 153, 0.6);
+  margin-top: 30px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+}
+
+/* Message Container */
+.messages {
+  padding: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.message {
+  padding: 10px;
+  margin: 5px 0;
+  background-color: rgba(0, 255, 153, 0.1);
+  border-radius: 5px;
+  color: #00ff99;
+  font-size: 1.1em;
+  line-height: 1.5;
+  box-shadow: 0 0 5px rgba(0, 255, 153, 0.6);
+  transition: all 0.3s ease;
+}
+
+.message:hover {
+  background-color: rgba(0, 255, 153, 0.2);
+  transform: scale(1.05);
+}
+
+/* Input Area */
+.input-area {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 10px;
+}
+
+#usernameInput, #messageInput {
+  padding: 15px;
+  border: 1px solid #00ff99;
+  border-radius: 5px;
+  width: 100%;
+  font-size: 1em;
+  color: #00ff99;
+  background-color: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 10px #00ff99;
+  caret-color: #00ff99;
+  transition: all 0.3s ease;
+}
+
+#usernameInput:focus, #messageInput:focus {
+  border-color: #00ff99;
+  background-color: rgba(0, 0, 0, 0.9);
+  outline: none;
+}
+
+button {
+  background-color: #00ff99;
+  color: black;
+  padding: 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2em;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(0, 255, 153, 0.5);
+}
+
+button:hover {
+  background-color: #00cc7a;
+  box-shadow: 0 0 25px rgba(0, 255, 153, 0.7);
+}
+
+/* Glowing Effect on Input */
+#usernameInput, #messageInput, button {
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(0, 255, 153, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 153, 1);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(0, 255, 153, 0.6);
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #00ff99;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #00cc7a;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+
+
+body {
+  animation: glitch 1s infinite;
+}
