@@ -294,6 +294,21 @@
                 }
             });
 
+            function changeNSFWImage() {
+                fetch("https://api.waifu.pics/nsfw/waifu")
+                    .then(response => response.json())
+                    .then(data => {
+                        const newImageUrl = data.url; // Assuming the response contains a 'url' field with the image URL
+                        const clickerImage = document.getElementById("clickerImage");
+                        clickerImage.src = newImageUrl; // Update the image source with the new URL
+                    })
+                    .catch(error => console.error("Error fetching NSFW image:", error));
+            }
+            
+            // Call the changeNSFWImage function every 10 seconds
+            setInterval(changeNSFWImage, 10000); // 10 seconds in milliseconds
+            
+
 
 
         </script>

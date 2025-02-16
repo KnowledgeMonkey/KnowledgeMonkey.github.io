@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sexy Kawaii World</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Custom Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <h1>Sexy Kawaii World</h1>
+    <p>Experience the alluring charm of kawaii art.</p>
+  </header>
+
+  <main class="container">
+    <!-- Left decorative images -->
+    <div id="left-images" class="side-images"></div>
+
+    <!-- Center options -->
+    <div id="center-options" class="center-options">
+      <a class="gallery-button" href="gallery.html?type=sfw">SFW Gallery</a>
+      <a class="gallery-button" href="gallery.html?type=nsfw">NSFW Gallery</a>
+      <button id="toggle-button" class="toggle-button">Toggle NSFW Images</button>
+    </div>
+
+    <!-- Right decorative images -->
+    <div id="right-images" class="side-images"></div>
+  </main>
+
+  <!-- Modal for enlarged image view (shared with gallery page) -->
+  <div id="modal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modal-image" alt="Enlarged view" />
+    <a id="download-button" class="download-button" href="#" download>Download</a>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Sexy Kawaii World</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

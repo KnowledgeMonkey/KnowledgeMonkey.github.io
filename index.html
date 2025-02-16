@@ -3,190 +3,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Negacord - Cyberpunk Chat</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>NSFW Wonderland</title>
+  <style>
+    /* Reset some basic defaults */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Body styling with a vibrant gradient background */
+    body {
+      background: linear-gradient(45deg, #ff0099, #493240);
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    /* Container to center content */
+    .container {
+      text-align: center;
+      z-index: 2;
+    }
+    
+    /* Glowing neon header */
+    h1 {
+      font-size: 4em;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px #ff66cc, 0 0 20px #ff66cc, 0 0 30px #ff66cc, 0 0 40px #ff66cc;
+      animation: neon 1.5s ease-in-out infinite alternate;
+    }
+    
+    h3 {
+        font-size: 24px;
+        margin-bottom: 30px;
+        text-shadow: 0 0 10px #ff66cc, 0 0 20px #ff66cc, 0 0 30px #ff66cc, 0 0 40px #ff66cc;
+        animation: neon 1.5s ease-in-out infinite alternate;
+      }
+
+    @keyframes neon {
+      from {
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff66cc, 0 0 20px #ff66cc, 0 0 25px #ff66cc, 0 0 30px #ff66cc;
+      }
+      to {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff66cc, 0 0 40px #ff66cc, 0 0 50px #ff66cc, 0 0 60px #ff66cc;
+      }
+    }
+    
+    /* Navigation menu styling */
+    .menu {
+      margin-top: 20px;
+    }
+    
+    .menu a {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px 30px;
+      margin: 15px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #fff;
+      font-size: 1.5em;
+      border: 2px solid transparent;
+      transition: transform 0.3s, background 0.3s, border 0.3s, box-shadow 0.3s;
+    }
+    
+    .menu a:hover {
+      transform: scale(1.1);
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid #ff66cc;
+      box-shadow: 0 0 20px #ff66cc;
+    }
+    
+    /* Anime waifu image styling */
+    .waifu {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 250px;
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 10px #ff66cc);
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+  </style>
 </head>
 <body>
-  <!-- Welcome Message -->
-  <div id="welcomeMessage">
-    <p>Welcome to Negacord. Type your message below.</p>
-  </div>
-
-  <!-- Admin Menu (Hidden by default) -->
-  <div id="adminMenu" style="display: block;">
-    <input type="password" id="adminPasswordInput" placeholder="Enter admin password" />
-    <button id="adminLoginBtn">Login</button>
-  </div>
-
-  <!-- Admin Controls (Hidden by default) -->
-  <div id="adminControls" style="display: none;">
-    <input type="text" id="customHtmlInput" placeholder="Enter custom HTML" />
-    <select id="messageColor" class="adminSelect">
-      <option value="green">Green</option>
-      <option value="red">Red</option>
-      <option value="blue">Blue</option>
-      <option value="yellow">Yellow</option>
-      <option value="white">White</option>
-    </select>
-    <select id="messageEffect" class="adminSelect">
-      <option value="none">None</option>
-      <option value="glow">Glow</option>
-      <option value="blink">Blink</option>
-    </select>
-    <button id="sendAdminMessage">Send Admin Message</button>
-    <button id="adminLogoutBtn">Logout</button>
-  </div>
-
-  <!-- Chat Section -->
-  <div id="chat">
-    <div class="messages" id="messages">
-      <!-- Messages will appear here -->
-    </div>
-    <div class="input-area">
-      <input type="text" id="usernameInput" placeholder="Enter your username" maxlength="20" />
-      <input type="text" id="messageInput" placeholder="Type a message..." />
-      <input type="text" id="imageInput" placeholder="Enter an image URL (optional)" />
-      <button id="sendBtn">Send</button>
+  <div class="container">
+    <h1>Welcome to NSFW Wonderland</h1>
+    <h3>Everything is a work in progress...</h3>
+    <div class="menu">
+      <a href="iogame/index.html">Nude Clicker</a>
+      <a href="nsfwcollection/index.html">Waifu Gallery</a>
+      <a href="nsfwsite/index.html">Waifu Fetcher</a>
     </div>
   </div>
-
-  <!-- Firebase Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
-    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
-
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyBLy2gvRiznyE-3a6xsT53X0tJg3aGR8O8",
-      authDomain: "suscord-65558.firebaseapp.com",
-      databaseURL: "https://suscord-65558-default-rtdb.firebaseio.com",
-      projectId: "suscord-65558",
-      storageBucket: "suscord-65558.firebasestorage.app",
-      messagingSenderId: "967281777709",
-      appId: "1:967281777709:web:4a3332a007fdd27cd52ca4",
-      measurementId: "G-TSQ55MD2TV"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    // Sign in anonymously
-    signInAnonymously(auth)
-      .then(() => {
-        console.log("Signed in anonymously");
-      })
-      .catch((error) => {
-        console.error("Error signing in anonymously", error);
-      });
-
-    // Function to send messages
-    async function sendMessage() {
-      const messageInput = document.getElementById("messageInput");
-      const usernameInput = document.getElementById("usernameInput");
-      const imageInput = document.getElementById("imageInput");
-      const message = messageInput.value;
-      const username = usernameInput.value.trim() || "Anonymous"; // Default to "Anonymous" if no username
-
-      let messageContent = message;
-      if (imageInput.value.trim() !== "") {
-        messageContent = `<img src="${imageInput.value.trim()}" alt="Image" />`;
-      }
-
-      if (message.trim() !== "") {
-        try {
-          await addDoc(collection(db, "messages"), {
-            username: username,
-            text: messageContent,
-            timestamp: new Date(),
-            color: "green", // Default color
-            effect: "none" // Default effect
-          });
-          messageInput.value = ""; // Clear input after sending
-          imageInput.value = ""; // Clear image URL input
-        } catch (e) {
-          console.error("Error adding message: ", e);
-        }
-      }
-    }
-
-    // Admin send message
-    async function sendAdminMessage() {
-      const customHtmlInput = document.getElementById("customHtmlInput");
-      const messageColor = document.getElementById("messageColor").value;
-      const messageEffect = document.getElementById("messageEffect").value;
-      const messageContent = customHtmlInput.value;
-
-      if (messageContent.trim() !== "") {
-        try {
-          await addDoc(collection(db, "messages"), {
-            username: "Admin",
-            text: messageContent,
-            timestamp: new Date(),
-            color: messageColor,
-            effect: messageEffect
-          });
-          customHtmlInput.value = ""; // Clear input after sending
-        } catch (e) {
-          console.error("Error adding admin message: ", e);
-        }
-      }
-    }
-
-    // Event listener for sending messages
-    document.getElementById("sendBtn").addEventListener("click", sendMessage);
-
-    // Event listener for admin login
-    document.getElementById("adminLoginBtn").addEventListener("click", function() {
-      const password = document.getElementById("adminPasswordInput").value;
-      if (password === "nox1234") {
-        document.getElementById("adminControls").style.display = "block";
-        document.getElementById("adminMenu").style.display = "none";
-      } else {
-        alert("Incorrect password!");
-      }
-    });
-
-    // Event listener for admin logout
-    document.getElementById("adminLogoutBtn").addEventListener("click", function() {
-      document.getElementById("adminControls").style.display = "none";
-      document.getElementById("adminMenu").style.display = "block";
-    });
-
-    // Event listener for sending admin messages
-    document.getElementById("sendAdminMessage").addEventListener("click", sendAdminMessage);
-
-    // Fetch and display messages from Firestore (with colors and effects)
-    async function loadMessages() {
-      const q = query(collection(db, "messages"), orderBy("timestamp"), limit(10)); // Limit to 10 messages
-      const querySnapshot = await getDocs(q);
-      const messagesDiv = document.getElementById("messages");
-      messagesDiv.innerHTML = ""; // Clear existing messages
-
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const messageElement = document.createElement("div");
-        messageElement.classList.add("message");
-        
-        // Apply effects and colors
-        messageElement.style.color = data.color;
-        if (data.effect === "glow") {
-          messageElement.classList.add("glow-effect");
-        }
-        if (data.effect === "blink") {
-          messageElement.classList.add("blink-effect");
-        }
-        
-        messageElement.innerHTML = `<strong>${data.username}:</strong> ${data.text}`;
-        messagesDiv.appendChild(messageElement);
-      });
-    }
-
-    // Load messages every 2 seconds
-    setInterval(loadMessages, 2000);
-
-  </script>
+  <!-- Replace 'waifu.png' with your own sexy kawaii anime waifu image -->
+  <img src="waifu.png" alt="Anime Waifu" class="waifu" />
 </body>
 </html>
