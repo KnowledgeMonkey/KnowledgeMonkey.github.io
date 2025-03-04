@@ -54,12 +54,10 @@ jobs:
         working-directory: guitar-learning
 
       - name: Build with Next.js
-        run: |
-          ${{ steps.detect-package-manager.outputs.runner }} next build
-          ${{ steps.detect-package-manager.outputs.runner }} next export
+        run: ${{ steps.detect-package-manager.outputs.runner }} next build
         working-directory: guitar-learning
 
-      - name: Ensure _next directory is copied
+      - name: Ensure `_next` directory is copied
         run: cp -r guitar-learning/.next/static guitar-learning/out/_next/
 
       - name: Fix GitHub Pages paths
