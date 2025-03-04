@@ -1,13 +1,11 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   output: 'export',
   images: {
-    unoptimized: true
+    unoptimized: true, // Important for GitHub Pages
   },
-  // Configure base path for GitHub Pages
-  basePath: '/guitar-learning',
-  assetPrefix: '/guitar-learning'
+  basePath: "/guitar-learning", // GitHub Pages expects this
+  assetPrefix: "/guitar-learning/",
 };
 
-export default nextConfig;
+module.exports = nextConfig;
