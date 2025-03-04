@@ -1,5 +1,5 @@
-# .github/workflows/deploy-pages.yml
-name: Deploy Next.js Site to GitHub Pages
+# Sample workflow for building and deploying a Next.js site to GitHub Pages
+name: Deploy Next.js site to Pages
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: "pages"
   cancel-in-progress: false
 
 jobs:
@@ -49,27 +49,21 @@ jobs:
             guitar-learning/package-lock.json
             guitar-learning/yarn.lock
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          static_site_generator: next
-
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            guitar-learning/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('guitar-learning/package-lock.json', 'guitar-learning/yarn.lock') }}-${{ hashFiles('guitar-learning/**/*.[jt]s', 'guitar-learning/**/*.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('guitar-learning/package-lock.json', 'guitar-learning/yarn.lock') }}-
-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
         working-directory: guitar-learning
 
       - name: Build with Next.js
-        run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        run: |
+          ${{ steps.detect-package-manager.outputs.runner }} next build
+          ${{ steps.detect-package-manager.outputs.runner }} next export
         working-directory: guitar-learning
+
+      - name: Ensure _next directory is copied
+        run: cp -r guitar-learning/.next/static guitar-learning/out/_next/
+
+      - name: Fix GitHub Pages paths
+        run: echo "github-pages" > guitar-learning/out/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -77,11 +71,11 @@ jobs:
           path: guitar-learning/out
 
   deploy:
-    runs-on: ubuntu-latest
-    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
