@@ -30,6 +30,11 @@ jobs:
           cd guitar-learning
           npx next build  # This will generate static files to the out/ directory
 
+      - name: Debug Build Output
+        run: |
+          cd guitar-learning
+          ls -la out  # List the contents of the 'out' directory to confirm if it exists
+
       - name: Move build files to root
         run: |
           cd guitar-learning
