@@ -1,13 +1,12 @@
 name: Build and Deploy to GitHub Pages
 
-# Define when the workflow should run
 on:
   push:
     branches:
-      - main  # Trigger the workflow on push to the `main` branch
+      - main
   pull_request:
     branches:
-      - main  # Trigger the workflow on pull requests to `main`
+      - main
 
 jobs:
   build:
@@ -19,27 +18,22 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"  # You can adjust the version based on your project requirements
+          node-version: "20"
 
       - name: Install dependencies
         run: |
-          cd guitar-learning  # Navigate to the guitar-learning folder
-          npm install         # Install dependencies
+          cd guitar-learning
+          npm install
 
       - name: Build Next.js app
         run: |
-          cd guitar-learning  # Navigate to guitar-learning folder
-          npx next build      # Build the app
-
-      - name: Export static files
-        run: |
-          cd guitar-learning  # Navigate to guitar-learning folder
-          npx next export     # Export the static files to the 'out' directory
+          cd guitar-learning
+          npx next build  # This will generate static files to the out/ directory
 
       - name: Move build files to root
         run: |
           cd guitar-learning
-          mv out/* ./   # Move static files from out/ to root directory
+          mv out/* ./   # Move the static files from out/ to the root folder
           mv _next ./_next   # Move the _next folder to root
 
       - name: Upload build artifact
@@ -54,5 +48,5 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
         with:
-          branch: gh-pages  # Deploy to gh-pages branch
+          branch: gh-pages
           folder: ./  # Deploy everything from the root directory
