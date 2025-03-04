@@ -45,6 +45,10 @@ jobs:
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
+          # Specify the dependency lock files location inside guitar-learning
+          cache-dependency-path: |
+            guitar-learning/package-lock.json
+            guitar-learning/yarn.lock
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
