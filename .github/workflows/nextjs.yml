@@ -25,20 +25,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "yarn"
 
       - name: Install dependencies
         run: |
-          if [ -f "$GITHUB_WORKSPACE/guitar-learning/yarn.lock" ]; then
-            cd guitar-learning
-            yarn install
-          elif [ -f "$GITHUB_WORKSPACE/guitar-learning/package-lock.json" ]; then
-            cd guitar-learning
-            npm ci
-          else
-            echo "No package manager found!"
-            exit 1
-          fi
+          cd guitar-learning
+          yarn install
 
       - name: Build Next.js
         run: |
@@ -64,4 +55,3 @@ jobs:
         with:
           branch: gh-pages
           folder: ./ # Deploy from root directory (containing _next/ and the built files)
-
