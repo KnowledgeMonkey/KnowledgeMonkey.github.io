@@ -26,24 +26,30 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install dependencies
+      - name: Install dependencies using npm
         run: |
-          cd guitar-learning
-          yarn install  # Ensure the dependencies are installed
+          cd guitar-learning  # Change to the guitar-learning directory
+          npm install  # Install dependencies using npm
 
-      - name: Build Next.js
+      - name: Build Next.js app
         run: |
-          cd guitar-learning
-          npx next build  # Use npx to run Next.js without needing to install it globally
+          cd guitar-learning  # Change to guitar-learning directory
+          npx next build  # Build the Next.js app using npx (ensures Next.js is used from local node_modules)
 
-      - name: Move Next.js files to root (for GitHub Pages)
+      - name: Export static files
         run: |
-          mv guitar-learning/out/_next ./_next  # Move _next to the correct directory
+          cd guitar-learning  # Change to guitar-learning directory
+          npx next export  # Export static files to /out
+
+      - name: Move build files to root directory
+        run: |
+          mv guitar-learning/out/* ./  # Move all files from guitar-learning/out to root directory
+          mv guitar-learning/_next ./_next  # Move the _next folder to root
 
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./_next # Upload the _next folder to be used in deployment
+          path: ./  # Upload everything from the root directory
 
   deploy:
     runs-on: ubuntu-latest
@@ -53,5 +59,5 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
         with:
-          branch: gh-pages
-          folder: ./ # Deploy from root directory (containing _next/ and the built files)
+          branch: gh-pages  # Deploy to the gh-pages branch
+          folder: ./  # Deploy everything from the root directory
