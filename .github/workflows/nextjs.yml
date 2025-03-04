@@ -29,16 +29,16 @@ jobs:
       - name: Install dependencies
         run: |
           cd guitar-learning
-          yarn install
+          yarn install  # Ensure the dependencies are installed
 
       - name: Build Next.js
         run: |
           cd guitar-learning
-          next build
+          npx next build  # Use npx to run Next.js without needing to install it globally
 
       - name: Move Next.js files to root (for GitHub Pages)
         run: |
-          mv guitar-learning/out/_next ./_next  # Moves _next to the correct directory
+          mv guitar-learning/out/_next ./_next  # Move _next to the correct directory
 
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
