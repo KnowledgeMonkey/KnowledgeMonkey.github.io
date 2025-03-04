@@ -1,3 +1,14 @@
+name: Build and Deploy to GitHub Pages
+
+# Define when the workflow should run
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on push to the `main` branch
+  pull_request:
+    branches:
+      - main  # Trigger the workflow on pull requests to `main`
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -8,11 +19,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20"  # You can adjust the version based on your project requirements
 
       - name: Install dependencies
         run: |
-          cd guitar-learning  # Navigate to guitar-learning folder
+          cd guitar-learning  # Navigate to the guitar-learning folder
           npm install         # Install dependencies
 
       - name: Build Next.js app
