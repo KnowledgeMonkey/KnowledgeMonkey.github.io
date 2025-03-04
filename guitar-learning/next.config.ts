@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  output: "export", // Required for GitHub Pages in Next.js 15+
   images: {
-    unoptimized: true, // Important for GitHub Pages
+    unoptimized: true, // Fixes images not working on GitHub Pages
   },
-  basePath: "/guitar-learning", // GitHub Pages expects this
-  assetPrefix: "/guitar-learning/",
+  basePath: "/guitar-learning", // Adjust this based on your GitHub repository name
+  assetPrefix: "/guitar-learning/", // Ensures correct asset loading
 };
 
 module.exports = nextConfig;
