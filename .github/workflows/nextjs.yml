@@ -28,12 +28,12 @@ jobs:
       - name: Build Next.js app
         run: |
           cd guitar-learning
-          npx next build  # This will generate static files to the out/ directory
+          npx next build  # This should generate static files in the out/ directory
 
       - name: Debug Build Output
         run: |
           cd guitar-learning
-          ls -la out  # List the contents of the 'out' directory to confirm if it exists
+          ls -la out  # List contents of the out directory to check if it's been generated
 
       - name: Move build files to root
         run: |
