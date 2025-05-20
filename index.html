@@ -2,110 +2,31 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guitar Learning Hub</title>
-    <link rel="stylesheet" href="styles/main.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>John Atanasoff – Startseite</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="dark-theme">
-    <nav class="navbar">
-        <div class="nav-brand">Guitar Learning Hub</div>
-        <div class="nav-links">
-            <a href="#home" class="nav-link active">
-                <span class="material-icons">home</span>
-                Home
-            </a>
-            <a href="#chord-library" class="nav-link">
-                <span class="material-icons">library_music</span>
-                Akkord Bibliothek
-            </a>
-            <a href="#metronome" class="nav-link">
-                <span class="material-icons">timer</span>
-                Metronom
-            </a>
-            <a href="#sheet-library" class="nav-link">
-                <span class="material-icons">menu_book</span>
-                Noten Bibliothek
-            </a>
-        </div>
-
-    </nav>
-
+<body>
+    <header>
+        <h1>John Vincent Atanasoff</h1>
+        <nav>
+            <a href="index.html">Startseite</a>
+            <a href="lebenslauf.html">Lebenslauf</a>
+            <a href="entdeckung.html">Entdeckung</a>
+        </nav>
+    </header>
     <main>
-        <section id="home" class="section active">
-            <div class="home-content">
-                <h1>Wilkommen im Guitar Learning Hub</h1>
-                <p>Für Emi gemacht damit sie besser lernen kann :3</p>
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <span class="material-icons">library_music</span>
-                        <h3>Akkord Bibliothek</h3>
-                        <p>Entdecke und lerne verschiedene Gitarrenakkorde</p>
-                    </div>
-                    <div class="feature-card">
-                        <span class="material-icons">timer</span>
-                        <h3>Metronom</h3>
-                        <p>Übe mit präzisem Timing</p>
-                    </div>
-                    <div class="feature-card">
-                        <span class="material-icons">menu_book</span>
-                        <h3>Noten Bibliothek</h3>
-                        <p>Greife auf deine Notensammlung zu</p>
-                    </div>
-                </div>
-            </div>
+        <section>
+            <h2>Überblick</h2>
+            <p>John Vincent Atanasoff war ein US-amerikanischer Physiker und Computerpionier. Gemeinsam mit seinem Studenten Clifford Berry entwickelte er in den Jahren 1937 bis 1942 den Atanasoff-Berry-Computer (ABC), einen der ersten elektronischen Digitalrechner.</p>
         </section>
-        <section id="chord-library" class="section">
-            <h2>Akkord Bibliothek</h2>
-            <div class="chord-grid">
-                <!-- Chord cards will be dynamically added here -->
-            </div>
+        <section>
+            <h2>Bedeutung</h2>
+            <p>Der ABC war wegweisend für die Entwicklung moderner Computertechnologie. Obwohl er nicht programmierbar war, führte er erstmals Konzepte wie binäre Arithmetik und die Trennung von Speicher und Recheneinheit ein. Diese Ideen beeinflussten spätere Entwicklungen erheblich.</p>
         </section>
-
-        <section id="metronome" class="section">
-            <h2>Metronom</h2>
-            <div class="metronome-container">
-                <div class="tempo-display">120 BPM</div>
-                <div class="controls">
-                    <button class="control-btn" id="decrease-tempo">
-                        <span class="material-icons">remove</span>
-                    </button>
-                    <button class="control-btn" id="play-btn">
-                        <span class="material-icons">play_arrow</span>
-                    </button>
-                    <button class="control-btn" id="increase-tempo">
-                        <span class="material-icons">add</span>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <section id="sheet-library" class="section">
-            <h2>Noten Bibliothek</h2>
-            <div class="upload-form">
-                <form id="sheet-upload-form" class="sheet-upload">
-                    <div class="form-group">
-                        <input type="text" id="sheet-name" placeholder="Name der Noten" required class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <input type="file" id="sheet-file" accept=".png,.jpg,.jpeg,.pdf" required class="form-input">
-                    </div>
-                    <button type="submit" class="control-btn upload-btn">
-                        <span class="material-icons">upload</span>
-                        Hochladen
-                    </button>
-                </form>
-            </div>
-            <div class="sheet-grid">
-                <!-- Sheet music cards will be dynamically added here -->
-            </div>
-        </section>
+        <img src="bilder/atanasoff.jpg" alt="John Atanasoff" width="300">
     </main>
-
-    <script src="js/effects.js"></script>
-    <script src="js/chord-svg.js"></script>
-    <script src="js/chords.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/metronome.js"></script>
+    <footer>
+        <p>Quellen: <a href="https://de.wikipedia.org/wiki/John_Atanasoff">Wikipedia – John Atanasoff</a></p>
+    </footer>
 </body>
 </html>
