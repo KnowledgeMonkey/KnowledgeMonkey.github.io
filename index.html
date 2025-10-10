@@ -1,32 +1,58 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <title>John Atanasoff – Startseite</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Evolution Miner</title>
+  <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
-    <header>
-        <h1>John Vincent Atanasoff</h1>
-        <nav>
-            <a href="index.html">Startseite</a>
-            <a href="lebenslauf.html">Lebenslauf</a>
-            <a href="entdeckung.html">Entdeckung</a>
-        </nav>
-    </header>
-    <main>
-        <section>
-            <h2>Überblick</h2>
-            <p>John Vincent Atanasoff war ein US-amerikanischer Physiker und Computerpionier. Gemeinsam mit seinem Studenten Clifford Berry entwickelte er in den Jahren 1937 bis 1942 den Atanasoff-Berry-Computer (ABC), einen der ersten elektronischen Digitalrechner.</p>
-        </section>
-        <section>
-            <h2>Bedeutung</h2>
-            <p>Der ABC war wegweisend für die Entwicklung moderner Computertechnologie. Obwohl er nicht programmierbar war, führte er erstmals Konzepte wie binäre Arithmetik und die Trennung von Speicher und Recheneinheit ein. Diese Ideen beeinflussten spätere Entwicklungen erheblich.</p>
-        </section>
-        <img src="bilder/atanasoff.jpg" alt="John Atanasoff" width="300">
-    </main>
-    <footer>
-        <p>Quellen: <a href="https://de.wikipedia.org/wiki/John_Atanasoff">Wikipedia – John Atanasoff</a></p>
-    </footer>
+  <div class="bg-parallax"></div>
+  <div class="bg-glow"></div>
+
+  <header class="topbar">
+    <h1>⛏️ Evolution Miner</h1>
+    <div class="topbar-right">
+      <div id="eraName" class="pill">Steinzeit</div>
+      <label class="toggle"><input id="fxToggle" type="checkbox" checked><span>FX</span></label>
+      <label class="toggle"><input id="sfxToggle" type="checkbox" checked><span>SFX</span></label>
+      <button id="resetBtn" class="link danger" title="Neustarten (löscht Spielstand)">Reset</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel main-panel">
+      <div class="resource-card">
+        <div class="resource-name">Stein</div>
+        <div class="resource-amount" id="resourceAmount">0</div>
+        <div class="rates">
+          <span id="perClick">+1/Klick</span>
+          <span id="perSec">0/Sek</span>
+        </div>
+        <button id="mineBtn" class="primary">Stein abbauen</button>
+      </div>
+
+      <div class="milestone" id="milestoneBox" hidden>
+        <h3>Nächster Meilenstein</h3>
+        <p id="milestoneText">Sammle X Stein, um die Bronzezeit freizuschalten.</p>
+        <progress id="milestoneProgress" value="0" max="1"></progress>
+        <div style="margin-top:10px; display:flex; gap:10px;">
+          <button id="evolveBtn" class="primary" disabled>Weiterentwickeln</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel shop-panel">
+      <h2>Upgrades</h2>
+      <div id="upgradeList" class="upgrade-list"></div>
+    </aside>
+  </main>
+
+  <footer class="statusbar">
+    <span>Gespeichert: <span id="saveStatus">–</span></span>
+  </footer>
+
+  <!-- Module: Reihenfolge wichtig -->
+  <script type="module" src="./js/main.js"></script>
 </body>
 </html>
