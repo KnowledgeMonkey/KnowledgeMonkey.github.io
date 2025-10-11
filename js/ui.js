@@ -1,4 +1,4 @@
-// ui.js – DOM-Updates & Effekte-Helfer (stabile Zahlendarstellung)
+// ui.js – DOM-Updates & Effekte-Helfer (Mehr-Ressourcen)
 
 const el = {
   eraName: document.getElementById('eraName'),
@@ -11,16 +11,13 @@ const el = {
   milestoneProgress: document.getElementById('milestoneProgress'),
   evolveBtn: document.getElementById('evolveBtn'),
   upgradeList: document.getElementById('upgradeList'),
+  multiRes: document.getElementById('multiRes'),
   fxToggle: document.getElementById('fxToggle'),
   sfxToggle: document.getElementById('sfxToggle'),
 };
 
 export function updateEra(name){ el.eraName.textContent = name; }
 
-/**
- * Stabile, sofortige Anzeige ohne Ticker (vermeidet Glitches bei hoher Update-Frequenz).
- * Kleiner „Bump“-Effekt bleibt für Feedback.
- */
 export function updateResource(amount){
   el.amount.textContent = format(amount);
   el.amount.classList.remove('bump'); void el.amount.offsetWidth; el.amount.classList.add('bump');
@@ -62,7 +59,30 @@ export function addUpgradeButton({id, name, desc, cost, affordable, onClick}){
   el.upgradeList.appendChild(btn);
 }
 
-/** Kompakte Zahlformatierung mit großen Suffixen */
+/* ===== Multi-Resource-Bar ===== */
+export function renderResourceBadges(defs, values){
+  if (!el.multiRes) return;
+  el.multiRes.innerHTML = '';
+  for (const d of defs){
+    const box = document.createElement('div');
+    box.className = 'res-badge';
+    box.innerHTML = `
+      <img alt="${d.name}" src="${d.icon}"/>
+      <span class="rname">${d.name}</span>
+      <span class="rval" data-res="${d.id}">${format(values[d.id] || 0)}</span>
+    `;
+    el.multiRes.appendChild(box);
+  }
+}
+export function updateResourceBadges(values){
+  if (!el.multiRes) return;
+  el.multiRes.querySelectorAll('.rval').forEach(node => {
+    const id = node.getAttribute('data-res');
+    node.textContent = format(values[id] || 0);
+  });
+}
+
+/* ===== Helpers ===== */
 export function format(n){
   const x = Number(n)||0;
   if (x >= 1e21) return (x/1e21).toFixed(2)+'Sx';
@@ -72,11 +92,9 @@ export function format(n){
   if (x >= 1e9)  return (x/1e9).toFixed(2)+'B';
   if (x >= 1e6)  return (x/1e6).toFixed(2)+'M';
   if (x >= 1e3)  return (x/1e3).toFixed(2)+'K';
-  // kleine Zahlen: zwei Nachkommastellen maximal
   return Math.abs(x - Math.round(x)) < 1e-9 ? Math.round(x).toString() : (Math.floor(x*100)/100).toString();
 }
 
-// Floater
 export function spawnFloat(x, y, text, cls=''){
   const d = document.createElement('div');
   d.className = 'float' + (cls ? ' '+cls : '');
@@ -86,6 +104,5 @@ export function spawnFloat(x, y, text, cls=''){
   d.addEventListener('animationend', () => d.remove());
 }
 
-// Toggles
-export function onFxToggle(cb){ el.fxToggle?.addEventListener('change', e=>cb(!!e.target.checked)); }
-export function onSfxToggle(cb){ el.sfxToggle?.addEventListener('change', e=>cb(!!e.target.checked)); }
+export function onFxToggle(cb){ document.getElementById('fxToggle')?.addEventListener('change', e=>cb(!!e.target.checked)); }
+export function onSfxToggle(cb){ document.getElementById('sfxToggle')?.addEventListener('change', e=>cb(!!e.target.checked)); }
