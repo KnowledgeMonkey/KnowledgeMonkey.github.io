@@ -172,7 +172,7 @@ body {
     display: flex;
     justify-content: space-between;
     gap: 8px;
-}
+  }
 
 .edit {
     background: transparent;
@@ -322,6 +322,16 @@ h1 {
 #list li .details { font-size: 14px; color: #aaaaaa; margin-top: 4px; }
 
 #list li.done .title { text-decoration: line-through; color: #7e7e7e; }
+
+#list li {
+    padding-top: 36px;
+  }
+  
+  #list li .title {
+    display: block;
+    text-align: center;
+  }
+
 
 #list li .toggle {
     position: absolute;
