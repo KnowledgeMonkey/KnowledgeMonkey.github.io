@@ -16,10 +16,15 @@
     <img src="assets/GuSHJB.gif" class="cat">
     <h1>ToDo</h1>
     <div class="input">
-      <input type="text" id="title" placeholder="Gebe einen spannenden Titel an!">
-      <textarea id="details" placeholder="Hier können coole details rein :)"></textarea>
-      <button id="add">ToDo erstellen</button>
-    </div>
+        <input type="text" id="title" placeholder="Titel des ToDos (z. B. Haushalt)">
+        <div class="subtask-input">
+          <input type="text" id="subtask" placeholder="Aufgabe hinzufügen (z. B. Wäsche waschen)">
+          <button id="addSubtask">+</button>
+        </div>
+        <ul id="subtaskList"></ul>
+        <button id="add">ToDo speichern</button>
+      </div>
+      
     <ul id="list" class="todolist"></ul>
   </div>
 
