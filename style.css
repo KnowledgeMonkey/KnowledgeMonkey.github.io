@@ -17,12 +17,12 @@ body {
 .cat {
     width: 100px;
     position: absolute;
-    top: -30px;
-    left: 90px;                 
-    transform: translateX(-50%); 
-    z-index: 5;         
-    pointer-events: none; 
-  }
+    bottom: 125px;
+    right: -14px;
+    transform: translateX(-50%);
+    z-index: 5;
+    pointer-events: none;
+}
 
 .container, .container2, .container3 {
     background-color: #202324;
@@ -37,8 +37,6 @@ body {
 .container2 { grid-area: stats; }
 .container3 { grid-area: chart; }
 
-
-
 .container3 > h1 {
     margin: 0 0 8px;
     flex: 0 0 auto;
@@ -52,17 +50,17 @@ body {
     gap: 12px;
     height: 100%;
     min-height: 420px;
-  }
-  
-  #statdiagramm {
+}
+
+#statdiagramm {
     width: 90%;
     max-width: 550px;
     height: 90%;
     max-height: 550px;
     display: block;
-  }
+}
 
-  .stats {
+.stats {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -73,9 +71,9 @@ body {
     padding: 25px 20px;
     box-shadow: 4px 4px 8px #111315, -4px -4px 8px #2b2d2f;
     flex-wrap: wrap;
-  }
-  
-  .stat-box {
+}
+
+.stat-box {
     flex: 1;
     min-width: 120px;
     text-align: center;
@@ -83,37 +81,36 @@ body {
     border-radius: 10px;
     padding: 15px 10px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .stat-box:hover {
+}
+
+.stat-box:hover {
     transform: translateY(-3px);
     box-shadow: 0 0 10px rgba(138, 180, 248, 0.4);
-  }
-  
-  .stat-title {
+}
+
+.stat-title {
     font-size: 16px;
     font-weight: 600;
     color: #cccccc;
     margin-bottom: 6px;
-  }
-  
-  .stat-value {
+}
+
+.stat-value {
     font-size: 22px;
     font-weight: bold;
-  }
-  
-  .stat-total .stat-value { color: #8ab4f8; }
-  .stat-complete .stat-value { color: #7ee081; }
-  .stat-pending .stat-value { color: #e08a7e; }
-  
+}
 
-  .subtask-input {
+.stat-total .stat-value { color: #8ab4f8; }
+.stat-complete .stat-value { color: #7ee081; }
+.stat-pending .stat-value { color: #e08a7e; }
+
+.subtask-input {
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
-  }
-  
-  #subtask {
+}
+
+#subtask {
     flex: 1;
     border: 1px solid #34373a;
     background: #2a2d2f;
@@ -121,9 +118,9 @@ body {
     padding: 10px;
     border-radius: 6px;
     font-size: 16px;
-  }
-  
-  #addSubtask {
+}
+
+#addSubtask {
     background-color: #8ab4f8;
     border: none;
     color: #101213;
@@ -132,19 +129,19 @@ body {
     font-weight: bold;
     cursor: pointer;
     font-size: 18px;
-  }
-  
-  #addSubtask:hover {
+}
+
+#addSubtask:hover {
     background-color: #7aa1e6;
-  }
-  
-  #subtaskList {
+}
+
+#subtaskList {
     list-style: none;
     margin: 0;
     padding: 0;
-  }
-  
-  #subtaskList li {
+}
+
+#subtaskList li {
     background: #2a2d2f;
     border: 1px solid #3a3d3f;
     border-radius: 6px;
@@ -153,21 +150,122 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  
-  #subtaskList li span {
+}
+
+#subtaskList li span {
     flex: 1;
-  }
-  
-  #subtaskList li button {
+}
+
+#subtaskList li button {
     background: transparent;
     border: none;
     color: #f28b82;
     font-size: 16px;
     cursor: pointer;
-  }
-  
+}
 
+.item-actions {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.edit {
+    background: transparent;
+    border: none;
+    color: #8ab4f8;
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.edit:hover {
+    color: #a6c8ff;
+    transform: scale(1.1);
+}
+
+.edit::before {
+    content: "✏️";
+    font-size: 18px;
+}
+
+.editing {
+    border: 1px dashed #3a3d3f;
+    padding: 14px;
+}
+
+.edit-title {
+    width: 100%;
+    border: 1px solid #34373a;
+    background: #2a2d2f;
+    color: #f1f1f1;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.edit-subtasks {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+}
+
+.edit-subtask-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0;
+}
+
+.edit-subtask-row input[type="text"] {
+    flex: 1;
+    border: 1px solid #34373a;
+    background: #2a2d2f;
+    color: #f1f1f1;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.edit-addrow {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 10px;
+}
+
+button.primary {
+    background-color: #8ab4f8;
+    border: none;
+    color: #101213;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button.mini {
+    background: #3a3d3f;
+    border: none;
+    color: #f1f1f1;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button.mini.danger {
+    background: transparent;
+    color: #f28b82;
+}
 
 h1 {
     text-align: center;
@@ -238,12 +336,7 @@ h1 {
 
 #list li .toggle:hover { border-color: #8ef0a6; }
 
-
-
 #list li .delete {
-    position: absolute;
-    right: 10px;
-    top: 10px;
     background: transparent;
     border: none;
     color: #f28b82;
