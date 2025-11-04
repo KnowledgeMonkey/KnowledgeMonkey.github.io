@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>ToDoWeb</title>
+</head>
+<body>
+
+    
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <div class="container">
+    <img src="assets/GuSHJB.gif" class="cat">
+    <h1>ToDo</h1>
+    <div class="input">
+      <input type="text" id="title" placeholder="Gebe einen spannenden Titel an!">
+      <textarea id="details" placeholder="Hier können coole details rein :)"></textarea>
+      <button id="add">ToDo erstellen</button>
+    </div>
+    <ul id="list" class="todolist"></ul>
+  </div>
+
+  <div class="container2">
+    <h1>Statistik</h1>
+    <div class="stats">
+        <div class="stat-box stat-total">
+          <div class="stat-title">Insgesamt</div>
+          <div class="stat-value" id="total">0</div>
+        </div>
+        <div class="stat-box stat-complete">
+          <div class="stat-title">Abgeschlossen</div>
+          <div class="stat-value" id="complete">0</div>
+        </div>
+        <div class="stat-box stat-pending">
+          <div class="stat-title">Ausstehend</div>
+          <div class="stat-value" id="pending">0</div>
+        </div>
+      </div>
+  </div>
+
+  <div class="container3">
+    <h1>Diagramm</h1>
+    <canvas id="statdiagramm"></canvas>
+  </div>
+
+  <script src="scripts/script.js"></script>
+</body>
+</html>
