@@ -1,57 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <title>ToDoWeb</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>ToDoWeb</title>
 </head>
+
 <body>
 
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <div class="container">
-    
-    <h1>ToDo</h1>
-    <div class="input">
-        <input type="text" id="title" placeholder="Titel des ToDos (z. B. Haushalt)">
-        <div class="subtask-input">
-          <input type="text" id="subtask" placeholder="Aufgabe hinzufügen (z. B. Wäsche waschen)">
-          <button id="addSubtask">+</button>
-        </div>
-        <ul id="subtaskList"></ul>
-        <button id="add">ToDo speichern</button>
-      </div>
-      
-    <ul id="list" class="todolist"></ul>
-  </div>
+    <div class="container">
+        <img src="assets/L5FPXPI.gif" class="cat" alt="sleeping cat" />
+        <h1>ToDo</h1>
 
-  <div class="container2">
-    <h1>Statistik</h1>
-    <div class="stats">
-        <div class="stat-box stat-total">
-          <div class="stat-title">Insgesamt</div>
-          <div class="stat-value" id="total">0</div>
-        </div>
-        <div class="stat-box stat-complete">
-          <div class="stat-title">Abgeschlossen</div>
-          <div class="stat-value" id="complete">0</div>
-        </div>
-        <div class="stat-box stat-pending">
-          <div class="stat-title">Ausstehend</div>
-          <div class="stat-value" id="pending">0</div>
-        </div>
-      </div>
-  </div>
+        <div class="input">
+            <input type="text" id="title" placeholder="Titel des ToDos (z. B. Haushalt)">
 
-  <div class="container3">
-    <img src="assets/L5FPXPI.gif" class="cat">
-    <h1>Diagramm</h1>
-    <canvas id="statdiagramm"></canvas>
-  </div>
+            <div class="subtask-input">
+                <input type="text" id="subtask" placeholder="Aufgabe hinzufügen (z. B. Wäsche waschen)">
+                <button id="addSubtask">+</button>
+            </div>
 
-  <script src="scripts/script.js"></script>
+            <ul id="subtaskList"></ul>
+
+            <div class="image-input">
+                <input type="file" id="images" accept="image/*" multiple>
+                <div id="imagePreview" class="image-preview"></div>
+            </div>
+
+            <button id="add">ToDo speichern</button>
+        </div>
+
+        <ul id="list" class="todolist"></ul>
+    </div>
+
+    <div class="right">
+        <div class="container2">
+            <h1>Statistik</h1>
+            <div class="stats">
+                <div class="stat-box stat-total">
+                    <div class="stat-title">Insgesamt</div>
+                    <div class="stat-value" id="total">0</div>
+                </div>
+                <div class="stat-box stat-complete">
+                    <div class="stat-title">Fertig</div>
+                    <div class="stat-value" id="complete">0</div>
+                </div>
+                <div class="stat-box stat-pending">
+                    <div class="stat-title">Ausstehend</div>
+                    <div class="stat-value" id="pending">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container3">
+            <h1>Diagramm</h1>
+            <canvas id="statdiagramm"></canvas>
+        </div>
+    </div>
+
+    <script src="scripts/script.js"></script>
 </body>
+
 </html>
