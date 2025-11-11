@@ -1,10 +1,13 @@
 let modalEl, chart, currentType = "doughnut";
 
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
 function ensureModal() {
     if (modalEl) return;
     modalEl = document.createElement("div");
     modalEl.className = "chart-modal hidden";
-    modalEl.innerHTML = '' +
+    modalEl.innerHTML =
         '<div class="chart-modal__backdrop"></div>' +
         '<div class="chart-modal__panel">' +
         '  <div class="chart-modal__header">' +
@@ -20,74 +23,58 @@ function ensureModal() {
         '</div>';
     document.body.appendChild(modalEl);
 
-    var closeBtn = modalEl.querySelector(".chart-modal__close");
-    var backdrop = modalEl.querySelector(".chart-modal__backdrop");
-    var close = function() {
-        modalEl.classList.add("hidden");
-        if (chart) { chart.destroy();
-            chart = null; }
-    };
-    closeBtn.addEventListener("click", close);
-    backdrop.addEventListener("click", close);
+    const close = () => { modalEl.classList.add("hidden"); if (chart) { chart.destroy();
+            chart = null; } };
+    $(".chart-modal__close", modalEl).addEventListener("click", close);
+    $(".chart-modal__backdrop", modalEl).addEventListener("click", close);
 
-    var typeButtons = modalEl.querySelectorAll(".chart-type");
-    for (var k = 0; k < typeButtons.length; k++) {
-        (function(btn) {
-            btn.addEventListener("click", function() {
-                currentType = btn.getAttribute("data-type");
-                for (var m = 0; m < typeButtons.length; m++) {
-                    typeButtons[m].classList.remove("active");
-                }
-                btn.classList.add("active");
-                if (modalEl._lastCounts) renderChartFromCounts(modalEl._lastCounts);
-            });
-        })(typeButtons[k]);
-    }
+    $(".chart-modal__types", modalEl).addEventListener("click", (e) => {
+        const btn = e.target.closest(".chart-type");
+        if (!btn) return;
+        currentType = btn.getAttribute("data-type");
+        setActiveTypeButtons();
+        if (modalEl._lastCounts) renderChartFromCounts(modalEl._lastCounts);
+    });
 }
 
 function computeCountsFromTodo(todo) {
-    var t = todo || {};
-    var tasks = t.tasks || [];
-    var completed = 0;
-    for (var i = 0; i < tasks.length; i++) {
-        if (tasks[i] && tasks[i].done) completed++;
-    }
-    var total = tasks.length;
-    return { title: t.title || "ToDo", completed: completed, pending: total - completed };
+    const t = todo || {};
+    const tasks = t.tasks || [];
+    const completed = tasks.reduce((a, x) => a + (x && x.done ? 1 : 0), 0);
+    return { title: t.title || "ToDo", completed, pending: tasks.length - completed };
 }
 
 function ensureCanvas() {
-    var wrap = modalEl.querySelector(".chart-modal__canvas-wrap");
+    const wrap = $(".chart-modal__canvas-wrap", modalEl);
     wrap.innerHTML = '<canvas id="todoChart"></canvas>';
-    return modalEl.querySelector("#todoChart");
+    return $("#todoChart", modalEl);
 }
 
-function renderChartFromCounts(obj) {
-    var title = obj.title;
-    var completed = obj.completed;
-    var pending = obj.pending;
+function setActiveTypeButtons() {
+    $$(".chart-type", modalEl).forEach(b => {
+        b.classList.toggle("active", b.getAttribute("data-type") === currentType);
+    });
+}
 
-    var isBar = currentType === "bar";
-    var ctx = ensureCanvas();
+function renderChartFromCounts({ title, completed, pending }) {
+    const total = completed + pending;
+    const wrap = $(".chart-modal__canvas-wrap", modalEl);
     if (chart) { chart.destroy();
         chart = null; }
 
-    if ((completed + pending) === 0) {
-        var wrap = modalEl.querySelector(".chart-modal__canvas-wrap");
+    if (!total) {
         wrap.innerHTML = '<div class="chart-modal__empty">Keine Unteraufgaben vorhanden.</div>';
         return;
     }
+
+    const isBar = currentType === "bar";
+    const ctx = ensureCanvas();
 
     chart = new Chart(ctx, {
         type: currentType,
         data: {
             labels: ["Fertig", "Ausstehend"],
-            datasets: [{
-                label: "Aufgaben",
-                data: [completed, pending],
-                backgroundColor: ["#7ee081", "#e08a7e"],
-                borderWidth: 1
-            }]
+            datasets: [{ label: "Aufgaben", data: [completed, pending], backgroundColor: ["#7ee081", "#e08a7e"], borderWidth: 1 }]
         },
         options: {
             responsive: true,
@@ -102,38 +89,30 @@ function renderChartFromCounts(obj) {
             } : {}
         }
     });
+    $(".chart-modal__title", modalEl).textContent = "Diagramm – " + title;
 }
 
 export function openChartModal(todo) {
     ensureModal();
-    var counts = computeCountsFromTodo(todo);
+    const counts = computeCountsFromTodo(todo);
     modalEl._lastCounts = counts;
     modalEl.classList.remove("hidden");
-    modalEl.querySelector(".chart-modal__title").textContent = "Diagramm – " + counts.title;
-
-    var typeButtons = modalEl.querySelectorAll(".chart-type");
-    for (var i = 0; i < typeButtons.length; i++) {
-        var b = typeButtons[i];
-        var active = b.getAttribute("data-type") === currentType;
-        if (active) b.classList.add("active");
-        else b.classList.remove("active");
-    }
-
+    setActiveTypeButtons();
     renderChartFromCounts(counts);
 }
 
-export function updateChartModalFromCounts(payload) {
+export function updateChartModalFromCounts(p = {}) {
     if (!modalEl || modalEl.classList.contains("hidden")) return;
-    var title = (payload && payload.title) ? payload.title : "ToDo";
-    var completed = payload && typeof payload.completed === "number" ? payload.completed : 0;
-    var pending = payload && typeof payload.pending === "number" ? payload.pending : 0;
-    modalEl._lastCounts = { title: title, completed: completed, pending: pending };
-    modalEl.querySelector(".chart-modal__title").textContent = "Diagramm – " + title;
-    renderChartFromCounts(modalEl._lastCounts);
+    const payload = {
+        title: p.title || "ToDo",
+        completed: typeof p.completed === "number" ? p.completed : 0,
+        pending: typeof p.pending === "number" ? p.pending : 0
+    };
+    modalEl._lastCounts = payload;
+    renderChartFromCounts(payload);
 }
 
 export function updateChartModal(todo) {
     if (!modalEl || modalEl.classList.contains("hidden")) return;
-    var counts = computeCountsFromTodo(todo);
-    updateChartModalFromCounts(counts);
+    updateChartModalFromCounts(computeCountsFromTodo(todo));
 }

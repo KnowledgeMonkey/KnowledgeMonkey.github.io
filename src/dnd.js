@@ -1,103 +1,69 @@
 // src/dnd.js
 import { load, save } from "./data.js";
 
-/*
-  enableListDnD({ listEl, onAfterReorder })
-  - listEl is the UL (bucket-list) parent we attach to
-  - items have data-id on <li> for todo id
-*/
-export function enableListDnD({ listEl, onAfterReorder }) {
-    let dragEl = null;
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+const getAfter = (container, y) => {
+    let closest = null,
+        off = Number.NEGATIVE_INFINITY;
+    for (const el of $$("li[data-id], li[data-subindex]", container).filter(el => !el.classList.contains("dragging"))) {
+        const box = el.getBoundingClientRect();
+        const d = y - box.top - box.height / 2;
+        if (d < 0 && d > off) { off = d;
+            closest = el; }
+    }
+    return closest;
+};
 
-    listEl.addEventListener("dragstart", (e) => {
-        const li = e.target.closest("li[data-id]");
+function attachDnD(container, itemAttr, onReorder) {
+    let dragging = null;
+
+    container.addEventListener("dragstart", e => {
+        const li = e.target.closest(`li[${itemAttr}]`);
         if (!li) return;
-        dragEl = li;
+        dragging = li;
         li.classList.add("dragging");
         e.dataTransfer.effectAllowed = "move";
     });
 
-    listEl.addEventListener("dragend", () => {
-        if (dragEl) dragEl.classList.remove("dragging");
-        dragEl = null;
+    container.addEventListener("dragend", () => {
+        if (dragging) dragging.classList.remove("dragging");
+        dragging = null;
     });
 
-    listEl.addEventListener("dragover", (e) => {
-        if (!dragEl) return;
+    container.addEventListener("dragover", e => {
+        if (!dragging) return;
         e.preventDefault();
-        const after = getDragAfterElement(listEl, e.clientY);
-        if (after == null) {
-            listEl.appendChild(dragEl);
-        } else {
-            listEl.insertBefore(dragEl, after);
-        }
+        const after = getAfter(container, e.clientY);
+        after ? container.insertBefore(dragging, after) : container.appendChild(dragging);
     });
 
-    listEl.addEventListener("drop", () => {
-        const ids = [...listEl.querySelectorAll("li[data-id]")].map(li => li.getAttribute("data-id"));
-        // reorder storage to match ids
+    container.addEventListener("drop", () => {
+        if (onReorder) onReorder();
+    });
+}
+
+/* -------- Public API -------- */
+
+export function enableListDnD({ listEl, onAfterReorder }) {
+    attachDnD(listEl, "data-id", () => {
+        const ids = $$("li[data-id]", listEl).map(li => li.getAttribute("data-id"));
         const arr = load();
         const byId = new Map(arr.map(x => [x.id, x]));
         const next = ids.map(id => byId.get(id)).filter(Boolean);
-        // also keep non-visible items (in other buckets or snoozed)
         for (const t of arr)
-            if (!byId.has(t.id)) next.push(t);
+            if (!byId.has(t.id)) next.push(t); // keep items not in this list
         save(next);
         onAfterReorder && onAfterReorder();
     });
 }
 
-function getDragAfterElement(container, y) {
-    const els = [...container.querySelectorAll("li[data-id]:not(.dragging)")];
-    let closest = null;
-    let closestOffset = Number.NEGATIVE_INFINITY;
-    for (const el of els) {
-        const box = el.getBoundingClientRect();
-        const offset = y - box.top - box.height / 2;
-        if (offset < 0 && offset > closestOffset) {
-            closestOffset = offset;
-            closest = el;
-        }
-    }
-    return closest;
-}
-
-/*
-  enableSubtaskDnD({ ulEl, todoIndex, onAfter })
-  - subtask <li> rows must carry data-subindex
-*/
 export function enableSubtaskDnD({ ulEl, todoIndex, onAfter }) {
-    let dragRow = null;
-
-    ulEl.addEventListener("dragstart", (e) => {
-        const row = e.target.closest("li[data-subindex]");
-        if (!row) return;
-        dragRow = row;
-        row.classList.add("dragging");
-        e.dataTransfer.effectAllowed = "move";
-    });
-
-    ulEl.addEventListener("dragend", () => {
-        if (dragRow) dragRow.classList.remove("dragging");
-        dragRow = null;
-    });
-
-    ulEl.addEventListener("dragover", (e) => {
-        if (!dragRow) return;
-        e.preventDefault();
-        const after = getDragAfterElement(ulEl, e.clientY);
-        if (after == null) ulEl.appendChild(dragRow);
-        else ulEl.insertBefore(dragRow, after);
-    });
-
-    ulEl.addEventListener("drop", () => {
+    attachDnD(ulEl, "data-subindex", () => {
         const arr = load();
         const t = arr[todoIndex];
         if (!t || !Array.isArray(t.tasks)) return;
-        const order = [...ulEl.querySelectorAll("li[data-subindex]")]
-            .map((li) => Number(li.getAttribute("data-subindex")));
-        const next = order.map(idx => t.tasks[idx]).filter(Boolean);
-        t.tasks = next;
+        const order = $$("li[data-subindex]", ulEl).map(li => Number(li.getAttribute("data-subindex")));
+        t.tasks = order.map(i => t.tasks[i]).filter(Boolean);
         save(arr);
         onAfter && onAfter();
     });

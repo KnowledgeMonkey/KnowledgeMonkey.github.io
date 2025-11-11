@@ -1,29 +1,21 @@
-import { save } from "./data.js";
+// src/reminders.js
 
 /* Ask permission if needed, resolve to 'granted' | 'denied' | 'default' */
 async function ensurePermission() {
     if (!("Notification" in window)) return "denied";
     if (Notification.permission === "granted") return "granted";
-    try {
-        const res = await Notification.requestPermission();
-        return res;
-    } catch {
-        return "denied";
-    }
+    try { return await Notification.requestPermission(); } catch { return "denied"; }
 }
 
 function notify(title, body) {
-    try {
-        new Notification(title, { body });
-    } catch {
-        alert(title + "\n" + body);
-    }
+    try { new Notification(title, { body }); } catch { alert(`${title}\n${body}`); }
 }
 
 /*
   options:
   - getTodos(): current list from storage
-  - setTodos(next): persist function (uses save)
+  - setTodos(next): persist function
+  - soonThresholdMinutes: (kept for API parity; not used here)
   Runs an interval every 60s to check reminders.
 */
 export function initReminders({ getTodos, setTodos, soonThresholdMinutes = 60 }) {
@@ -32,7 +24,6 @@ export function initReminders({ getTodos, setTodos, soonThresholdMinutes = 60 })
     const tick = () => {
         const todos = getTodos();
         const now = Date.now();
-
         let changed = false;
 
         for (const t of todos) {
@@ -43,7 +34,7 @@ export function initReminders({ getTodos, setTodos, soonThresholdMinutes = 60 })
 
             const reminderTime = t.dueAt - remindMins * 60 * 1000;
             if (now >= reminderTime && (t.lastNotified || 0) < reminderTime) {
-                notify("Erinnerung: " + (t.title || "ToDo"), "Fällig " + new Date(t.dueAt).toLocaleString());
+                notify(`Erinnerung: ${t.title || "ToDo"}`, `Fällig ${new Date(t.dueAt).toLocaleString()}`);
                 t.lastNotified = reminderTime;
                 changed = true;
             }
@@ -52,22 +43,13 @@ export function initReminders({ getTodos, setTodos, soonThresholdMinutes = 60 })
         if (changed) setTodos(todos);
     };
 
-    // only run if permission is okay
     ensurePermission().then((perm) => {
-        if (perm === "granted") {
-            if (timer) clearInterval(timer);
-            tick();
-            timer = setInterval(tick, 60 * 1000);
-            document.addEventListener("visibilitychange", () => {
-                if (!document.hidden) tick();
-            });
-        }
+        if (perm !== "granted") return;
+        if (timer) clearInterval(timer);
+        tick(); // immediate check
+        timer = setInterval(tick, 60 * 1000);
+        document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
     });
 
-    return {
-        refresh: () => {
-            // call when todos change
-            tick();
-        }
-    };
+    return { refresh: tick };
 }

@@ -32,7 +32,6 @@ function header(doc, brand, author, margin) {
     setText(doc, C.muted);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
-    doc.text(`erstellt von ${author}`, margin, margin + 26);
 
     // Thin divider
     setStroke(doc, C.border);
