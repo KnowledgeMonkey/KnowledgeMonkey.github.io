@@ -1,0 +1,78 @@
+body {
+    margin: 0;
+    padding: 40px;
+    background-color: #181a1b;
+    color: #f2f2f2;
+    font-family: Arial, Helvetica, sans-serif;
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    grid-template-areas: "left stats" "left chart";
+    gap: 30px;
+    align-items: start;
+    box-sizing: border-box;
+}
+
+.cat {
+    width: 100px;
+    position: absolute;
+    bottom: 253px;
+    right: -14px;
+    transform: translateX(-50%);
+    z-index: 5;
+    pointer-events: none;
+}
+
+.container,
+.container2,
+.container3 {
+    background-color: #202324;
+    border: 1px solid #2c2f31;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+}
+
+.container {
+    grid-area: left;
+}
+
+.container2 {
+    grid-area: stats;
+}
+
+.container3 {
+    grid-area: chart;
+}
+
+.container3>h1 {
+    margin: 0 0 8px;
+    flex: 0 0 auto;
+}
+
+.container3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 100%;
+    min-height: 420px;
+}
+
+#statdiagramm {
+    width: 90%;
+    max-width: 550px;
+    height: 90%;
+    max-height: 550px;
+    display: block;
+}
+
+@media (max-width: 900px) {
+    body {
+        grid-template-columns: 1fr;
+        grid-template-areas: "left" "stats" "chart";
+        gap: 20px;
+        padding: 20px;
+    }
+}

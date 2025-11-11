@@ -4,16 +4,25 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
     <title>ToDoWeb</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <link rel="stylesheet" href="./styles/layout.css">
+    <link rel="stylesheet" href="./styles/components.css">
+    <link rel="stylesheet" href="./styles/theme.css">
+    <link rel="stylesheet" href="./styles/inputs.css">
 </head>
 
 <body>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
+
+
     <div class="container">
-        <img src="assets/L5FPXPI.gif" class="cat" alt="sleeping cat" />
+        <img src="./images/cat.gif" alt="sleeping cat" class="cat">
+
         <h1>ToDo</h1>
 
         <div class="input">
@@ -21,17 +30,65 @@
 
             <div class="subtask-input">
                 <input type="text" id="subtask" placeholder="Aufgabe hinzufügen (z. B. Wäsche waschen)">
-                <button id="addSubtask">+</button>
+                <button id="addSubtask" class="mini">+</button>
             </div>
 
             <ul id="subtaskList"></ul>
 
-            <div class="image-input">
+            <div class="image-input form-section">
+                <label class="file-btn" for="images">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M5 20h14a2 2 0 0 0 2-2v-6l-3-3-4 4-3-3-6 6-2-2v4a2 2 0 0 0 2 2zM10 5a2 2 0 1 1 4 0v4h3l-5 5-5-5h3V5z"/>
+                  </svg>
+                  Bild hochladen
+                </label>
                 <input type="file" id="images" accept="image/*" multiple>
                 <div id="imagePreview" class="image-preview"></div>
             </div>
 
-            <button id="add">ToDo speichern</button>
+
+            <!-- Due date + reminder row -->
+            <div class="due-row">
+                <input type="date" id="dueDate" />
+                <input type="time" id="dueTime" />
+                <select id="remindBefore">
+                    <option value="">Kein Reminder</option>
+                    <option value="5">5 Min vorher</option>
+                    <option value="15">15 Min vorher</option>
+                    <option value="60">1 Std vorher</option>
+                    <option value="180">3 Std vorher</option>
+                    <option value="1440">1 Tag vorher</option>
+                </select>
+            </div>
+
+            <div class="color-row">
+                <label for="listColor">Listenfarbe:</label>
+                <input type="color" id="listColor" value="#2c2f31">
+            </div>
+
+            <div class="priority-row">
+                <label for="priority">Priorität:</label>
+                <select id="priority">
+                  <option value="medium">Mittel</option>
+                  <option value="high">Hoch</option>
+                  <option value="low">Niedrig</option>
+                </select>
+            </div>
+
+            <div class="templates-row">
+                <label for="templateSelect">Vorlage:</label>
+                <select id="templateSelect">
+                  <option value="">Keine</option>
+                  <option value="household">Haushalt</option>
+                  <option value="grocery">Einkauf</option>
+                  <option value="study">Lernen</option>
+                  <option value="project">Projekt</option>
+                </select>
+                <button id="applyTemplate" class="mini">Einfügen</button>
+            </div>
+
+
+            <button id="add" class="primary">ToDo speichern</button>
         </div>
 
         <ul id="list" class="todolist"></ul>
@@ -40,7 +97,7 @@
     <div class="right">
         <div class="container2">
             <h1>Statistik</h1>
-            <div class="stats">
+            <div class="stats compact">
                 <div class="stat-box stat-total">
                     <div class="stat-title">Insgesamt</div>
                     <div class="stat-value" id="total">0</div>
@@ -56,13 +113,29 @@
             </div>
         </div>
 
+
         <div class="container3">
             <h1>Diagramm</h1>
             <canvas id="statdiagramm"></canvas>
         </div>
     </div>
 
-    <script src="scripts/script.js"></script>
+    <div class="topbar">
+        <button id="exportBtn" class="mini">Export</button>
+        <label class="import-btn mini">
+          Import
+          <input type="file" id="importInput" accept="application/json">
+        </label>
+        <button id="pdfBtn" class="mini">PDF</button>
+        <label class="theme-switch">
+          <input type="checkbox" id="themeToggle">
+          <span class="slider"></span>
+          <span class="theme-label">Light</span>
+        </label>
+    </div>
+
+
+    <script type="module" src="./src/main.js"></script>
 </body>
 
 </html>

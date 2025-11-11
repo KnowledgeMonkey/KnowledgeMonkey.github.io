@@ -1,0 +1,135 @@
+/* === universal input style === */
+
+input[type="text"],
+input[type="date"],
+input[type="time"],
+input[type="color"],
+select,
+textarea {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="color"]:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.2);
+}
+
+
+/* === date/time pickers === */
+
+input[type="date"],
+input[type="time"] {
+    color-scheme: dark;
+    /* ensures dark calendar popups on supported browsers */
+    cursor: pointer;
+}
+
+
+/* remove chrome default arrow color */
+
+input::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+}
+
+input:hover::-webkit-calendar-picker-indicator {
+    opacity: 1;
+}
+
+
+/* === file upload === */
+
+.image-input input[type="file"] {
+    display: none;
+    /* hide the ugly default */
+}
+
+.image-input label,
+.image-input .file-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #101213;
+    padding: 10px 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.image-input label:hover,
+.image-input .file-btn:hover {
+    background: #7aa1e6;
+    transform: translateY(-1px);
+}
+
+.image-input label:active,
+.image-input .file-btn:active {
+    transform: translateY(0);
+}
+
+.image-input .file-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: #101213;
+}
+
+
+/* === color picker === */
+
+input[type="color"] {
+    height: 40px;
+    width: 100%;
+    border-radius: 8px;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    background: var(--surface-alt);
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+input[type="color"]::-moz-color-swatch {
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+
+/* === section spacing === */
+
+.form-section {
+    margin-bottom: 16px;
+}
+
+input,
+select,
+textarea {
+    transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .15s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    transform: scale(1.01);
+}

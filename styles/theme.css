@@ -1,0 +1,92 @@
+:root {
+    --bg: #181a1b;
+    --surface: #202324;
+    --surface-alt: #2a2d2f;
+    --border: #2c2f31;
+    --text: #f2f2f2;
+    --text-muted: #aaaaaa;
+    --accent: #8ab4f8;
+    --success: #7ee081;
+    --error: #f28b82;
+    --warn: #e8b26a;
+    --shadow: rgba(0, 0, 0, 0.3);
+}
+
+ :root[data-theme="light"] {
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --surface-alt: #f1f4f8;
+    --border: #dfe3ea;
+    --text: #0f172a;
+    --text-muted: #586174;
+    --accent: #3b82f6;
+    --success: #16a34a;
+    --error: #ef4444;
+    --warn: #d97706;
+    --shadow: rgba(0, 0, 0, 0.08);
+}
+
+
+/* topbar + theme switch */
+
+.topbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.import-btn {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.import-btn input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.theme-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.theme-switch .slider {
+    width: 46px;
+    height: 24px;
+    border-radius: 999px;
+    background: #3a3d3f;
+    position: relative;
+}
+
+.theme-switch .slider::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    transition: left .2s ease;
+}
+
+.theme-switch input:checked+.slider::after {
+    left: 25px;
+}
+
+.theme-switch .theme-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
