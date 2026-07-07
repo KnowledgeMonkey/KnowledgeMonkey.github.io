@@ -258,8 +258,11 @@
 <script>
   // ===== CONFIG =========================================================
   // Local testing: keep localhost. Published + tunnelled: use your https url.
-  const BASE = "https://memphis-knew-aware-tutorial.trycloudflare.com";
+  const BASE = "http://localhost:8000";
   const MOUNT = "stream";
+  // How far the audio lags the source, in ms. Raise until the title flips
+  // exactly when you hear the new track. Around 3000-6000 is typical.
+  const STREAM_DELAY_MS = 5000;
   // ======================================================================
 
   const audio  = document.getElementById("audio");
@@ -283,6 +286,7 @@
   vol.addEventListener("input", () => audio.volume = parseFloat(vol.value));
 
   let playing = false;
+  let lastSeenRaw = "";
   play.addEventListener("click", () => {
     if (playing) {
       audio.pause();
@@ -309,6 +313,7 @@
       titleEl.textContent = "not connected";
       artistEl.textContent = "the station is asleep";
       showCover(null);
+      lastSeenRaw = "";
     }
   }
 
@@ -330,6 +335,25 @@
     }
   }
 
+  function applyMeta(raw) {
+    if (raw.includes(" - ")) {
+      const [a, ...rest] = raw.split(" - ");
+      artistEl.textContent = a;
+      titleEl.textContent = rest.join(" - ");
+    } else {
+      titleEl.textContent = raw || "—";
+      artistEl.textContent = "";
+    }
+    showCover(`${BASE}/cover.jpg?t=${Date.now()}`);
+  }
+
+  function scheduleMeta(raw) {
+    // While listening, hold the update to match the audio the ear is on.
+    // Idle (not yet playing), show it right away.
+    if (playing) setTimeout(() => applyMeta(raw), STREAM_DELAY_MS);
+    else applyMeta(raw);
+  }
+
   async function poll() {
     try {
       const res = await fetch(`${BASE}/status-json.xsl`, { cache: "no-store" });
@@ -341,25 +365,17 @@
 
       setLive(true);
       const raw = (src.title || src.yp_currently_playing || "").trim();
-      if (raw) {
-        const parts = raw.split(" - ");
-        if (parts.length >= 2) {
-          artistEl.textContent = parts[0];
-          titleEl.textContent = parts.slice(1).join(" - ");
-        } else {
-          titleEl.textContent = raw;
-          artistEl.textContent = "";
-        }
+      if (raw && raw !== lastSeenRaw) {
+        lastSeenRaw = raw;
+        scheduleMeta(raw);
       }
-      // cache-bust so the cover updates on track change
-      showCover(`${BASE}/cover.jpg?t=${Math.floor(Date.now()/5000)}`);
     } catch {
       setLive(false);
     }
   }
 
   poll();
-  setInterval(poll, 8000);
+  setInterval(poll, 2000);
 </script>
 </body>
 </html>
