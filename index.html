@@ -1,1942 +1,365 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#1a1b26" />
-<title>ble.tool</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>night shift radio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+  /* ---- CONFIG ---------------------------------------------------------
+     Point this at your stream. For local testing on your own PC, leave it
+     as localhost. When you publish and run a tunnel (see notes), swap it
+     for your public https address, e.g. https://radio.yourname.com
+  --------------------------------------------------------------------- */
   :root {
-    --bg:        #1a1b26;
-    --bg-alt:    #16161e;
-    --bg-hi:     #232433;
-    --bg-hi2:    #2d2e42;
-    --fg:        #c0caf5;
-    --fg-dim:    #565f89;
-    --fg-mute:   #414868;
-    --line:      #2a2b3d;
-    --blue:      #7aa2f7;
-    --cyan:      #7dcfff;
-    --green:     #9ece6a;
-    --yellow:    #e0af68;
-    --red:       #f7768e;
-    --magenta:   #bb9af7;
-    --orange:    #ff9e64;
-  }
-  body.light {
-    --bg:        #e1e2e7;
-    --bg-alt:    #d5d6db;
-    --bg-hi:     #cbccd1;
-    --bg-hi2:    #b6b7bd;
-    --fg:        #3760bf;
-    --fg-dim:    #6172b0;
-    --fg-mute:   #848cb5;
-    --line:      #b8b9c1;
-    --blue:      #2e7de9;
-    --cyan:      #007197;
-    --green:     #587539;
-    --yellow:    #8c6c3e;
-    --red:       #f52a65;
-    --magenta:   #9854f1;
-    --orange:    #b15c00;
+    --bg:      #0e0b1a;
+    --panel:   #171327;
+    --edge:    #262038;
+    --text:    #e9e5f4;
+    --muted:   #8a83a6;
+    --accent:  #ff5c72;
+    --spark:   #ffd85c;
+    --shadow:  0 20px 60px -20px rgba(0,0,0,.8);
   }
 
-  * { box-sizing: border-box; }
-  html, body {
-    margin: 0; padding: 0;
-    background: var(--bg); color: var(--fg);
-  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
   body {
-    font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
-    font-size: 13px;
-    line-height: 1.5;
-    min-height: 100vh;
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  }
-
-  /* ─── header ─────────────────────────────────────────── */
-  header {
-    border-bottom: 1px solid var(--line);
-    padding: 12px 16px 0;
-    background: var(--bg-alt);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  .titlebar {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    padding-bottom: 10px;
-  }
-  h1 {
-    margin: 0;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-  }
-  h1 .prompt { color: var(--green); }
-  h1 .path { color: var(--blue); }
-  .tagline { color: var(--fg-dim); font-size: 11px; }
-  .header-actions { display: flex; gap: 6px; }
-
-  .conn-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    border: 1px solid var(--line);
-    border-radius: 100px;
-    font-size: 11px;
+    font-family: "Space Grotesk", system-ui, sans-serif;
     background: var(--bg);
-  }
-  .conn-pill .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--fg-mute);
-  }
-  .conn-pill.on .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
-  .conn-pill .name { color: var(--fg); }
-  .conn-pill.on .name { color: var(--green); }
-
-  /* ─── tabs ───────────────────────────────────────────── */
-  nav.tabs {
-    display: flex;
-    gap: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  nav.tabs::-webkit-scrollbar { display: none; }
-  .tab {
-    padding: 8px 16px;
-    cursor: pointer;
-    color: var(--fg-dim);
-    border-bottom: 2px solid transparent;
-    font-size: 12px;
-    white-space: nowrap;
-    user-select: none;
-    transition: color 0.1s, border-color 0.1s;
-  }
-  .tab:hover { color: var(--fg); }
-  .tab.active {
-    color: var(--blue);
-    border-bottom-color: var(--blue);
-  }
-  .tab .badge {
-    margin-left: 6px;
-    font-size: 10px;
-    color: var(--orange);
-  }
-
-  /* ─── main ───────────────────────────────────────────── */
-  main {
-    padding: 16px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-  .panel { display: none; }
-  .panel.active { display: block; }
-
-  /* ─── controls ───────────────────────────────────────── */
-  button, .btn {
-    background: var(--bg-hi);
-    color: var(--fg);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 7px 12px;
-    font-family: inherit;
-    font-size: 12px;
-    cursor: pointer;
-    transition: background 0.1s, border-color 0.1s;
-  }
-  button:hover:not(:disabled), .btn:hover { background: var(--bg-hi2); border-color: var(--blue); }
-  button:disabled { opacity: 0.4; cursor: not-allowed; }
-  button.primary { border-color: var(--blue); color: var(--blue); }
-  button.danger  { border-color: var(--red); color: var(--red); }
-  button.green   { border-color: var(--green); color: var(--green); }
-  button.ghost   { background: transparent; }
-  button.tiny    { padding: 3px 8px; font-size: 11px; }
-  button.active  { background: var(--blue); color: var(--bg); border-color: var(--blue); }
-
-  input[type=text], input[type=search], textarea, select {
-    background: var(--bg-alt);
-    color: var(--fg);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 7px 10px;
-    font-family: inherit;
-    font-size: 12px;
-    width: 100%;
-  }
-  input:focus, textarea:focus, select:focus {
-    outline: none;
-    border-color: var(--blue);
-  }
-  textarea {
-    resize: vertical;
-    min-height: 80px;
-    line-height: 1.4;
-  }
-  label.field {
-    display: block;
-    margin: 8px 0;
-  }
-  label.field .lbl {
-    display: block;
-    font-size: 10px;
-    color: var(--fg-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 3px;
-  }
-  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  .row.tight { gap: 4px; }
-  .grow { flex: 1; min-width: 0; }
-
-  /* ─── sections ───────────────────────────────────────── */
-  section.card {
-    background: var(--bg-alt);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    margin: 12px 0;
+    color: var(--text);
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    padding: 24px;
     overflow: hidden;
   }
-  section.card > h2 {
-    margin: 0;
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--line);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--fg-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-  }
-  section.card > .body {
-    padding: 12px 14px;
-  }
-  section.card > .body.flush { padding: 0; }
 
-  /* ─── status ─────────────────────────────────────────── */
-  .status {
-    padding: 8px 12px;
-    background: var(--bg-alt);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    font-size: 12px;
-    margin-bottom: 12px;
-  }
-  .status .label { color: var(--fg-dim); margin-right: 6px; }
-  .status .ok    { color: var(--green); }
-  .status .err   { color: var(--red); }
-  .status .warn  { color: var(--yellow); }
-
-  /* ─── service tree ───────────────────────────────────── */
-  details.svc {
-    border-bottom: 1px solid var(--line);
-    background: var(--bg-alt);
-  }
-  details.svc:last-child { border-bottom: none; }
-  details.svc > summary {
-    cursor: pointer;
-    padding: 9px 14px;
-    list-style: none;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  details.svc > summary::-webkit-details-marker { display: none; }
-  details.svc > summary::before {
-    content: "▸";
-    color: var(--fg-mute);
-    width: 12px;
-    transition: transform 0.1s;
-  }
-  details.svc[open] > summary::before { transform: rotate(90deg); }
-  details.svc .svc-name {
-    color: var(--cyan);
-    flex: 1;
-    word-break: break-all;
-    font-size: 12px;
-  }
-  details.svc .svc-tag { color: var(--fg-dim); font-size: 11px; }
-
-  .char {
-    border-top: 1px solid var(--line);
-    padding: 9px 14px 11px 32px;
-    font-size: 12px;
-  }
-  .char-row1 {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .char-uuid { color: var(--magenta); word-break: break-all; flex: 1; min-width: 0; }
-  .char-label {
-    color: var(--orange);
-    font-size: 11px;
-    background: var(--bg-hi);
-    padding: 1px 6px;
-    border-radius: 2px;
-    border: 1px solid var(--line);
-  }
-  .char-edit-label {
-    background: transparent;
-    border: 1px dashed var(--line);
-    color: var(--fg-dim);
-    padding: 1px 6px;
-    font-size: 11px;
-    cursor: pointer;
-    border-radius: 2px;
-  }
-  .char-edit-label:hover { color: var(--orange); border-color: var(--orange); }
-  .char-props { display: inline-flex; gap: 3px; flex-wrap: wrap; margin: 4px 0 6px; }
-  .prop {
-    font-size: 9px;
-    padding: 1px 5px;
-    border-radius: 2px;
-    background: var(--bg-hi);
-    color: var(--fg-dim);
-    border: 1px solid var(--line);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  .prop.read   { color: var(--green);  border-color: var(--green); }
-  .prop.write  { color: var(--yellow); border-color: var(--yellow); }
-  .prop.notify { color: var(--blue);   border-color: var(--blue); }
-  .char-actions { display: flex; gap: 5px; flex-wrap: wrap; }
-
-  /* ─── stream / log ───────────────────────────────────── */
-  .log-toolbar {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--line);
-    background: var(--bg);
-  }
-  .log-toolbar input[type=search] { max-width: 260px; }
-  .log-stats {
-    margin-left: auto;
-    font-size: 11px;
-    color: var(--fg-dim);
-  }
-  .log-stats .num { color: var(--orange); }
-
-  #log-body {
-    max-height: 60vh;
-    overflow-y: auto;
-    font-size: 11px;
-  }
-  .entry {
-    padding: 5px 14px;
-    border-bottom: 1px dashed var(--line);
-    display: grid;
-    grid-template-columns: 70px 1fr;
-    gap: 10px;
-    word-break: break-all;
-  }
-  .entry:last-child { border-bottom: none; }
-  .entry .t { color: var(--fg-dim); font-size: 10px; }
-  .entry .head {
-    color: var(--magenta);
-    font-size: 10px;
-    margin-bottom: 2px;
-  }
-  .entry .head .dir-rx { color: var(--blue); }
-  .entry .head .dir-tx { color: var(--yellow); }
-  .entry .hex { color: var(--cyan); font-size: 11px; }
-  .entry .ascii { color: var(--fg-dim); font-size: 11px; margin-top: 1px; }
-  .entry .decoded {
-    color: var(--green);
-    font-size: 11px;
-    margin-top: 3px;
-    padding-left: 8px;
-    border-left: 2px solid var(--green);
-  }
-  .entry .decoded.err { color: var(--red); border-left-color: var(--red); }
-  .entry.system .head { color: var(--yellow); }
-  .entry.system .hex { color: var(--fg); }
-
-  /* ─── empty state ────────────────────────────────────── */
-  .empty {
-    text-align: center;
-    color: var(--fg-mute);
-    padding: 32px 16px;
-    font-size: 12px;
-    line-height: 1.7;
-  }
-  .empty code {
-    color: var(--orange);
-    background: var(--bg-hi);
-    padding: 1px 5px;
-    border-radius: 2px;
-  }
-
-  /* ─── decoders ───────────────────────────────────────── */
-  .decoder-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 8px;
-  }
-  .decoder-card {
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 10px 12px;
-    background: var(--bg-alt);
-    font-size: 11px;
-    cursor: pointer;
-    transition: border-color 0.1s;
-  }
-  .decoder-card:hover { border-color: var(--blue); }
-  .decoder-card.active { border-color: var(--green); background: var(--bg-hi); }
-  .decoder-card .name { color: var(--cyan); font-size: 12px; margin-bottom: 4px; }
-  .decoder-card .meta { color: var(--fg-dim); font-size: 10px; }
-  .decoder-card .actions { margin-top: 6px; display: flex; gap: 4px; }
-
-  /* ─── chart ──────────────────────────────────────────── */
-  .chart-wrap {
-    background: var(--bg-alt);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 10px;
-    margin-top: 10px;
-  }
-  .chart-controls {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 8px;
-    flex-wrap: wrap;
-    font-size: 11px;
-    color: var(--fg-dim);
-    align-items: center;
-  }
-  .chart-controls input[type=number] { width: 70px; }
-  canvas.chart {
-    width: 100%;
-    height: 180px;
-    display: block;
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: 2px;
-  }
-  .chart-current {
-    color: var(--orange);
-    font-size: 16px;
-    margin-top: 4px;
-  }
-
-  /* ─── helpers ────────────────────────────────────────── */
-  .help {
-    margin-top: 18px;
-    padding: 12px 14px;
-    border: 1px dashed var(--line);
-    border-radius: 4px;
-    color: var(--fg-dim);
-    font-size: 11px;
-    line-height: 1.7;
-  }
-  .help b { color: var(--fg); font-weight: 600; }
-  .help code {
-    color: var(--orange);
-    background: var(--bg-alt);
-    padding: 1px 5px;
-    border-radius: 2px;
-  }
-  .help kbd {
-    color: var(--fg);
-    background: var(--bg-hi);
-    border: 1px solid var(--line);
-    padding: 1px 5px;
-    border-radius: 2px;
-    font-size: 10px;
-  }
-
-  /* ─── modal ──────────────────────────────────────────── */
-  .modal-bg {
-    display: none;
+  /* blurred ambient background made from the current cover */
+  #ambient {
     position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
+    inset: -20%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(70px) saturate(1.3) brightness(.5);
+    transform: scale(1.2);
+    opacity: 0;
+    transition: opacity 1.2s ease, background-image .4s ease;
+    z-index: 0;
   }
-  .modal-bg.active { display: flex; }
-  .modal {
-    background: var(--bg-alt);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    max-width: 600px;
+  #ambient.on { opacity: .55; }
+
+  .card {
+    position: relative;
+    z-index: 1;
     width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
+    max-width: 380px;
+    background: linear-gradient(180deg, rgba(23,19,39,.9), rgba(23,19,39,.98));
+    border: 1px solid var(--edge);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 22px;
+    backdrop-filter: blur(12px);
   }
-  .modal-head {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--line);
+
+  .top {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
   }
-  .modal-head h3 { margin: 0; font-size: 13px; color: var(--cyan); }
-  .modal-body { padding: 14px; }
 
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--fg-mute); }
+  .wordmark {
+    font-family: "Press Start 2P", monospace;
+    font-size: 9px;
+    line-height: 1.6;
+    letter-spacing: .5px;
+    color: var(--text);
+  }
+  .wordmark span { color: var(--accent); }
 
-  .mono-tiny {
-    font-family: inherit;
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  .status.live .dot {
+    background: var(--accent);
+    box-shadow: 0 0 0 0 rgba(255,92,114,.6);
+    animation: pulse 2s infinite;
+  }
+  .status.live { color: var(--accent); }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255,92,114,.6); }
+    70%  { box-shadow: 0 0 0 8px rgba(255,92,114,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,92,114,0); }
+  }
+
+  .cover-wrap {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #0a0814;
+    border: 1px solid var(--edge);
+  }
+  #cover {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity .4s ease;
+  }
+  .cover-fallback {
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    color: var(--muted);
+    font-family: "Press Start 2P", monospace;
     font-size: 10px;
-    color: var(--fg-mute);
+    letter-spacing: 1px;
+  }
+
+  /* decorative equaliser, animates only while playing */
+  .eq {
+    position: absolute;
+    left: 14px; bottom: 14px;
+    display: flex; align-items: flex-end; gap: 3px;
+    height: 22px;
+    padding: 5px 7px;
+    border-radius: 8px;
+    background: rgba(14,11,26,.55);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+  .eq.on { opacity: 1; }
+  .eq i {
+    width: 3px; height: 5px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+  .eq.on i { animation: bounce .9s ease-in-out infinite; }
+  .eq i:nth-child(2){ animation-delay:.15s } .eq i:nth-child(3){ animation-delay:.3s }
+  .eq i:nth-child(4){ animation-delay:.45s } .eq i:nth-child(5){ animation-delay:.6s }
+  @keyframes bounce { 0%,100%{ height:4px } 50%{ height:16px } }
+
+  .meta { margin: 18px 2px 20px; min-height: 46px; }
+  .title {
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -.2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .artist { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+  .controls { display: flex; align-items: center; gap: 14px; }
+
+  .play {
+    flex: none;
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent);
+    color: #1a0a0e;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: transform .12s ease, filter .2s ease;
+  }
+  .play:hover { filter: brightness(1.08); }
+  .play:active { transform: scale(.94); }
+  .play:disabled { background: var(--edge); color: var(--muted); cursor: not-allowed; }
+  .play svg { width: 22px; height: 22px; fill: currentColor; }
+  .play:focus-visible { outline: 2px solid var(--spark); outline-offset: 3px; }
+
+  .vol { display: flex; align-items: center; gap: 9px; flex: 1; color: var(--muted); }
+  .vol svg { width: 17px; height: 17px; fill: currentColor; flex: none; }
+  input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 4px;
+    border-radius: 4px;
+    background: var(--edge);
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--text);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 14px; height: 14px; border: none; border-radius: 50%;
+    background: var(--text);
+  }
+  input[type=range]:focus-visible { outline: 2px solid var(--spark); outline-offset: 4px; }
+
+  .foot {
+    margin-top: 18px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .3px;
+  }
+  .foot b { color: var(--spark); font-weight: 500; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 </style>
 </head>
 <body>
+  <div id="ambient"></div>
 
-<header>
-  <div class="titlebar">
-    <h1><span class="prompt">~$</span> <span class="path">ble.tool</span></h1>
-    <div class="header-actions">
-      <span class="conn-pill" id="conn-pill"><span class="dot"></span><span class="name">disconnected</span></span>
-      <button class="ghost tiny" id="btn-theme">theme</button>
-    </div>
-  </div>
-  <nav class="tabs">
-    <div class="tab active" data-tab="devices">devices</div>
-    <div class="tab" data-tab="stream">stream <span class="badge" id="tab-stream-count"></span></div>
-    <div class="tab" data-tab="send">send</div>
-    <div class="tab" data-tab="decoders">decoders</div>
-    <div class="tab" data-tab="sessions">sessions</div>
-  </nav>
-</header>
-
-<main>
-
-  <!-- ─── devices panel ─── -->
-  <div class="panel active" data-panel="devices">
-    <div class="status" id="status">
-      <span class="label">status:</span>
-      <span id="status-text">idle. tap connect to discover devices.</span>
+  <main class="card">
+    <div class="top">
+      <div class="wordmark">NIGHT<br><span>SHIFT</span> RADIO</div>
+      <div class="status" id="status"><span class="dot"></span><span id="statusText">offline</span></div>
     </div>
 
-    <div class="row">
-      <button id="btn-connect" class="primary">connect</button>
-      <button id="btn-reconnect" disabled>reconnect last</button>
-      <button id="btn-disconnect" class="danger" disabled>disconnect</button>
-      <label class="row tight" style="margin-left: auto;">
-        <input type="checkbox" id="auto-reconnect" />
-        <span class="mono-tiny">auto-reconnect</span>
-      </label>
+    <div class="cover-wrap">
+      <img id="cover" alt="" style="opacity:0">
+      <div class="cover-fallback" id="fallback">NO SIGNAL</div>
+      <div class="eq" id="eq"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
 
-    <section class="card" style="margin-top: 14px;">
-      <h2>
-        connection filter (used on next connect)
-        <button class="ghost tiny" id="btn-show-uuids">extra uuids…</button>
-      </h2>
-      <div class="body">
-        <label class="field">
-          <span class="lbl">name prefix (optional)</span>
-          <input type="text" id="filter-name" placeholder="e.g. NB, MIScooter, leave empty for all" />
-        </label>
-        <label class="field">
-          <span class="lbl">service uuid (optional, hex 16-bit or full 128-bit)</span>
-          <input type="text" id="filter-service" placeholder="e.g. fe95 or 6e400001-b5a3-..." />
-        </label>
-        <div class="mono-tiny">empty filters = "accept all devices" picker. add filters when targeting a known device.</div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>
-        services
-        <span id="svc-count" class="mono-tiny"></span>
-      </h2>
-      <div class="body flush" id="services">
-        <div class="empty">no device. connect to enumerate services.</div>
-      </div>
-    </section>
-  </div>
-
-  <!-- ─── stream panel ─── -->
-  <div class="panel" data-panel="stream">
-    <section class="card">
-      <h2>
-        notification stream
-        <div class="row tight">
-          <button class="ghost tiny" id="btn-pause">pause</button>
-          <button class="ghost tiny" id="btn-clear">clear</button>
-          <button class="ghost tiny" id="btn-copy-log">copy</button>
-          <button class="ghost tiny" id="btn-export-log">export json</button>
-        </div>
-      </h2>
-      <div class="body flush">
-        <div class="log-toolbar">
-          <input type="search" id="log-filter" placeholder="filter by hex / uuid / decoded..." />
-          <select id="log-decoder" style="max-width: 220px;">
-            <option value="">no decoder</option>
-          </select>
-          <span class="log-stats">
-            <span class="num" id="log-count">0</span> packets ·
-            <span class="num" id="log-rate">0</span> /s
-          </span>
-        </div>
-        <div id="log-body">
-          <div class="empty">subscribe to a notify-capable characteristic on the <b>devices</b> tab to start logging.</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card" id="chart-section" style="display: none;">
-      <h2>
-        live chart
-        <button class="ghost tiny" id="btn-chart-clear">clear chart</button>
-      </h2>
-      <div class="body">
-        <div class="chart-controls">
-          <span>parse byte at offset</span>
-          <input type="number" id="chart-offset" value="0" min="0" />
-          <span>as</span>
-          <select id="chart-type" style="width: auto;">
-            <option value="u8">uint8</option>
-            <option value="i8">int8</option>
-            <option value="u16le">uint16 le</option>
-            <option value="u16be">uint16 be</option>
-            <option value="i16le">int16 le</option>
-            <option value="i16be">int16 be</option>
-            <option value="u32le">uint32 le</option>
-            <option value="u32be">uint32 be</option>
-            <option value="f32le">float32 le</option>
-            <option value="f32be">float32 be</option>
-          </select>
-          <span>×</span>
-          <input type="number" id="chart-scale" value="1" step="any" />
-        </div>
-        <canvas class="chart" id="chart"></canvas>
-        <div class="chart-current" id="chart-current">—</div>
-      </div>
-    </section>
-  </div>
-
-  <!-- ─── send panel ─── -->
-  <div class="panel" data-panel="send">
-    <section class="card">
-      <h2>compose packet</h2>
-      <div class="body">
-        <label class="field">
-          <span class="lbl">target characteristic</span>
-          <select id="send-target">
-            <option value="">— pick a writable characteristic —</option>
-          </select>
-        </label>
-        <label class="field">
-          <span class="lbl">payload (hex bytes, space or comma separated)</span>
-          <textarea id="send-hex" placeholder="55 aa 03 22 01 10 00"></textarea>
-        </label>
-        <label class="field">
-          <span class="lbl">…or as ascii text</span>
-          <input type="text" id="send-ascii" placeholder="hello" />
-        </label>
-
-        <section class="card" style="margin: 12px 0; background: var(--bg);">
-          <h2>checksum / framing helpers</h2>
-          <div class="body">
-            <div class="row">
-              <select id="cksum-type" style="max-width: 220px;">
-                <option value="">no checksum</option>
-                <option value="sum8">sum mod 256 (xiaomi/ninebot)</option>
-                <option value="invsum16">inverse sum16 le (ninebot v2)</option>
-                <option value="xor">xor of all bytes</option>
-                <option value="crc8">crc-8 (poly 0x07)</option>
-                <option value="crc16-modbus">crc-16/modbus</option>
-                <option value="crc16-ccitt">crc-16/ccitt-false</option>
-              </select>
-              <select id="cksum-pos" style="max-width: 140px;">
-                <option value="append">append</option>
-                <option value="append-le">append (16-bit le)</option>
-                <option value="append-be">append (16-bit be)</option>
-              </select>
-              <button class="ghost tiny" id="btn-cksum-preview">preview</button>
-            </div>
-            <div class="mono-tiny" id="cksum-preview" style="margin-top: 6px;"></div>
-          </div>
-        </section>
-
-        <div class="row">
-          <button class="primary" id="btn-send">send</button>
-          <button id="btn-send-noresp">send (no response)</button>
-          <label class="row tight" style="margin-left: auto;">
-            <input type="checkbox" id="send-loop" />
-            <span class="mono-tiny">repeat every</span>
-            <input type="number" id="send-loop-ms" value="500" min="50" style="width: 70px;" />
-            <span class="mono-tiny">ms</span>
-          </label>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>
-        saved packets
-        <button class="ghost tiny" id="btn-save-packet">save current</button>
-      </h2>
-      <div class="body" id="saved-packets">
-        <div class="empty">no saved packets yet.</div>
-      </div>
-    </section>
-  </div>
-
-  <!-- ─── decoders panel ─── -->
-  <div class="panel" data-panel="decoders">
-    <section class="card">
-      <h2>
-        protocol templates
-        <span class="mono-tiny">built-in</span>
-      </h2>
-      <div class="body">
-        <div class="decoder-list" id="builtin-decoders"></div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>
-        custom decoders
-        <button class="ghost tiny" id="btn-new-decoder">new</button>
-      </h2>
-      <div class="body">
-        <div class="decoder-list" id="custom-decoders">
-          <div class="empty">no custom decoders. tap <b>new</b> to write one.</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>scratchpad — test against a hex string</h2>
-      <div class="body">
-        <label class="field">
-          <span class="lbl">test bytes (hex)</span>
-          <input type="text" id="scratch-bytes" placeholder="55 aa 03 22 01 10 00 a4" />
-        </label>
-        <label class="field">
-          <span class="lbl">decoder source — function gets (bytes: Uint8Array, ctx) → string | object</span>
-          <textarea id="scratch-code" rows="10" spellcheck="false">// example: parse a length-prefixed packet
-const len = bytes[2];
-const cmd = bytes[3];
-const payload = bytes.slice(4, 4 + len - 2);
-return {
-  len,
-  cmd: '0x' + cmd.toString(16).padStart(2, '0'),
-  payload: Array.from(payload).map(b => b.toString(16).padStart(2,'0')).join(' '),
-};</textarea>
-        </label>
-        <div class="row">
-          <button class="primary" id="btn-scratch-run">run</button>
-          <input type="text" id="scratch-name" placeholder="name to save as..." style="flex:1;" />
-          <button class="green" id="btn-scratch-save">save</button>
-        </div>
-        <pre id="scratch-output" style="margin-top: 10px; padding: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; font-size: 11px; color: var(--green); white-space: pre-wrap; max-height: 200px; overflow: auto;"></pre>
-      </div>
-    </section>
-
-    <div class="help">
-      <b>decoder context</b><br>
-      your function receives <code>(bytes, ctx)</code> where ctx has:<br>
-      • <code>ctx.uuid</code> — characteristic uuid the bytes came from<br>
-      • <code>ctx.history</code> — last 32 packets from this same characteristic<br>
-      • <code>ctx.le16(off)</code>, <code>ctx.be16(off)</code>, <code>ctx.le32(off)</code>, <code>ctx.be32(off)</code>, <code>ctx.f32le(off)</code>, <code>ctx.s16le(off)</code> — byte readers<br>
-      <br>
-      return a string or object. objects render as key:value pairs. throw to mark as decode error.
+    <div class="meta">
+      <div class="title" id="title">not connected</div>
+      <div class="artist" id="artist">start the stream to tune in</div>
     </div>
-  </div>
 
-  <!-- ─── sessions panel ─── -->
-  <div class="panel" data-panel="sessions">
-    <section class="card">
-      <h2>device annotations</h2>
-      <div class="body" id="annotations-list">
-        <div class="empty">connect to a device and label its characteristics. annotations save automatically per device.</div>
+    <div class="controls">
+      <button class="play" id="play" aria-label="Play" disabled>
+        <svg id="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <div class="vol">
+        <svg viewBox="0 0 24 24"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
       </div>
-    </section>
-
-    <section class="card">
-      <h2>
-        sessions
-        <div class="row tight">
-          <button class="ghost tiny" id="btn-import-session">import</button>
-          <button class="ghost tiny" id="btn-export-session">export current</button>
-        </div>
-      </h2>
-      <div class="body">
-        <div class="mono-tiny" style="margin-bottom: 8px;">a session is a json bundle of: device info, services tree, full log, annotations, decoders. importing re-loads everything except the live connection.</div>
-        <input type="file" id="import-file" accept=".json" style="display: none;" />
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>storage</h2>
-      <div class="body">
-        <div class="mono-tiny" id="storage-info"></div>
-        <div class="row" style="margin-top: 8px;">
-          <button class="danger tiny" id="btn-wipe">wipe all local storage</button>
-        </div>
-      </div>
-    </section>
-
-    <div class="help">
-      <b>privacy:</b> nothing leaves your browser. all annotations, decoders, and sessions are stored in <code>localStorage</code>. clearing your browser data wipes them.
     </div>
-  </div>
 
-</main>
+    <div class="foot">streaming from <b>a little PC somewhere</b></div>
+  </main>
 
-<!-- ─── modal ─── -->
-<div class="modal-bg" id="modal-bg">
-  <div class="modal">
-    <div class="modal-head">
-      <h3 id="modal-title">edit</h3>
-      <button class="ghost tiny" id="modal-close">close</button>
-    </div>
-    <div class="modal-body" id="modal-body"></div>
-  </div>
-</div>
+  <audio id="audio" preload="none" crossorigin="anonymous"></audio>
 
 <script>
-'use strict';
+  // ===== CONFIG =========================================================
+  // Local testing: keep localhost. Published + tunnelled: use your https url.
+  const BASE = "https://memphis-knew-aware-tutorial.trycloudflare.com";
+  const MOUNT = "stream";
+  // ======================================================================
 
-// ╔══════════════════════════════════════════════════════════╗
-// ║ ble.tool — single-file web bluetooth multitool          ║
-// ╚══════════════════════════════════════════════════════════╝
+  const audio  = document.getElementById("audio");
+  const play   = document.getElementById("play");
+  const icon   = document.getElementById("icon");
+  const vol    = document.getElementById("vol");
+  const cover  = document.getElementById("cover");
+  const fallback = document.getElementById("fallback");
+  const ambient  = document.getElementById("ambient");
+  const eq     = document.getElementById("eq");
+  const titleEl  = document.getElementById("title");
+  const artistEl = document.getElementById("artist");
+  const status = document.getElementById("status");
+  const statusText = document.getElementById("statusText");
 
-// ─── tiny dom helpers ──────────────────────────────────────
-const $ = (id) => document.getElementById(id);
-const el = (tag, attrs = {}, ...kids) => {
-  const e = document.createElement(tag);
-  for (const k in attrs) {
-    if (k === 'class') e.className = attrs[k];
-    else if (k === 'style' && typeof attrs[k] === 'object') Object.assign(e.style, attrs[k]);
-    else if (k.startsWith('on')) e.addEventListener(k.slice(2), attrs[k]);
-    else e.setAttribute(k, attrs[k]);
+  const PLAY_ICON  = "M8 5v14l11-7z";
+  const PAUSE_ICON = "M6 5h4v14H6zM14 5h4v14h-4z";
+
+  audio.src = `${BASE}/${MOUNT}`;
+  audio.volume = parseFloat(vol.value);
+  vol.addEventListener("input", () => audio.volume = parseFloat(vol.value));
+
+  let playing = false;
+  play.addEventListener("click", () => {
+    if (playing) {
+      audio.pause();
+    } else {
+      // reassign src so we always grab the live edge, not a stale buffer
+      audio.src = `${BASE}/${MOUNT}?t=${Date.now()}`;
+      audio.play().catch(() => setLive(false));
+    }
+  });
+
+  audio.addEventListener("playing", () => { playing = true; icon.setAttribute("d", PAUSE_ICON); play.setAttribute("aria-label","Pause"); eq.classList.add("on"); });
+  audio.addEventListener("pause",   () => { playing = false; icon.setAttribute("d", PLAY_ICON); play.setAttribute("aria-label","Play"); eq.classList.remove("on"); });
+  audio.addEventListener("error",   () => setLive(false));
+
+  function setLive(isLive) {
+    if (isLive) {
+      status.classList.add("live");
+      statusText.textContent = "live";
+      play.disabled = false;
+    } else {
+      status.classList.remove("live");
+      statusText.textContent = "offline";
+      play.disabled = true;
+      titleEl.textContent = "not connected";
+      artistEl.textContent = "the station is asleep";
+      showCover(null);
+    }
   }
-  for (const kid of kids) {
-    if (kid == null) continue;
-    e.appendChild(typeof kid === 'string' ? document.createTextNode(kid) : kid);
-  }
-  return e;
-};
 
-// ─── state ─────────────────────────────────────────────────
-const STATE = {
-  device: null,
-  server: null,
-  services: [],          // [{service, characteristics: [{char, label}]}]
-  subscribed: new Map(), // uuid -> {char, handler}
-  log: [],
-  paused: false,
-  rateBucket: 0,
-  filter: '',
-  activeDecoder: null,   // decoder fn applied to log entries
-  chart: { uuid: null, values: [], max: 200 },
-  loopTimer: null,
-};
-
-const STORE = {
-  // localStorage keys
-  ANNOT: 'ble.tool.annotations',     // { deviceId: { charUuid: label } }
-  DECODERS: 'ble.tool.decoders',     // { name: source }
-  PACKETS: 'ble.tool.packets',       // { name: { target, hex } }
-  THEME: 'ble.tool.theme',
-  LASTDEV: 'ble.tool.lastdevice',    // last connected device id (for reconnect)
-};
-
-const loadJSON = (k, def) => {
-  try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; }
-  catch { return def; }
-};
-const saveJSON = (k, v) => localStorage.setItem(k, JSON.stringify(v));
-
-// ─── byte utilities ────────────────────────────────────────
-const U = {
-  toHex(buf) {
-    const a = buf instanceof DataView ? new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength) :
-              buf instanceof Uint8Array ? buf :
-              new Uint8Array(buf);
-    return Array.from(a).map(b => b.toString(16).padStart(2, '0')).join(' ');
-  },
-  toAscii(buf) {
-    const a = buf instanceof DataView ? new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength) :
-              buf instanceof Uint8Array ? buf :
-              new Uint8Array(buf);
-    return Array.from(a).map(b => (b >= 0x20 && b < 0x7f) ? String.fromCharCode(b) : '·').join('');
-  },
-  parseHex(s) {
-    const cleaned = s.replace(/0x/gi, '').replace(/[,\s]+/g, '');
-    if (cleaned.length % 2) throw new Error('odd hex length');
-    const out = new Uint8Array(cleaned.length / 2);
-    for (let i = 0; i < out.length; i++) {
-      const b = parseInt(cleaned.substr(i * 2, 2), 16);
-      if (isNaN(b)) throw new Error('bad hex at byte ' + i);
-      out[i] = b;
-    }
-    return out;
-  },
-  shortUuid(u) {
-    if (typeof u !== 'string') return String(u);
-    const m = u.match(/^0000([0-9a-f]{4})-0000-1000-8000-00805f9b34fb$/i);
-    return m ? `0x${m[1].toLowerCase()}` : u.slice(0, 8) + '…';
-  },
-  normUuid(s) {
-    s = s.trim().toLowerCase().replace(/^0x/, '');
-    if (/^[0-9a-f]{4}$/.test(s)) {
-      return `0000${s}-0000-1000-8000-00805f9b34fb`;
-    }
-    return s;
-  },
-};
-
-// ─── checksums ─────────────────────────────────────────────
-const Cksum = {
-  sum8(b) { let s = 0; for (const x of b) s = (s + x) & 0xff; return [s]; },
-  invsum16(b) {
-    let s = 0; for (const x of b) s = (s + x) & 0xffff;
-    s = (~s) & 0xffff;
-    return [s & 0xff, (s >> 8) & 0xff];
-  },
-  xor(b) { let x = 0; for (const v of b) x ^= v; return [x]; },
-  crc8(b) {
-    let c = 0;
-    for (const x of b) {
-      c ^= x;
-      for (let i = 0; i < 8; i++) c = (c & 0x80) ? ((c << 1) ^ 0x07) & 0xff : (c << 1) & 0xff;
-    }
-    return [c];
-  },
-  crc16Modbus(b) {
-    let c = 0xffff;
-    for (const x of b) {
-      c ^= x;
-      for (let i = 0; i < 8; i++) c = (c & 1) ? (c >> 1) ^ 0xa001 : c >> 1;
-    }
-    return [c & 0xff, (c >> 8) & 0xff];
-  },
-  crc16Ccitt(b) {
-    let c = 0xffff;
-    for (const x of b) {
-      c ^= (x << 8);
-      for (let i = 0; i < 8; i++) c = (c & 0x8000) ? ((c << 1) ^ 0x1021) & 0xffff : (c << 1) & 0xffff;
-    }
-    return [(c >> 8) & 0xff, c & 0xff];
-  },
-};
-
-const applyChecksum = (bytes, type, pos) => {
-  if (!type) return bytes;
-  let extra;
-  switch (type) {
-    case 'sum8': extra = Cksum.sum8(bytes); break;
-    case 'invsum16': extra = Cksum.invsum16(bytes); break;
-    case 'xor': extra = Cksum.xor(bytes); break;
-    case 'crc8': extra = Cksum.crc8(bytes); break;
-    case 'crc16-modbus': extra = Cksum.crc16Modbus(bytes); break;
-    case 'crc16-ccitt': extra = Cksum.crc16Ccitt(bytes); break;
-    default: return bytes;
-  }
-  // pos 'append' uses the cksum function's natural byte order
-  // pos 'append-le'/'append-be' force order for 16-bit results
-  if ((pos === 'append-le' || pos === 'append-be') && extra.length === 2) {
-    extra = pos === 'append-be' ? [extra[1], extra[0]] : extra;
-  }
-  const out = new Uint8Array(bytes.length + extra.length);
-  out.set(bytes);
-  out.set(extra, bytes.length);
-  return out;
-};
-
-// ─── built-in decoders ─────────────────────────────────────
-const BUILTIN = [
-  {
-    name: 'raw hex+ascii',
-    desc: 'no parsing, just bytes',
-    fn: (b) => null, // null means "use default rendering"
-  },
-  {
-    name: 'battery service (0x180f)',
-    desc: 'standard ble battery level (0–100%)',
-    fn: (b) => b.length ? { battery_pct: b[0] } : null,
-  },
-  {
-    name: 'nordic uart (text)',
-    desc: 'treat bytes as utf-8 text',
-    fn: (b) => {
-      try { return { text: new TextDecoder('utf-8', { fatal: false }).decode(b) }; }
-      catch { return null; }
-    },
-  },
-  {
-    name: 'ninebot v1 frame (xiaomi m365)',
-    desc: '55 aa LEN DST CMD ARG payload... cksum16le',
-    fn: (b, ctx) => {
-      if (b.length < 7 || b[0] !== 0x55 || b[1] !== 0xaa) throw new Error('no 0x55aa preamble');
-      const len = b[2];
-      const dst = b[3];
-      const cmd = b[4];
-      const arg = b[5];
-      const payload = b.slice(6, 6 + len - 2);
-      const ck = b.length >= 6 + len - 2 + 2
-        ? (b[b.length - 2] | (b[b.length - 1] << 8))
-        : null;
-      return {
-        len, dst: '0x' + dst.toString(16).padStart(2,'0'),
-        cmd: '0x' + cmd.toString(16).padStart(2,'0'),
-        arg: '0x' + arg.toString(16).padStart(2,'0'),
-        payload: ctx.hex(payload),
-        cksum: ck != null ? '0x' + ck.toString(16).padStart(4,'0') : '?',
+  function showCover(url) {
+    if (url) {
+      const test = new Image();
+      test.onload = () => {
+        cover.src = url; cover.style.opacity = 1;
+        fallback.style.display = "none";
+        ambient.style.backgroundImage = `url("${url}")`;
+        ambient.classList.add("on");
       };
-    },
-  },
-  {
-    name: 'ninebot v2 frame (newer)',
-    desc: '5a a5 LEN ... encrypted/auth in newer firmwares',
-    fn: (b) => {
-      if (b.length < 4 || b[0] !== 0x5a || b[1] !== 0xa5) throw new Error('no 0x5aa5 preamble');
-      const len = b[2];
-      const cmd = b[3];
-      return { preamble: '5a a5', len, cmd: '0x' + cmd.toString(16).padStart(2,'0'), rest: U.toHex(b.slice(4)) };
-    },
-  },
-  {
-    name: 'le u16 fields',
-    desc: 'parse pairs of bytes as uint16 little-endian',
-    fn: (b) => {
-      const fields = [];
-      for (let i = 0; i + 1 < b.length; i += 2) {
-        fields.push(b[i] | (b[i+1] << 8));
-      }
-      return { u16le: fields.join(', ') };
-    },
-  },
-];
-
-// ─── ble connection ────────────────────────────────────────
-const onDisconnected = () => {
-  setStatus('disconnected', 'warn');
-  sysLog('device disconnected');
-  $('btn-connect').disabled = false;
-  $('btn-disconnect').disabled = true;
-  $('btn-reconnect').disabled = false;
-  setConnPill(false);
-  STATE.subscribed.clear();
-  // try auto-reconnect if enabled
-  if ($('auto-reconnect').checked && STATE.device) {
-    sysLog('auto-reconnect: trying in 2s...');
-    setTimeout(async () => {
-      try {
-        STATE.server = await STATE.device.gatt.connect();
-        await enumerateServices();
-        setStatus('reconnected', 'ok');
-        setConnPill(true, STATE.device.name);
-        $('btn-connect').disabled = true;
-        $('btn-disconnect').disabled = false;
-      } catch (e) {
-        sysLog(`auto-reconnect failed: ${e.message}`);
-      }
-    }, 2000);
-  }
-};
-
-const buildRequestOptions = () => {
-  const namePrefix = $('filter-name').value.trim();
-  const serviceFilter = $('filter-service').value.trim();
-  const optionalServices = [
-    '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
-    '0000fe95-0000-1000-8000-00805f9b34fb',
-    '0000fee7-0000-1000-8000-00805f9b34fb',
-    '0000ffe0-0000-1000-8000-00805f9b34fb',
-    '0000ffe5-0000-1000-8000-00805f9b34fb',
-    '0000fff0-0000-1000-8000-00805f9b34fb',
-    0x180a, 0x1800, 0x1801, 0x180f, 0x1812,
-    '00001530-1212-efde-1523-785feabcd123',
-  ];
-  if (serviceFilter) {
-    const norm = U.normUuid(serviceFilter);
-    if (!optionalServices.includes(norm)) optionalServices.push(norm);
-  }
-  if (namePrefix || serviceFilter) {
-    const filters = [];
-    if (namePrefix) filters.push({ namePrefix });
-    if (serviceFilter) filters.push({ services: [U.normUuid(serviceFilter)] });
-    return { filters, optionalServices };
-  }
-  return { acceptAllDevices: true, optionalServices };
-};
-
-const connect = async () => {
-  if (!navigator.bluetooth) {
-    setStatus('web bluetooth not available. use chrome on android or bluefy on ios.', 'err');
-    return;
-  }
-  try {
-    setStatus('opening device chooser...');
-    STATE.device = await navigator.bluetooth.requestDevice(buildRequestOptions());
-    STATE.device.addEventListener('gattserverdisconnected', onDisconnected);
-    localStorage.setItem(STORE.LASTDEV, STATE.device.id);
-
-    setStatus(`connecting to ${STATE.device.name || '(unnamed)'}...`);
-    sysLog(`device: ${STATE.device.name || '(unnamed)'} | id: ${STATE.device.id}`);
-    STATE.server = await STATE.device.gatt.connect();
-    await enumerateServices();
-    setStatus(`connected to ${STATE.device.name || '(unnamed)'}`, 'ok');
-    setConnPill(true, STATE.device.name || '(unnamed)');
-    $('btn-connect').disabled = true;
-    $('btn-disconnect').disabled = false;
-    $('btn-reconnect').disabled = false;
-  } catch (e) {
-    setStatus(`error: ${e.message}`, 'err');
-    sysLog(`connect error: ${e.message}`);
-  }
-};
-
-const disconnect = () => {
-  if (STATE.device && STATE.device.gatt && STATE.device.gatt.connected) {
-    STATE.device.gatt.disconnect();
-  }
-};
-
-const enumerateServices = async () => {
-  const container = $('services');
-  container.innerHTML = '';
-  STATE.services = [];
-
-  let services = [];
-  try {
-    services = await STATE.server.getPrimaryServices();
-  } catch (e) {
-    container.innerHTML = `<div class="empty">could not list services: ${e.message}</div>`;
-    sysLog(`getPrimaryServices error: ${e.message}`);
-    return;
-  }
-
-  $('svc-count').textContent = `${services.length} service(s)`;
-  sysLog(`enumerated ${services.length} primary service(s)`);
-
-  const annot = loadJSON(STORE.ANNOT, {})[STATE.device.id] || {};
-  const writableTargets = [];
-
-  for (const svc of services) {
-    const det = el('details', { class: 'svc', open: '' });
-    const sum = el('summary', {},
-      el('span', { class: 'svc-name' }, svc.uuid),
-      el('span', { class: 'svc-tag' }, U.shortUuid(svc.uuid))
-    );
-    det.appendChild(sum);
-
-    let chars = [];
-    try { chars = await svc.getCharacteristics(); }
-    catch (e) {
-      det.appendChild(el('div', { class: 'char', style: { color: 'var(--red)' } },
-        `error reading characteristics: ${e.message}`));
-      container.appendChild(det);
-      continue;
-    }
-
-    const charRows = [];
-    for (const ch of chars) {
-      const row = makeCharRow(svc, ch, annot[ch.uuid]);
-      det.appendChild(row);
-      charRows.push({ char: ch });
-      if (ch.properties.write || ch.properties.writeWithoutResponse) {
-        writableTargets.push({ svc, ch, label: annot[ch.uuid] });
-      }
-    }
-    STATE.services.push({ service: svc, characteristics: charRows });
-    container.appendChild(det);
-  }
-
-  // populate send target dropdown
-  const sendTarget = $('send-target');
-  sendTarget.innerHTML = '<option value="">— pick a writable characteristic —</option>';
-  writableTargets.forEach((t, i) => {
-    const opt = el('option', { value: String(i) },
-      `${t.label ? '['+t.label+'] ' : ''}${U.shortUuid(t.svc.uuid)} → ${U.shortUuid(t.ch.uuid)}`);
-    sendTarget.appendChild(opt);
-  });
-  sendTarget._targets = writableTargets;
-
-  refreshAnnotations();
-};
-
-const makeCharRow = (svc, ch, label) => {
-  const row = el('div', { class: 'char' });
-  const props = [];
-  if (ch.properties.read) props.push('read');
-  if (ch.properties.write) props.push('write');
-  if (ch.properties.writeWithoutResponse) props.push('write-nr');
-  if (ch.properties.notify) props.push('notify');
-  if (ch.properties.indicate) props.push('indicate');
-
-  const tagText = `${U.shortUuid(svc.uuid)} → ${U.shortUuid(ch.uuid)}`;
-
-  const labelEl = el('button', {
-    class: 'char-edit-label',
-    onclick: () => editLabel(svc, ch, labelEl),
-  }, label || '+ label');
-  if (label) labelEl.style.color = 'var(--orange)';
-
-  const row1 = el('div', { class: 'char-row1' },
-    el('span', { class: 'char-uuid' }, ch.uuid),
-    labelEl
-  );
-
-  const propsRow = el('div', { class: 'char-props' });
-  for (const p of props) {
-    const cls = p === 'read' ? 'read' : (p.startsWith('write') ? 'write' : 'notify');
-    propsRow.appendChild(el('span', { class: 'prop ' + cls }, p));
-  }
-
-  const actions = el('div', { class: 'char-actions' });
-  if (ch.properties.read) {
-    actions.appendChild(el('button', {
-      class: 'tiny',
-      onclick: async () => {
-        try {
-          const v = await ch.readValue();
-          addLog({ t: Date.now(), tag: 'READ', uuid: ch.uuid, dir: 'rx', tagText,
-            bytes: new Uint8Array(v.buffer, v.byteOffset, v.byteLength) });
-        } catch (e) { sysLog(`read ${ch.uuid} failed: ${e.message}`); }
-      },
-    }, 'read'));
-  }
-  if (ch.properties.notify || ch.properties.indicate) {
-    const subBtn = el('button', { class: 'tiny' }, 'subscribe');
-    subBtn.onclick = async () => {
-      try {
-        if (STATE.subscribed.has(ch.uuid)) {
-          await ch.stopNotifications();
-          ch.removeEventListener('characteristicvaluechanged', STATE.subscribed.get(ch.uuid).handler);
-          STATE.subscribed.delete(ch.uuid);
-          subBtn.textContent = 'subscribe';
-          subBtn.classList.remove('active');
-          sysLog(`unsubscribed ${ch.uuid}`);
-        } else {
-          const handler = (ev) => {
-            const v = ev.target.value;
-            const bytes = new Uint8Array(v.buffer, v.byteOffset, v.byteLength);
-            addLog({ t: Date.now(), tag: 'NOTIFY', uuid: ch.uuid, dir: 'rx', tagText, bytes });
-            // chart
-            if (STATE.chart.uuid === ch.uuid) updateChart(bytes);
-          };
-          ch.addEventListener('characteristicvaluechanged', handler);
-          await ch.startNotifications();
-          STATE.subscribed.set(ch.uuid, { char: ch, handler });
-          subBtn.textContent = 'unsub';
-          subBtn.classList.add('active');
-          sysLog(`subscribed ${ch.uuid}`);
-        }
-      } catch (e) { sysLog(`subscribe ${ch.uuid} failed: ${e.message}`); }
-    };
-    actions.appendChild(subBtn);
-
-    actions.appendChild(el('button', {
-      class: 'tiny',
-      onclick: () => {
-        STATE.chart.uuid = ch.uuid;
-        STATE.chart.values = [];
-        $('chart-section').style.display = 'block';
-        switchTab('stream');
-        sysLog(`charting ${ch.uuid}`);
-      },
-    }, 'chart'));
-  }
-  if (!actions.children.length) {
-    actions.appendChild(el('span', { class: 'mono-tiny' }, '(no read/notify ops)'));
-  }
-
-  row.appendChild(row1);
-  row.appendChild(propsRow);
-  row.appendChild(actions);
-  return row;
-};
-
-// ─── annotations ───────────────────────────────────────────
-const editLabel = (svc, ch, labelEl) => {
-  const cur = labelEl.textContent === '+ label' ? '' : labelEl.textContent;
-  const next = prompt(`label for ${ch.uuid}:`, cur);
-  if (next === null) return;
-  const all = loadJSON(STORE.ANNOT, {});
-  if (!all[STATE.device.id]) all[STATE.device.id] = {};
-  if (next.trim() === '') {
-    delete all[STATE.device.id][ch.uuid];
-    labelEl.textContent = '+ label';
-    labelEl.style.color = '';
-  } else {
-    all[STATE.device.id][ch.uuid] = next.trim();
-    labelEl.textContent = next.trim();
-    labelEl.style.color = 'var(--orange)';
-  }
-  saveJSON(STORE.ANNOT, all);
-  refreshAnnotations();
-};
-
-const refreshAnnotations = () => {
-  const all = loadJSON(STORE.ANNOT, {});
-  const container = $('annotations-list');
-  container.innerHTML = '';
-  const ids = Object.keys(all);
-  if (!ids.length) {
-    container.appendChild(el('div', { class: 'empty' }, 'no annotations yet.'));
-    return;
-  }
-  for (const id of ids) {
-    const card = el('div', { style: { padding: '8px 0', borderBottom: '1px solid var(--line)' } });
-    card.appendChild(el('div', { class: 'mono-tiny', style: { color: 'var(--cyan)' } }, `device ${id}`));
-    for (const uuid in all[id]) {
-      card.appendChild(el('div', { style: { display: 'flex', gap: '8px', padding: '3px 0', fontSize: '11px' } },
-        el('span', { class: 'mono-tiny' }, U.shortUuid(uuid)),
-        el('span', { style: { color: 'var(--orange)' } }, all[id][uuid])
-      ));
-    }
-    container.appendChild(card);
-  }
-};
-
-// ─── log / stream ──────────────────────────────────────────
-const setStatus = (text, kind = '') => {
-  const el = $('status-text');
-  el.innerHTML = '';
-  const span = document.createElement('span');
-  if (kind) span.className = kind;
-  span.textContent = text;
-  el.appendChild(span);
-};
-
-const setConnPill = (on, name) => {
-  const p = $('conn-pill');
-  p.classList.toggle('on', !!on);
-  p.querySelector('.name').textContent = on ? (name || 'connected') : 'disconnected';
-};
-
-const sysLog = (msg) => {
-  addLog({ t: Date.now(), tag: 'SYSTEM', uuid: '', dir: '', tagText: '[system]', system: true, text: msg });
-};
-
-const addLog = (entry) => {
-  if (STATE.paused && !entry.system) return;
-  STATE.log.push(entry);
-  $('log-count').textContent = STATE.log.length;
-  $('tab-stream-count').textContent = STATE.log.length;
-  if (!entry.system) STATE.rateBucket++;
-  renderLogEntry(entry);
-};
-
-const renderLogEntry = (entry) => {
-  const body = $('log-body');
-  if (body.querySelector('.empty')) body.innerHTML = '';
-
-  // filter
-  const f = STATE.filter.toLowerCase();
-  if (f) {
-    const hay = (entry.tagText + ' ' + (entry.bytes ? U.toHex(entry.bytes) : '') + ' ' + (entry.text || '')).toLowerCase();
-    if (!hay.includes(f)) return;
-  }
-
-  const ts = new Date(entry.t).toISOString().slice(11, 23);
-  const head = el('div', { class: 'head' });
-  if (entry.dir === 'rx') head.appendChild(el('span', { class: 'dir-rx' }, '« RX '));
-  else if (entry.dir === 'tx') head.appendChild(el('span', { class: 'dir-tx' }, '» TX '));
-  head.appendChild(el('span', {}, entry.tagText));
-
-  const right = el('div', {}, head);
-
-  if (entry.system) {
-    right.appendChild(el('div', { class: 'hex' }, entry.text || ''));
-  } else if (entry.bytes) {
-    right.appendChild(el('div', { class: 'hex' }, U.toHex(entry.bytes)));
-    right.appendChild(el('div', { class: 'ascii' }, U.toAscii(entry.bytes)));
-
-    // run active decoder
-    if (STATE.activeDecoder) {
-      try {
-        const decoded = runDecoder(STATE.activeDecoder, entry.bytes, entry.uuid);
-        if (decoded != null) {
-          const txt = typeof decoded === 'object'
-            ? Object.entries(decoded).map(([k,v]) => `${k}=${v}`).join('  ')
-            : String(decoded);
-          right.appendChild(el('div', { class: 'decoded' }, txt));
-        }
-      } catch (e) {
-        right.appendChild(el('div', { class: 'decoded err' }, `decode error: ${e.message}`));
-      }
-    }
-  }
-
-  const node = el('div', { class: 'entry' + (entry.system ? ' system' : '') },
-    el('span', { class: 't' }, ts),
-    right
-  );
-  body.appendChild(node);
-
-  // cap dom nodes
-  while (body.children.length > 300) body.removeChild(body.firstChild);
-  body.scrollTop = body.scrollHeight;
-};
-
-// ─── chart ─────────────────────────────────────────────────
-const readNum = (bytes, off, type) => {
-  if (off >= bytes.length) return null;
-  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-  try {
-    switch (type) {
-      case 'u8':    return bytes[off];
-      case 'i8':    return dv.getInt8(off);
-      case 'u16le': return dv.getUint16(off, true);
-      case 'u16be': return dv.getUint16(off, false);
-      case 'i16le': return dv.getInt16(off, true);
-      case 'i16be': return dv.getInt16(off, false);
-      case 'u32le': return dv.getUint32(off, true);
-      case 'u32be': return dv.getUint32(off, false);
-      case 'f32le': return dv.getFloat32(off, true);
-      case 'f32be': return dv.getFloat32(off, false);
-    }
-  } catch { return null; }
-  return null;
-};
-
-const updateChart = (bytes) => {
-  const off = parseInt($('chart-offset').value, 10) || 0;
-  const type = $('chart-type').value;
-  const scale = parseFloat($('chart-scale').value) || 1;
-  const v = readNum(bytes, off, type);
-  if (v == null) return;
-  const scaled = v * scale;
-  STATE.chart.values.push(scaled);
-  while (STATE.chart.values.length > STATE.chart.max) STATE.chart.values.shift();
-  $('chart-current').textContent = scaled.toFixed(3).replace(/\.?0+$/, '');
-  drawChart();
-};
-
-const drawChart = () => {
-  const canvas = $('chart');
-  const dpr = window.devicePixelRatio || 1;
-  const w = canvas.clientWidth;
-  const h = canvas.clientHeight;
-  if (canvas.width !== w * dpr) {
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-  }
-  const ctx = canvas.getContext('2d');
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, w, h);
-
-  const cs = getComputedStyle(document.body);
-  const lineColor = cs.getPropertyValue('--blue').trim();
-  const gridColor = cs.getPropertyValue('--line').trim();
-  const fgColor = cs.getPropertyValue('--fg-dim').trim();
-
-  const vals = STATE.chart.values;
-  if (!vals.length) return;
-  let min = Math.min(...vals), max = Math.max(...vals);
-  if (min === max) { min -= 1; max += 1; }
-  const pad = (max - min) * 0.1;
-  min -= pad; max += pad;
-
-  // grid + labels
-  ctx.strokeStyle = gridColor;
-  ctx.fillStyle = fgColor;
-  ctx.font = '10px ui-monospace, monospace';
-  ctx.lineWidth = 1;
-  for (let i = 0; i <= 4; i++) {
-    const y = (h - 1) - (i / 4) * (h - 1);
-    ctx.beginPath();
-    ctx.moveTo(40, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
-    const v = min + (i / 4) * (max - min);
-    ctx.fillText(v.toFixed(1), 4, y + 3);
-  }
-
-  // line
-  ctx.strokeStyle = lineColor;
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  vals.forEach((v, i) => {
-    const x = 40 + (i / (STATE.chart.max - 1)) * (w - 40);
-    const y = (h - 1) - ((v - min) / (max - min)) * (h - 1);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  });
-  ctx.stroke();
-};
-
-// ─── decoder runner ────────────────────────────────────────
-const compileDecoder = (src) => {
-  // wrap in async function to allow await, but we'll call synchronously for simplicity
-  // eslint-disable-next-line no-new-func
-  return new Function('bytes', 'ctx', src);
-};
-
-const runDecoder = (decoder, bytes, uuid) => {
-  const ctx = {
-    uuid,
-    history: [], // not maintained per-uuid in v1 to keep things simple
-    hex: (b) => U.toHex(b),
-    ascii: (b) => U.toAscii(b),
-    le16: (off) => readNum(bytes, off, 'u16le'),
-    be16: (off) => readNum(bytes, off, 'u16be'),
-    le32: (off) => readNum(bytes, off, 'u32le'),
-    be32: (off) => readNum(bytes, off, 'u32be'),
-    f32le: (off) => readNum(bytes, off, 'f32le'),
-    s16le: (off) => readNum(bytes, off, 'i16le'),
-    s16be: (off) => readNum(bytes, off, 'i16be'),
-    s8: (off) => readNum(bytes, off, 'i8'),
-  };
-  if (typeof decoder === 'function') return decoder(bytes, ctx);
-  if (typeof decoder === 'string') return compileDecoder(decoder)(bytes, ctx);
-  return null;
-};
-
-// ─── decoder ui ────────────────────────────────────────────
-const renderDecoderList = () => {
-  const builtinEl = $('builtin-decoders');
-  builtinEl.innerHTML = '';
-  BUILTIN.forEach((d, i) => {
-    const card = el('div', {
-      class: 'decoder-card' + (STATE.activeDecoder?.builtinIdx === i ? ' active' : ''),
-      onclick: () => {
-        if (STATE.activeDecoder?.builtinIdx === i) {
-          STATE.activeDecoder = null;
-        } else {
-          STATE.activeDecoder = { builtinIdx: i, fn: d.fn };
-        }
-        renderDecoderList();
-        updateDecoderDropdown();
-      },
-    });
-    card.appendChild(el('div', { class: 'name' }, d.name));
-    card.appendChild(el('div', { class: 'meta' }, d.desc));
-    builtinEl.appendChild(card);
-  });
-
-  const customEl = $('custom-decoders');
-  customEl.innerHTML = '';
-  const customs = loadJSON(STORE.DECODERS, {});
-  const names = Object.keys(customs);
-  if (!names.length) {
-    customEl.appendChild(el('div', { class: 'empty' }, 'no custom decoders. tap new to write one.'));
-  } else {
-    for (const name of names) {
-      const isActive = STATE.activeDecoder?.customName === name;
-      const card = el('div', {
-        class: 'decoder-card' + (isActive ? ' active' : ''),
-      });
-      card.appendChild(el('div', { class: 'name' }, name));
-      card.appendChild(el('div', { class: 'meta' }, customs[name].slice(0, 60).replace(/\n/g, ' ') + '...'));
-      const acts = el('div', { class: 'actions' },
-        el('button', { class: 'tiny', onclick: (e) => {
-          e.stopPropagation();
-          if (isActive) {
-            STATE.activeDecoder = null;
-          } else {
-            try {
-              const fn = compileDecoder(customs[name]);
-              STATE.activeDecoder = { customName: name, fn };
-            } catch (e) {
-              alert('compile error: ' + e.message);
-              return;
-            }
-          }
-          renderDecoderList();
-          updateDecoderDropdown();
-        } }, isActive ? 'deactivate' : 'activate'),
-        el('button', { class: 'tiny', onclick: (e) => {
-          e.stopPropagation();
-          $('scratch-name').value = name;
-          $('scratch-code').value = customs[name];
-        } }, 'edit'),
-        el('button', { class: 'tiny danger', onclick: (e) => {
-          e.stopPropagation();
-          if (!confirm(`delete decoder "${name}"?`)) return;
-          delete customs[name];
-          saveJSON(STORE.DECODERS, customs);
-          if (STATE.activeDecoder?.customName === name) STATE.activeDecoder = null;
-          renderDecoderList();
-          updateDecoderDropdown();
-        } }, 'del'),
-      );
-      card.appendChild(acts);
-      customEl.appendChild(card);
-    }
-  }
-  refreshStorageInfo();
-};
-
-const updateDecoderDropdown = () => {
-  const dd = $('log-decoder');
-  const cur = dd.value;
-  dd.innerHTML = '<option value="">no decoder</option>';
-  BUILTIN.forEach((d, i) => {
-    dd.appendChild(el('option', { value: 'b:' + i }, d.name));
-  });
-  const customs = loadJSON(STORE.DECODERS, {});
-  for (const name of Object.keys(customs)) {
-    dd.appendChild(el('option', { value: 'c:' + name }, name));
-  }
-  // sync with active
-  if (STATE.activeDecoder?.builtinIdx != null) dd.value = 'b:' + STATE.activeDecoder.builtinIdx;
-  else if (STATE.activeDecoder?.customName) dd.value = 'c:' + STATE.activeDecoder.customName;
-  else dd.value = '';
-};
-
-// ─── send ──────────────────────────────────────────────────
-const buildSendBytes = () => {
-  const hex = $('send-hex').value.trim();
-  const ascii = $('send-ascii').value;
-  let bytes;
-  if (hex) {
-    bytes = U.parseHex(hex);
-  } else if (ascii) {
-    bytes = new TextEncoder().encode(ascii);
-  } else {
-    throw new Error('no payload');
-  }
-  return applyChecksum(bytes, $('cksum-type').value, $('cksum-pos').value);
-};
-
-const doSend = async (withResponse) => {
-  const idx = $('send-target').value;
-  if (!idx) { alert('pick a target characteristic'); return; }
-  const target = $('send-target')._targets[parseInt(idx, 10)];
-  let bytes;
-  try { bytes = buildSendBytes(); }
-  catch (e) { alert(e.message); return; }
-  try {
-    if (withResponse && target.ch.properties.write) {
-      await target.ch.writeValueWithResponse(bytes);
-    } else if (target.ch.properties.writeWithoutResponse) {
-      await target.ch.writeValueWithoutResponse(bytes);
+      test.onerror = () => { cover.style.opacity = 0; fallback.style.display = "grid"; ambient.classList.remove("on"); };
+      test.src = url;
     } else {
-      await target.ch.writeValue(bytes);
+      cover.style.opacity = 0;
+      fallback.style.display = "grid";
+      ambient.classList.remove("on");
     }
-    addLog({
-      t: Date.now(), tag: 'WRITE', uuid: target.ch.uuid, dir: 'tx',
-      tagText: `${U.shortUuid(target.svc.uuid)} → ${U.shortUuid(target.ch.uuid)}`,
-      bytes,
-    });
-  } catch (e) {
-    sysLog(`send failed: ${e.message}`);
   }
-};
 
-const renderSavedPackets = () => {
-  const c = $('saved-packets');
-  c.innerHTML = '';
-  const saved = loadJSON(STORE.PACKETS, {});
-  const names = Object.keys(saved);
-  if (!names.length) {
-    c.appendChild(el('div', { class: 'empty' }, 'no saved packets yet.'));
-    return;
-  }
-  for (const name of names) {
-    const p = saved[name];
-    const row = el('div', {
-      class: 'row',
-      style: { padding: '6px 0', borderBottom: '1px solid var(--line)' }
-    },
-      el('span', { class: 'grow', style: { color: 'var(--cyan)' } }, name),
-      el('span', { class: 'mono-tiny grow', style: { color: 'var(--fg-dim)' } }, p.hex),
-      el('button', { class: 'tiny', onclick: () => {
-        $('send-hex').value = p.hex;
-      } }, 'load'),
-      el('button', { class: 'tiny danger', onclick: () => {
-        if (!confirm(`delete "${name}"?`)) return;
-        delete saved[name];
-        saveJSON(STORE.PACKETS, saved);
-        renderSavedPackets();
-      } }, 'del'),
-    );
-    c.appendChild(row);
-  }
-};
-
-// ─── tabs ──────────────────────────────────────────────────
-const switchTab = (name) => {
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
-  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === name));
-};
-
-// ─── storage info ──────────────────────────────────────────
-const refreshStorageInfo = () => {
-  let total = 0;
-  const counts = {};
-  for (const k of Object.values(STORE)) {
-    const v = localStorage.getItem(k);
-    const len = v ? v.length : 0;
-    total += len;
-    counts[k] = len;
-  }
-  $('storage-info').innerHTML = `
-    annotations: ${counts[STORE.ANNOT] || 0} bytes ·
-    decoders: ${counts[STORE.DECODERS] || 0} bytes ·
-    packets: ${counts[STORE.PACKETS] || 0} bytes ·
-    total: ${total} bytes
-  `;
-};
-
-// ─── init / wiring ─────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  // theme
-  const t = localStorage.getItem(STORE.THEME);
-  if (t === 'light') document.body.classList.add('light');
-
-  // tab clicks
-  document.querySelectorAll('.tab').forEach(t => {
-    t.onclick = () => switchTab(t.dataset.tab);
-  });
-
-  // connect buttons
-  $('btn-connect').onclick = connect;
-  $('btn-disconnect').onclick = disconnect;
-  $('btn-reconnect').onclick = async () => {
-    if (!STATE.device) {
-      alert('no last device. use "connect" first.');
-      return;
-    }
+  async function poll() {
     try {
-      setStatus(`reconnecting...`);
-      STATE.server = await STATE.device.gatt.connect();
-      await enumerateServices();
-      setStatus(`reconnected`, 'ok');
-      setConnPill(true, STATE.device.name);
-      $('btn-connect').disabled = true;
-      $('btn-disconnect').disabled = false;
-    } catch (e) { setStatus(`error: ${e.message}`, 'err'); }
-  };
+      const res = await fetch(`${BASE}/status-json.xsl`, { cache: "no-store" });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      let src = data?.icestats?.source;
+      if (!src) throw new Error();
+      if (Array.isArray(src)) src = src.find(s => (s.listenurl || "").endsWith(MOUNT)) || src[0];
 
-  // theme toggle
-  $('btn-theme').onclick = () => {
-    document.body.classList.toggle('light');
-    localStorage.setItem(STORE.THEME, document.body.classList.contains('light') ? 'light' : 'dark');
-  };
-
-  // log toolbar
-  $('btn-pause').onclick = () => {
-    STATE.paused = !STATE.paused;
-    $('btn-pause').textContent = STATE.paused ? 'resume' : 'pause';
-    $('btn-pause').classList.toggle('active', STATE.paused);
-  };
-  $('btn-clear').onclick = () => {
-    STATE.log.length = 0;
-    $('log-count').textContent = '0';
-    $('tab-stream-count').textContent = '';
-    $('log-body').innerHTML = '<div class="empty">log cleared.</div>';
-  };
-  $('btn-copy-log').onclick = async () => {
-    const text = STATE.log.map(e => {
-      const ts = new Date(e.t).toISOString();
-      if (e.system) return `${ts}  [system]  ${e.text}`;
-      return `${ts}  ${e.dir.toUpperCase()}  ${e.tagText}  ${e.bytes ? U.toHex(e.bytes) : ''}`;
-    }).join('\n');
-    try { await navigator.clipboard.writeText(text); $('btn-copy-log').textContent = 'copied!'; setTimeout(() => $('btn-copy-log').textContent = 'copy', 1500); }
-    catch { alert(text); }
-  };
-  $('btn-export-log').onclick = () => {
-    const blob = new Blob([JSON.stringify(STATE.log, (k, v) => v instanceof Uint8Array ? Array.from(v) : v, 2)],
-      { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = el('a', { href: url, download: `ble-log-${Date.now()}.json` });
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-  $('log-filter').oninput = (e) => {
-    STATE.filter = e.target.value;
-    // re-render whole log
-    const body = $('log-body');
-    body.innerHTML = '';
-    for (const entry of STATE.log) renderLogEntry(entry);
-  };
-  $('log-decoder').onchange = (e) => {
-    const v = e.target.value;
-    if (!v) STATE.activeDecoder = null;
-    else if (v.startsWith('b:')) {
-      const i = parseInt(v.slice(2), 10);
-      STATE.activeDecoder = { builtinIdx: i, fn: BUILTIN[i].fn };
-    } else if (v.startsWith('c:')) {
-      const name = v.slice(2);
-      const customs = loadJSON(STORE.DECODERS, {});
-      try {
-        STATE.activeDecoder = { customName: name, fn: compileDecoder(customs[name]) };
-      } catch (e) { alert('compile error: ' + e.message); return; }
+      setLive(true);
+      const raw = (src.title || src.yp_currently_playing || "").trim();
+      if (raw) {
+        const parts = raw.split(" - ");
+        if (parts.length >= 2) {
+          artistEl.textContent = parts[0];
+          titleEl.textContent = parts.slice(1).join(" - ");
+        } else {
+          titleEl.textContent = raw;
+          artistEl.textContent = "";
+        }
+      }
+      // cache-bust so the cover updates on track change
+      showCover(`${BASE}/cover.jpg?t=${Math.floor(Date.now()/5000)}`);
+    } catch {
+      setLive(false);
     }
-    renderDecoderList();
-  };
-
-  // chart
-  $('btn-chart-clear').onclick = () => {
-    STATE.chart.values = [];
-    drawChart();
-    $('chart-current').textContent = '—';
-  };
-  $('chart-offset').oninput = drawChart;
-  $('chart-type').onchange = drawChart;
-  $('chart-scale').oninput = drawChart;
-
-  // send
-  $('btn-send').onclick = () => doSend(true);
-  $('btn-send-noresp').onclick = () => doSend(false);
-  $('btn-cksum-preview').onclick = () => {
-    try {
-      const bytes = buildSendBytes();
-      $('cksum-preview').textContent = '→ ' + U.toHex(bytes) + `  (${bytes.length} bytes)`;
-    } catch (e) {
-      $('cksum-preview').textContent = 'error: ' + e.message;
-    }
-  };
-  $('btn-save-packet').onclick = () => {
-    const idx = $('send-target').value;
-    const hex = $('send-hex').value.trim();
-    if (!hex) { alert('nothing to save'); return; }
-    const name = prompt('name this packet:');
-    if (!name) return;
-    const saved = loadJSON(STORE.PACKETS, {});
-    saved[name] = { hex, target: idx };
-    saveJSON(STORE.PACKETS, saved);
-    renderSavedPackets();
-  };
-
-  // send loop
-  $('send-loop').onchange = (e) => {
-    if (e.target.checked) {
-      const ms = parseInt($('send-loop-ms').value, 10) || 500;
-      STATE.loopTimer = setInterval(() => doSend(false), ms);
-    } else {
-      clearInterval(STATE.loopTimer);
-      STATE.loopTimer = null;
-    }
-  };
-
-  // decoder ui
-  $('btn-new-decoder').onclick = () => {
-    $('scratch-name').value = '';
-    $('scratch-code').value = '// receives (bytes: Uint8Array, ctx)\n// return string or object\n\nreturn { len: bytes.length, hex: ctx.hex(bytes) };';
-    document.querySelector('[data-tab=decoders]').click();
-    $('scratch-name').focus();
-  };
-  $('btn-scratch-run').onclick = () => {
-    const code = $('scratch-code').value;
-    const hex = $('scratch-bytes').value.trim();
-    if (!hex) { $('scratch-output').textContent = 'enter test bytes'; return; }
-    try {
-      const bytes = U.parseHex(hex);
-      const fn = compileDecoder(code);
-      const r = runDecoder(fn, bytes, 'scratch');
-      $('scratch-output').style.color = 'var(--green)';
-      $('scratch-output').textContent = typeof r === 'object' ? JSON.stringify(r, null, 2) : String(r);
-    } catch (e) {
-      $('scratch-output').style.color = 'var(--red)';
-      $('scratch-output').textContent = e.stack || e.message;
-    }
-  };
-  $('btn-scratch-save').onclick = () => {
-    const name = $('scratch-name').value.trim();
-    const code = $('scratch-code').value;
-    if (!name) { alert('give it a name'); return; }
-    try { compileDecoder(code); } catch (e) { alert('compile error: ' + e.message); return; }
-    const customs = loadJSON(STORE.DECODERS, {});
-    customs[name] = code;
-    saveJSON(STORE.DECODERS, customs);
-    renderDecoderList();
-    updateDecoderDropdown();
-  };
-
-  // sessions
-  $('btn-export-session').onclick = () => {
-    const session = {
-      exportedAt: new Date().toISOString(),
-      device: STATE.device ? { id: STATE.device.id, name: STATE.device.name } : null,
-      services: STATE.services.map(s => ({
-        uuid: s.service.uuid,
-        characteristics: s.characteristics.map(c => ({
-          uuid: c.char.uuid,
-          properties: c.char.properties,
-        })),
-      })),
-      log: STATE.log.map(e => ({ ...e, bytes: e.bytes ? Array.from(e.bytes) : undefined })),
-      annotations: loadJSON(STORE.ANNOT, {}),
-      decoders: loadJSON(STORE.DECODERS, {}),
-      packets: loadJSON(STORE.PACKETS, {}),
-    };
-    const blob = new Blob([JSON.stringify(session, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = el('a', { href: url, download: `ble-session-${Date.now()}.json` });
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-  $('btn-import-session').onclick = () => $('import-file').click();
-  $('import-file').onchange = (e) => {
-    const f = e.target.files[0];
-    if (!f) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const s = JSON.parse(reader.result);
-        if (s.annotations) saveJSON(STORE.ANNOT, s.annotations);
-        if (s.decoders) saveJSON(STORE.DECODERS, s.decoders);
-        if (s.packets) saveJSON(STORE.PACKETS, s.packets);
-        renderDecoderList();
-        updateDecoderDropdown();
-        renderSavedPackets();
-        refreshAnnotations();
-        alert('session imported.');
-      } catch (e) { alert('import failed: ' + e.message); }
-    };
-    reader.readAsText(f);
-  };
-  $('btn-wipe').onclick = () => {
-    if (!confirm('delete all annotations, decoders, saved packets, and theme?')) return;
-    for (const k of Object.values(STORE)) localStorage.removeItem(k);
-    renderDecoderList();
-    updateDecoderDropdown();
-    renderSavedPackets();
-    refreshAnnotations();
-    refreshStorageInfo();
-    alert('wiped.');
-  };
-
-  // modal close
-  $('modal-close').onclick = () => $('modal-bg').classList.remove('active');
-  $('modal-bg').onclick = (e) => { if (e.target.id === 'modal-bg') $('modal-bg').classList.remove('active'); };
-
-  // rate ticker
-  setInterval(() => {
-    $('log-rate').textContent = STATE.rateBucket;
-    STATE.rateBucket = 0;
-  }, 1000);
-
-  // initial render
-  renderDecoderList();
-  updateDecoderDropdown();
-  renderSavedPackets();
-  refreshAnnotations();
-  refreshStorageInfo();
-
-  if (!navigator.bluetooth) {
-    setStatus('web bluetooth not supported. use chrome on android, or bluefy on ios.', 'err');
-    $('btn-connect').disabled = true;
   }
 
-  // resize chart on window resize
-  window.addEventListener('resize', () => { if (STATE.chart.values.length) drawChart(); });
-});
+  poll();
+  setInterval(poll, 8000);
 </script>
 </body>
 </html>
