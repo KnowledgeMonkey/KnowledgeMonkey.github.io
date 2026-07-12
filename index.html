@@ -1,381 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>night shift radio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-  /* ---- CONFIG ---------------------------------------------------------
-     Point this at your stream. For local testing on your own PC, leave it
-     as localhost. When you publish and run a tunnel (see notes), swap it
-     for your public https address, e.g. https://radio.yourname.com
-  --------------------------------------------------------------------- */
-  :root {
-    --bg:      #0e0b1a;
-    --panel:   #171327;
-    --edge:    #262038;
-    --text:    #e9e5f4;
-    --muted:   #8a83a6;
-    --accent:  #ff5c72;
-    --spark:   #ffd85c;
-    --shadow:  0 20px 60px -20px rgba(0,0,0,.8);
-  }
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
 
-  html, body { height: 100%; }
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
 
-  body {
-    font-family: "Space Grotesk", system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    display: grid;
-    place-items: center;
-    min-height: 100vh;
-    padding: 24px;
-    overflow: hidden;
-  }
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="/">
 
-  /* blurred ambient background made from the current cover */
-  #ambient {
-    position: fixed;
-    inset: -20%;
-    background-size: cover;
-    background-position: center;
-    filter: blur(70px) saturate(1.3) brightness(.5);
-    transform: scale(1.2);
-    opacity: 0;
-    transition: opacity 1.2s ease, background-image .4s ease;
-    z-index: 0;
-  }
-  #ambient.on { opacity: .55; }
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
 
-  .card {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 380px;
-    background: linear-gradient(180deg, rgba(23,19,39,.9), rgba(23,19,39,.98));
-    border: 1px solid var(--edge);
-    border-radius: 22px;
-    box-shadow: var(--shadow);
-    padding: 22px;
-    backdrop-filter: blur(12px);
-  }
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="folk_radio">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
-  .top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
 
-  .wordmark {
-    font-family: "Press Start 2P", monospace;
-    font-size: 9px;
-    line-height: 1.6;
-    letter-spacing: .5px;
-    color: var(--text);
-  }
-  .wordmark span { color: var(--accent); }
-
-  .status {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--muted);
-  }
-  .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--muted);
-  }
-  .status.live .dot {
-    background: var(--accent);
-    box-shadow: 0 0 0 0 rgba(255,92,114,.6);
-    animation: pulse 2s infinite;
-  }
-  .status.live { color: var(--accent); }
-  @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(255,92,114,.6); }
-    70%  { box-shadow: 0 0 0 8px rgba(255,92,114,0); }
-    100% { box-shadow: 0 0 0 0 rgba(255,92,114,0); }
-  }
-
-  .cover-wrap {
-    position: relative;
-    aspect-ratio: 1;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #0a0814;
-    border: 1px solid var(--edge);
-  }
-  #cover {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: opacity .4s ease;
-  }
-  .cover-fallback {
-    position: absolute; inset: 0;
-    display: grid; place-items: center;
-    color: var(--muted);
-    font-family: "Press Start 2P", monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-  }
-
-  /* decorative equaliser, animates only while playing */
-  .eq {
-    position: absolute;
-    left: 14px; bottom: 14px;
-    display: flex; align-items: flex-end; gap: 3px;
-    height: 22px;
-    padding: 5px 7px;
-    border-radius: 8px;
-    background: rgba(14,11,26,.55);
-    backdrop-filter: blur(4px);
-    opacity: 0;
-    transition: opacity .3s ease;
-  }
-  .eq.on { opacity: 1; }
-  .eq i {
-    width: 3px; height: 5px;
-    background: var(--accent);
-    border-radius: 2px;
-  }
-  .eq.on i { animation: bounce .9s ease-in-out infinite; }
-  .eq i:nth-child(2){ animation-delay:.15s } .eq i:nth-child(3){ animation-delay:.3s }
-  .eq i:nth-child(4){ animation-delay:.45s } .eq i:nth-child(5){ animation-delay:.6s }
-  @keyframes bounce { 0%,100%{ height:4px } 50%{ height:16px } }
-
-  .meta { margin: 18px 2px 20px; min-height: 46px; }
-  .title {
-    font-size: 19px;
-    font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: -.2px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .artist { font-size: 13px; color: var(--muted); margin-top: 3px; }
-
-  .controls { display: flex; align-items: center; gap: 14px; }
-
-  .play {
-    flex: none;
-    width: 54px; height: 54px;
-    border-radius: 50%;
-    border: none;
-    background: var(--accent);
-    color: #1a0a0e;
-    cursor: pointer;
-    display: grid; place-items: center;
-    transition: transform .12s ease, filter .2s ease;
-  }
-  .play:hover { filter: brightness(1.08); }
-  .play:active { transform: scale(.94); }
-  .play:disabled { background: var(--edge); color: var(--muted); cursor: not-allowed; }
-  .play svg { width: 22px; height: 22px; fill: currentColor; }
-  .play:focus-visible { outline: 2px solid var(--spark); outline-offset: 3px; }
-
-  .vol { display: flex; align-items: center; gap: 9px; flex: 1; color: var(--muted); }
-  .vol svg { width: 17px; height: 17px; fill: currentColor; flex: none; }
-  input[type=range] {
-    -webkit-appearance: none; appearance: none;
-    width: 100%; height: 4px;
-    border-radius: 4px;
-    background: var(--edge);
-    cursor: pointer;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none;
-    width: 14px; height: 14px; border-radius: 50%;
-    background: var(--text);
-  }
-  input[type=range]::-moz-range-thumb {
-    width: 14px; height: 14px; border: none; border-radius: 50%;
-    background: var(--text);
-  }
-  input[type=range]:focus-visible { outline: 2px solid var(--spark); outline-offset: 4px; }
-
-  .foot {
-    margin-top: 18px;
-    text-align: center;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: .3px;
-  }
-  .foot b { color: var(--spark); font-weight: 500; }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; }
-  }
-</style>
+  <title>folk_radio</title>
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <div id="ambient"></div>
+  <!--
+    You can customize the "flutter_bootstrap.js" script.
+    This is useful to provide a custom configuration to the Flutter loader
+    or to give the user feedback during the initialization process.
 
-  <main class="card">
-    <div class="top">
-      <div class="wordmark">NIGHT<br><span>SHIFT</span> RADIO</div>
-      <div class="status" id="status"><span class="dot"></span><span id="statusText">offline</span></div>
-    </div>
-
-    <div class="cover-wrap">
-      <img id="cover" alt="" style="opacity:0">
-      <div class="cover-fallback" id="fallback">NO SIGNAL</div>
-      <div class="eq" id="eq"><i></i><i></i><i></i><i></i><i></i></div>
-    </div>
-
-    <div class="meta">
-      <div class="title" id="title">not connected</div>
-      <div class="artist" id="artist">start the stream to tune in</div>
-    </div>
-
-    <div class="controls">
-      <button class="play" id="play" aria-label="Play" disabled>
-        <svg id="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      </button>
-      <div class="vol">
-        <svg viewBox="0 0 24 24"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
-        <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
-      </div>
-    </div>
-
-    <div class="foot">streaming from <b>a little PC somewhere</b></div>
-  </main>
-
-  <audio id="audio" preload="none" crossorigin="anonymous"></audio>
-
-<script>
-  // ===== CONFIG =========================================================
-  // Local testing: keep localhost. Published + tunnelled: use your https url.
-  const BASE = "https://formal-sin-auburn-stylus.trycloudflare.com";
-  const MOUNT = "stream";
-  // How far the audio lags the source, in ms. Raise until the title flips
-  // exactly when you hear the new track. Around 3000-6000 is typical.
-  const STREAM_DELAY_MS = 5000;
-  // ======================================================================
-
-  const audio  = document.getElementById("audio");
-  const play   = document.getElementById("play");
-  const icon   = document.getElementById("icon");
-  const vol    = document.getElementById("vol");
-  const cover  = document.getElementById("cover");
-  const fallback = document.getElementById("fallback");
-  const ambient  = document.getElementById("ambient");
-  const eq     = document.getElementById("eq");
-  const titleEl  = document.getElementById("title");
-  const artistEl = document.getElementById("artist");
-  const status = document.getElementById("status");
-  const statusText = document.getElementById("statusText");
-
-  const PLAY_ICON  = "M8 5v14l11-7z";
-  const PAUSE_ICON = "M6 5h4v14H6zM14 5h4v14h-4z";
-
-  audio.src = `${BASE}/${MOUNT}`;
-  audio.volume = parseFloat(vol.value);
-  vol.addEventListener("input", () => audio.volume = parseFloat(vol.value));
-
-  let playing = false;
-  let lastSeenRaw = "";
-  play.addEventListener("click", () => {
-    if (playing) {
-      audio.pause();
-    } else {
-      // reassign src so we always grab the live edge, not a stale buffer
-      audio.src = `${BASE}/${MOUNT}?t=${Date.now()}`;
-      audio.play().catch(() => setLive(false));
-    }
-  });
-
-  audio.addEventListener("playing", () => { playing = true; icon.setAttribute("d", PAUSE_ICON); play.setAttribute("aria-label","Pause"); eq.classList.add("on"); });
-  audio.addEventListener("pause",   () => { playing = false; icon.setAttribute("d", PLAY_ICON); play.setAttribute("aria-label","Play"); eq.classList.remove("on"); });
-  audio.addEventListener("error",   () => setLive(false));
-
-  function setLive(isLive) {
-    if (isLive) {
-      status.classList.add("live");
-      statusText.textContent = "live";
-      play.disabled = false;
-    } else {
-      status.classList.remove("live");
-      statusText.textContent = "offline";
-      play.disabled = true;
-      titleEl.textContent = "not connected";
-      artistEl.textContent = "the station is asleep";
-      showCover(null);
-      lastSeenRaw = "";
-    }
-  }
-
-  function showCover(url) {
-    if (url) {
-      const test = new Image();
-      test.onload = () => {
-        cover.src = url; cover.style.opacity = 1;
-        fallback.style.display = "none";
-        ambient.style.backgroundImage = `url("${url}")`;
-        ambient.classList.add("on");
-      };
-      test.onerror = () => { cover.style.opacity = 0; fallback.style.display = "grid"; ambient.classList.remove("on"); };
-      test.src = url;
-    } else {
-      cover.style.opacity = 0;
-      fallback.style.display = "grid";
-      ambient.classList.remove("on");
-    }
-  }
-
-  function applyMeta(raw) {
-    if (raw.includes(" - ")) {
-      const [a, ...rest] = raw.split(" - ");
-      artistEl.textContent = a;
-      titleEl.textContent = rest.join(" - ");
-    } else {
-      titleEl.textContent = raw || "—";
-      artistEl.textContent = "";
-    }
-    showCover(`${BASE}/cover.jpg?t=${Date.now()}`);
-  }
-
-  function scheduleMeta(raw) {
-    // While listening, hold the update to match the audio the ear is on.
-    // Idle (not yet playing), show it right away.
-    if (playing) setTimeout(() => applyMeta(raw), STREAM_DELAY_MS);
-    else applyMeta(raw);
-  }
-
-  async function poll() {
-    try {
-      const res = await fetch(`${BASE}/status-json.xsl`, { cache: "no-store" });
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      let src = data?.icestats?.source;
-      if (!src) throw new Error();
-      if (Array.isArray(src)) src = src.find(s => (s.listenurl || "").endsWith(MOUNT)) || src[0];
-
-      setLive(true);
-      const raw = (src.title || src.yp_currently_playing || "").trim();
-      if (raw && raw !== lastSeenRaw) {
-        lastSeenRaw = raw;
-        scheduleMeta(raw);
-      }
-    } catch {
-      setLive(false);
-    }
-  }
-
-  poll();
-  setInterval(poll, 2000);
-</script>
+    For more details:
+    * https://docs.flutter.dev/platform-integration/web/initialization
+  -->
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
