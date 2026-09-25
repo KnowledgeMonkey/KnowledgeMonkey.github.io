@@ -174,27 +174,39 @@ function tryRandomEvent(chancePercent, event) {
 
 function getEventDefinitions() {
     return [
-        { event: darkScreenEvent, level: 1, name: "Darkness", image: "dark-figure.png", description: "Something slowly appears in the dark." },
+        { event: darkScreenEvent, level: 1, name: "Darkness", image: "dark-figure.png", description: "Wait for the switch, then turn the lights back on." },
         { event: breakfastQuizEvent, level: 1, name: "Breakfast quiz", image: "breakfast-bird.png", description: "Answer one very important breakfast question." },
         { event: flushThePigEvent, level: 1, name: "Emergency flush", image: "toilet-pig.png", description: "Click fast and deal with the bathroom situation." },
-        { event: containmentBreachEvent, level: 2, name: "Containment breach", image: "containment-cat.gif", description: "The contained cat is no longer contained." },
-        { event: chickenEvent, level: 2, name: "Chicken charge", image: "toothy-chicken.png", description: "A deeply upsetting chicken approaches." },
-        { event: hydrationInspectionEvent, level: 3, name: "Hydration inspection", image: "bottle-cat.png", description: "The bottle cat checks your water intake." },
+        { event: containmentBreachEvent, level: 2, name: "Containment breach", image: "containment-cat.gif", description: "Read and enter the three-part lock code." },
+        { event: chickenEvent, level: 2, name: "Chicken charge", image: "toothy-chicken.png", description: "Drag the gate shut before the chicken arrives." },
+        { event: hydrationInspectionEvent, level: 3, name: "Hydration inspection", image: "bottle-cat.png", description: "Type the requested word to pass inspection." },
         { event: greenCreatureEvent, level: 3, name: "Creature chase", image: "green-creature.png", description: "Catch and bonk the moving creature." },
         { event: phoneCallEvent, level: 4, name: "Incoming call", image: "phone-creature.png", description: "Answer the call or try to decline it." },
         { event: sparkleCollectorEvent, level: 4, name: "Sparkle collector", image: "sparkle-mask.png", description: "Collect every sparkle before time runs out." },
         { event: darknessHuntEvent, level: 4, name: "Escape the void", image: "pure-darkness.png", description: "Find the escape button three times." },
+        { event: slotMachineEvent, level: 4, name: "Image slots", image: "mr-aura.png", description: "Spin three image reels. Three matching images pay 100 XP." },
         { event: birdExamEvent, level: 5, name: "Bird exam", image: "strange-bird.png", description: "Pass an advanced bird identification test." },
         { event: reactionDuelEvent, level: 5, name: "Reaction duel", image: "parking-lot-person.png", description: "Wait for GO and test your reaction time." },
-        { event: emoglobinEvent, level: 6, name: "Emoglobin", image: "emoglobin.png", description: "Blood levels become extremely emo." },
-        { event: toothpasteBattleEvent, level: 6, name: "Toothpaste battle", image: "lacalut-dog.png", description: "Two dental champions fight for dominance." },
-        { event: powerChargeEvent, level: 7, name: "Power charge", image: "electric-chair.png", description: "Mash Charge until the meter hits 100%." },
+        { event: emoglobinEvent, level: 6, name: "Emoglobin", image: "emoglobin.png", description: "Click in time with four heartbeat windows." },
+        { event: toothpasteBattleEvent, level: 6, name: "Toothpaste battle", image: "lacalut-dog.png", description: "Back one dental champion and see who wins." },
+        { event: powerChargeEvent, level: 7, name: "Power charge", image: "electric-chair.png", description: "Alternate left and right without making a mistake." },
         { event: whatsappSwipeEvent, level: 7, name: "Wizard call", image: "whatsapp-wizard.png", description: "Slide across the screen to answer." },
         { event: cosmicMemoryEvent, level: 8, name: "Cosmic memory", image: "cosmic-king.png", description: "Watch and repeat the symbol sequence." },
         { event: bikeEscapeEvent, level: 8, name: "Bike escape", image: "apocalypse-bike.png", description: "Remember the safe lane and escape." },
         { event: bossDefenseEvent, level: 9, name: "Boss defense", image: "boss-duo.png", description: "Chase the block button through five attacks." },
         { event: characterSelectEvent, level: 9, name: "Choose a fighter", image: "mr-aura.png", description: "Pick a fighter and reveal their power." },
-        { event: pancakeBalanceEvent, level: 10, name: "Pancake balance", image: "pancake-bunny.png", description: "Hold steady without letting go." }
+        { event: pancakeBalanceEvent, level: 10, name: "Pancake balance", image: "pancake-bunny.png", description: "Hold steady without letting go." },
+        { event: barberTimingEvent, level: 3, name: "Cursed haircut", image: "anime-barber.png", description: "Stop the clippers inside the marked zone." },
+        { event: volkscatParkingEvent, level: 4, name: "Volkscat parking", image: "volkscat.png", description: "Move the car into the highlighted parking bay." },
+        { event: chickenHorseEvent, level: 5, name: "Chicken horse", image: "chicken-horse.png", description: "Correctly classify an impossible animal." },
+        { event: gustavoCallEvent, level: 5, name: "Gustavo calling", image: "gustavo-call.png", description: "Answer Gustavo and determine what he wants." },
+        { event: galaxyShieldEvent, level: 6, name: "Galaxy shield", image: "galaxy-cat.png", description: "Raise the shield matching each incoming laser." },
+        { event: findTheCircleEvent, level: 7, name: "Find the circle", image: "circle-bunny.png", description: "Click the marked face hidden in the picture." },
+        { event: saveTheCatEvent, level: 8, name: "Bomb or cat", image: "bomb-vs-cat.png", description: "Keep selecting the cat while the sides switch." },
+        { event: meditationEvent, level: 9, name: "Never goon", image: "never-goon.png", description: "Follow three timed breathing prompts." },
+        { event: hashBrownEvent, level: 10, name: "Hash brown", image: "hash-brown-cat.png", description: "Build the order by pressing the words in sequence." },
+        { event: staticDischargeEvent, level: 11, name: "Static discharge", image: "lightning-dog.png", description: "Discharge five electrical nodes before timeout." },
+        { event: sansFightEvent, level: 12, name: "Bad time", image: "sans-fight/icon-256.png", description: "The complete Sans fight. Arrow keys move; Z selects." }
     ];
 }
 
@@ -256,13 +268,15 @@ function darkScreenEvent() {
     const overlay = document.createElement("div");
     const image = document.createElement("img");
 
-    overlay.className = "dark-event-overlay";
+    overlay.className = "dark-event-overlay random-event-overlay interactive-event dark-choice-event event-settling";
     image.className = "dark-event-image";
     image.src = "assets/dark-figure.png";
     image.alt = "A figure appearing in the darkness";
 
+    addEventText(overlay, "Wait for the light switch");
     overlay.appendChild(image);
     document.body.appendChild(overlay);
+    setTimeout(() => overlay.classList.remove("event-settling"), 650);
     playEventSound(overlay, "dark-ambience.mp3", 0.65);
 
     requestAnimationFrame(() => {
@@ -272,14 +286,22 @@ function darkScreenEvent() {
     });
 
     setTimeout(() => {
-        overlay.remove();
-    }, 5000);
+        if (!overlay.isConnected) return;
+        const light = addEventButton(overlay, "TURN ON LIGHT", () => {
+            playSound("success.mp3", 0.55);
+            finishInteractiveEvent(overlay, "Lights on.");
+        }, "event-choice light-switch");
+        light.focus();
+    }, 4000);
+
+    setTimeout(() => overlay.remove(), 10000);
 }
 
 function createEventOverlay(className, duration = 5000) {
     const overlay = document.createElement("div");
-    overlay.className = `random-event-overlay ${className}`;
+    overlay.className = `random-event-overlay event-settling ${className}`;
     document.body.appendChild(overlay);
+    setTimeout(() => overlay.classList.remove("event-settling"), 650);
     setTimeout(() => overlay.remove(), duration);
     return overlay;
 }
@@ -302,39 +324,95 @@ function addEventText(overlay, text, className = "event-message") {
 }
 
 function containmentBreachEvent() {
-    const overlay = createEventOverlay("containment-event", 5500);
+    const overlay = createEventOverlay("random-event-overlay interactive-event containment-event", 14000);
     playEventSound(overlay, "alarm.mp3", 0.55);
     setTimeout(() => {
         if (overlay.isConnected) playSound("cat-scream.mp3", 0.65);
     }, 2600);
-    addEventText(overlay, "⚠ BUTTON CONTAINMENT FAILURE ⚠");
+    const code = Array.from({ length: 3 }, () => 1 + Math.floor(Math.random() * 3));
+    addEventText(overlay, `Lock code: ${code.join(" · ")}`);
     addEventImage(overlay, "assets/containment-cat.gif", "Contained cat", "containment-cat");
-    addEventText(overlay, "DO NOT MAKE EYE CONTACT", "event-submessage");
+    addEventText(overlay, "Enter the code before containment fails", "event-submessage");
+    const controls = document.createElement("div");
+    controls.className = "event-choices";
+    overlay.appendChild(controls);
+    let position = 0;
+    [1, 2, 3].forEach(number => {
+        addEventButton(controls, String(number), () => {
+            if (code[position] !== number) {
+                position = 0;
+                playSound("fail.mp3", 0.5);
+                overlay.querySelector(".event-submessage").textContent = "Wrong. Start again.";
+                return;
+            }
+            position++;
+            playSound("pop.mp3", 0.4);
+            overlay.querySelector(".event-submessage").textContent = `${position}/3 entered`;
+            if (position === code.length) finishInteractiveEvent(overlay, "Containment restored.");
+        });
+    });
 }
 
 function chickenEvent() {
-    const overlay = createEventOverlay("chicken-event", 4500);
+    const overlay = createEventOverlay("random-event-overlay interactive-event chicken-event", 10000);
     playEventSound(overlay, "chicken.mp3", 0.8);
     addEventImage(overlay, "assets/toothy-chicken.png", "A chicken with human teeth", "chicken-image");
-    addEventText(overlay, "YOU CLUCKED AROUND.");
-    addEventText(overlay, "NOW YOU FIND OUT.", "event-submessage");
+    addEventText(overlay, "Close the gate");
+    const gate = document.createElement("input");
+    gate.type = "range";
+    gate.min = "0";
+    gate.max = "100";
+    gate.value = "0";
+    gate.className = "gate-slider";
+    overlay.appendChild(gate);
+    addEventText(overlay, "Drag the gate shut before the chicken arrives", "event-submessage");
+    gate.addEventListener("input", () => {
+        if (Number(gate.value) >= 98) finishInteractiveEvent(overlay, "Gate closed.");
+    });
 }
 
 function emoglobinEvent() {
-    const overlay = createEventOverlay("emoglobin-event", 5000);
+    const overlay = createEventOverlay("random-event-overlay interactive-event emoglobin-event", 15000);
     playEventSound(overlay, "heartbeat.mp3", 0.7);
     addEventImage(overlay, "assets/emoglobin.png", "Emoglobin", "emoglobin-image");
-    addEventText(overlay, "EMOGLOBIN DETECTED");
-    addEventText(overlay, "blood levels: extremely emo", "event-submessage");
+    addEventText(overlay, "Match 4 heartbeats — 0/4");
+    const beatButton = addEventButton(overlay, "WAIT", () => {
+        if (!beatButton.classList.contains("beat-now")) {
+            playSound("fail.mp3", 0.5);
+            finishInteractiveEvent(overlay, "Missed the beat.", false);
+            return;
+        }
+        hits++;
+        beatButton.classList.remove("beat-now");
+        beatButton.textContent = "WAIT";
+        overlay.querySelector(".event-message").textContent = `Match 4 heartbeats — ${hits}/4`;
+        if (hits === 4) finishInteractiveEvent(overlay, "Perfect rhythm.");
+    }, "event-choice heartbeat-button");
+    let hits = 0;
+    let beat = 0;
+    const pulse = setInterval(() => {
+        if (!overlay.isConnected || hits === 4) {
+            clearInterval(pulse);
+            return;
+        }
+        beat++;
+        beatButton.classList.add("beat-now");
+        beatButton.textContent = "BEAT";
+        setTimeout(() => {
+            beatButton.classList.remove("beat-now");
+            beatButton.textContent = "WAIT";
+        }, 420);
+        if (beat > 8 && hits < 4) {
+            clearInterval(pulse);
+            finishInteractiveEvent(overlay, "Rhythm lost.", false);
+        }
+    }, 1050);
 }
 
 function toothpasteBattleEvent() {
-    const overlay = createEventOverlay("toothpaste-event", 6000);
+    const overlay = createEventOverlay("random-event-overlay interactive-event toothpaste-event", 14000);
     playEventSound(overlay, "fight-bell.mp3", 0.75);
-    setTimeout(() => {
-        if (overlay.isConnected) playSound("punch.mp3", 0.65);
-    }, 1800);
-    addEventText(overlay, "TOOTHPASTE BATTLE");
+    addEventText(overlay, "Pick the winner");
 
     const arena = document.createElement("div");
     arena.className = "toothpaste-arena";
@@ -343,20 +421,45 @@ function toothpasteBattleEvent() {
     addEventText(arena, "VS", "versus");
     addEventImage(arena, "assets/colgate-dog.png", "Colgate dog", "toothpaste-fighter fighter-right");
 
-    setTimeout(() => {
-        if (!overlay.isConnected) return;
-        const winner = Math.random() < 0.5 ? "LACALUT WINS!" : "COLGATE WINS!";
-        addEventText(overlay, winner, "toothpaste-winner");
-        playSound("victory.mp3", 0.7);
-    }, 3500);
+    const picks = document.createElement("div");
+    picks.className = "event-choices";
+    overlay.appendChild(picks);
+    [["Lacalut", 0], ["Colgate", 1]].forEach(([name, pick]) => {
+        addEventButton(picks, name, () => {
+            const winner = Math.random() < 0.5 ? 0 : 1;
+            playSound("punch.mp3", 0.65);
+            setTimeout(() => {
+                if (!overlay.isConnected) return;
+                playSound(pick === winner ? "victory.mp3" : "fail.mp3", 0.65);
+                finishInteractiveEvent(overlay, pick === winner ? `${name} wins. Good call.` : `${winner === 0 ? "Lacalut" : "Colgate"} wins.`, pick === winner);
+            }, 700);
+            picks.querySelectorAll("button").forEach(choice => choice.disabled = true);
+        });
+    });
 }
 
 function hydrationInspectionEvent() {
-    const overlay = createEventOverlay("hydration-event", 5000);
+    const overlay = createEventOverlay("random-event-overlay interactive-event hydration-event", 14000);
     playEventSound(overlay, "water-bubble.mp3", 0.65);
-    addEventText(overlay, "HYDRATION INSPECTION");
+    addEventText(overlay, "Hydration check");
     addEventImage(overlay, "assets/bottle-cat.png", "Cat inside a water bottle", "bottle-cat");
-    addEventText(overlay, "drink water. the cat is watching.", "event-submessage");
+    addEventText(overlay, "Type WATER and press Enter", "event-submessage");
+    const answer = document.createElement("input");
+    answer.className = "hydration-input";
+    answer.placeholder = "type here";
+    answer.autocomplete = "off";
+    overlay.appendChild(answer);
+    answer.focus();
+    answer.addEventListener("keydown", event => {
+        if (event.key !== "Enter") return;
+        if (answer.value.trim().toLowerCase() === "water") {
+            finishInteractiveEvent(overlay, "Hydration approved.");
+        } else {
+            playSound("fail.mp3", 0.5);
+            answer.value = "";
+            answer.placeholder = "try again";
+        }
+    });
 }
 
 function addEventButton(overlay, text, onClick, className = "event-choice") {
@@ -368,8 +471,8 @@ function addEventButton(overlay, text, onClick, className = "event-choice") {
     return choice;
 }
 
-function finishInteractiveEvent(overlay, message) {
-    if (!overlay.progressRewarded) {
+function finishInteractiveEvent(overlay, message, reward = true) {
+    if (reward && !overlay.progressRewarded) {
         overlay.progressRewarded = true;
         awardXP(15);
         showToast("Event completed — +15 XP");
@@ -525,7 +628,7 @@ function reactionDuelEvent() {
         const reaction = performance.now() - startedAt;
         if (reaction < 0) {
             playSound("fail.mp3", 0.7);
-            finishInteractiveEvent(overlay, "Too early.");
+            finishInteractiveEvent(overlay, "Too early.", false);
         } else {
             playSound("success.mp3", 0.65);
             finishInteractiveEvent(overlay, `${Math.round(reaction)} ms`);
@@ -542,22 +645,34 @@ function reactionDuelEvent() {
 
 function powerChargeEvent() {
     const overlay = createEventOverlay("interactive-event power-event", 14000);
-    addEventText(overlay, "Charge the chair — 0%");
+    addEventText(overlay, "Alternate controls — LEFT first");
     addEventImage(overlay, "assets/electric-chair.png", "Electric chair", "challenge-image");
     const meter = document.createElement("div");
     meter.className = "charge-meter";
     meter.innerHTML = "<div></div>";
     overlay.appendChild(meter);
     let charge = 0;
-    addEventButton(overlay, "Charge", () => {
-        charge = Math.min(100, charge + 10);
-        playSound("punch.mp3", 0.35);
-        meter.firstElementChild.style.width = `${charge}%`;
-        overlay.querySelector(".event-message").textContent = `Charge the chair — ${charge}%`;
-        if (charge === 100) {
-            playSound("success.mp3", 0.65);
-            finishInteractiveEvent(overlay, "Fully charged.");
-        }
+    let expectedSide = "LEFT";
+    const controls = document.createElement("div");
+    controls.className = "event-choices charge-controls";
+    overlay.appendChild(controls);
+    ["LEFT", "RIGHT"].forEach(side => {
+        addEventButton(controls, side, () => {
+            if (side !== expectedSide) {
+                charge = Math.max(0, charge - 20);
+                playSound("fail.mp3", 0.45);
+            } else {
+                charge = Math.min(100, charge + 20);
+                expectedSide = expectedSide === "LEFT" ? "RIGHT" : "LEFT";
+                playSound("punch.mp3", 0.35);
+            }
+            meter.firstElementChild.style.width = `${charge}%`;
+            overlay.querySelector(".event-message").textContent = `${charge}% — press ${expectedSide}`;
+            if (charge === 100) {
+                playSound("success.mp3", 0.65);
+                finishInteractiveEvent(overlay, "Fully charged.");
+            }
+        });
     });
 }
 
@@ -597,7 +712,7 @@ function cosmicMemoryEvent() {
             playSound("pop.mp3", 0.4);
             if (sequence[position] !== index) {
                 playSound("fail.mp3", 0.65);
-                finishInteractiveEvent(overlay, "Wrong sequence.");
+                finishInteractiveEvent(overlay, "Wrong sequence.", false);
                 return;
             }
             position++;
@@ -640,7 +755,7 @@ function bikeEscapeEvent() {
         return addEventButton(lanes, label, () => {
             if (index !== safeLane) {
                 playSound("fail.mp3", 0.65);
-                finishInteractiveEvent(overlay, "Meteor. Wrong lane.");
+                finishInteractiveEvent(overlay, "Meteor. Wrong lane.", false);
                 return;
             }
             playSound("whoosh.mp3", 0.55);
@@ -689,22 +804,26 @@ function bossDefenseEvent() {
 
 function characterSelectEvent() {
     const overlay = createEventOverlay("interactive-event select-event", 15000);
-    addEventText(overlay, "Choose your fighter");
+    const challenge = ["strength", "speed", "luck"][Math.floor(Math.random() * 3)];
+    addEventText(overlay, `Choose for ${challenge}`);
     const roster = document.createElement("div");
     roster.className = "fighter-roster";
     overlay.appendChild(roster);
     const fighters = [
-        ["assets/mr-penis.png", "Mr. Penis", 72],
-        ["assets/mr-aura.png", "Mr. Aura", 98],
-        ["assets/mrs-boobs.png", "Mrs. Boobs", 84]
+        { source: "assets/mr-penis.png", name: "Mr. Penis", strength: 9, speed: 4, luck: 5 },
+        { source: "assets/mr-aura.png", name: "Mr. Aura", strength: 6, speed: 7, luck: 10 },
+        { source: "assets/mrs-boobs.png", name: "Mrs. Boobs", strength: 5, speed: 10, luck: 7 }
     ];
-    fighters.forEach(([source, name, power]) => {
+    const bestScore = Math.max(...fighters.map(fighter => fighter[challenge]));
+    fighters.forEach(fighter => {
         const card = document.createElement("button");
         card.className = "fighter-card";
-        card.innerHTML = `<img src="${source}" alt="${name}"><span>${name}</span>`;
+        card.innerHTML = `<img src="${fighter.source}" alt="${fighter.name}"><span>${fighter.name}</span><small>STR ${fighter.strength} · SPD ${fighter.speed} · LCK ${fighter.luck}</small>`;
         card.addEventListener("click", () => {
             playSound("fight-bell.mp3", 0.6);
-            finishInteractiveEvent(overlay, `${name} selected — power ${power}`);
+            const won = fighter[challenge] === bestScore;
+            playSound(won ? "success.mp3" : "fail.mp3", 0.55);
+            finishInteractiveEvent(overlay, won ? `${fighter.name} wins on ${challenge}.` : `${fighter.name} wasn't the best pick.`, won);
         });
         roster.appendChild(card);
     });
@@ -743,4 +862,318 @@ function pancakeBalanceEvent() {
     });
     hold.addEventListener("pointerup", stopHolding);
     hold.addEventListener("pointerleave", stopHolding);
+}
+
+function slotMachineEvent() {
+    const overlay = createEventOverlay("interactive-event slots-event", 20000);
+    addEventText(overlay, "Image slots");
+    addEventText(overlay, "Three matching images pay 100 XP", "event-submessage");
+
+    const imagePool = getEventDefinitions()
+        .filter(definition => definition.event !== slotMachineEvent)
+        .map(definition => definition.image);
+    const machine = document.createElement("div");
+    machine.className = "slot-machine";
+    overlay.appendChild(machine);
+    const reels = Array.from({ length: 3 }, () => {
+        const reel = document.createElement("div");
+        reel.className = "slot-reel";
+        const image = document.createElement("img");
+        image.src = `assets/${imagePool[Math.floor(Math.random() * imagePool.length)]}`;
+        image.alt = "Slot reel";
+        reel.appendChild(image);
+        machine.appendChild(reel);
+        return image;
+    });
+
+    const spin = addEventButton(overlay, "SPIN", () => {
+        spin.disabled = true;
+        playSound("event-start.mp3", 0.55);
+        const jackpot = Math.random() < 0.2;
+        const winningImage = imagePool[Math.floor(Math.random() * imagePool.length)];
+        const results = jackpot
+            ? [winningImage, winningImage, winningImage]
+            : pickLosingSlotResult(imagePool);
+
+        reels.forEach((reel, index) => {
+            let changes = 0;
+            const interval = setInterval(() => {
+                reel.src = `assets/${imagePool[Math.floor(Math.random() * imagePool.length)]}`;
+                changes++;
+                if (changes % 4 === 0) playSound("pop.mp3", 0.18);
+                if (changes >= 9 + index * 4) {
+                    clearInterval(interval);
+                    reel.src = `assets/${results[index]}`;
+                    reel.closest(".slot-reel").classList.add("stopped");
+                    if (index === 2) {
+                        setTimeout(() => {
+                            if (!overlay.isConnected) return;
+                            if (jackpot) {
+                                awardXP(100);
+                                playSound("victory.mp3", 0.75);
+                                showToast("jackpot · +100 xp");
+                                finishInteractiveEvent(overlay, "JACKPOT — +100 XP", false);
+                            } else {
+                                playSound("fail.mp3", 0.45);
+                                finishInteractiveEvent(overlay, "No match.", false);
+                            }
+                        }, 450);
+                    }
+                }
+            }, 90);
+        });
+    }, "event-choice slot-spin");
+}
+
+function pickLosingSlotResult(imagePool) {
+    const results = Array.from({ length: 3 }, () => imagePool[Math.floor(Math.random() * imagePool.length)]);
+    if (results[0] === results[1] && results[1] === results[2]) {
+        results[2] = imagePool.find(image => image !== results[0]);
+    }
+    return results;
+}
+
+function createImageGame(title, imageName, className, duration = 15000) {
+    const overlay = createEventOverlay(`interactive-event ${className}`, duration);
+    addEventText(overlay, title);
+    addEventImage(overlay, `assets/${imageName}`, title, "challenge-image");
+    return overlay;
+}
+
+function barberTimingEvent() {
+    const overlay = createImageGame("Stop the clippers in the zone", "anime-barber.png", "barber-event");
+    playEventSound(overlay, "event-start.mp3", 0.35);
+    const track = document.createElement("div");
+    track.className = "timing-track";
+    const target = document.createElement("div");
+    target.className = "timing-target";
+    const marker = document.createElement("div");
+    marker.className = "timing-marker";
+    const targetPosition = 20 + Math.random() * 60;
+    target.style.left = `${targetPosition}%`;
+    track.append(target, marker);
+    overlay.appendChild(track);
+    const started = performance.now();
+    addEventButton(overlay, "STOP", () => {
+        const phase = ((performance.now() - started) % 3600) / 1800;
+        const markerPosition = phase <= 1 ? phase * 100 : (2 - phase) * 100;
+        const won = Math.abs(markerPosition - targetPosition) <= 8;
+        playSound(won ? "success.mp3" : "haircut-fail.mp3", 0.6);
+        finishInteractiveEvent(overlay, won ? "Clean cut." : "Bad haircut.", won);
+    });
+}
+
+function volkscatParkingEvent() {
+    const overlay = createImageGame("Park in the highlighted bay", "volkscat.png", "parking-event");
+    playEventSound(overlay, "car-engine.mp3", 0.3, true);
+    const parking = document.createElement("div");
+    parking.className = "parking-grid";
+    const target = Math.random() < 0.5 ? 0 : 2;
+    let position = 1;
+    const bays = Array.from({ length: 3 }, (_, index) => {
+        const bay = document.createElement("div");
+        bay.className = `parking-bay${index === target ? " parking-target" : ""}`;
+        parking.appendChild(bay);
+        return bay;
+    });
+    const car = document.createElement("div");
+    car.className = "parking-car";
+    car.textContent = "🚗";
+    parking.appendChild(car);
+    overlay.appendChild(parking);
+    const controls = document.createElement("div");
+    controls.className = "event-choices";
+    overlay.appendChild(controls);
+    const updateCar = () => car.style.left = `${16.67 + position * 33.33}%`;
+    addEventButton(controls, "←", () => { position = Math.max(0, position - 1); playSound("car-move.mp3", 0.25); updateCar(); });
+    addEventButton(controls, "PARK", () => {
+        const won = position === target;
+        playSound(won ? "car-horn.mp3" : "fail.mp3", 0.55);
+        finishInteractiveEvent(overlay, won ? "Parked." : "Wrong bay.", won);
+    });
+    addEventButton(controls, "→", () => { position = Math.min(2, position + 1); playSound("car-move.mp3", 0.25); updateCar(); });
+    updateCar();
+}
+
+function chickenHorseEvent() {
+    const overlay = createImageGame("What is this?", "chicken-horse.png", "hybrid-event");
+    playEventSound(overlay, "horse-neigh.mp3", 0.55);
+    const controls = document.createElement("div");
+    controls.className = "event-choices";
+    overlay.appendChild(controls);
+    ["CHICKEN", "HORSE", "BOTH"].forEach(answer => {
+        addEventButton(controls, answer, () => finishInteractiveEvent(overlay, answer === "BOTH" ? "Correct enough." : "Look again.", answer === "BOTH"));
+    });
+}
+
+function gustavoCallEvent() {
+    const overlay = createImageGame("Gustavo is calling", "gustavo-call.png", "gustavo-event");
+    playEventSound(overlay, "gustavo-ringtone.mp3", 0.5, true);
+    const controls = document.createElement("div");
+    controls.className = "event-choices";
+    overlay.appendChild(controls);
+    addEventButton(controls, "ANSWER", () => {
+        overlay.eventAudio?.forEach(audio => audio.pause());
+        playSound("dog-bark.mp3", 0.65);
+        controls.innerHTML = "";
+        overlay.querySelector(".event-message").textContent = "Gustavo says: WOOF WOOF?";
+        ["TREAT", "TAXES", "WRONG NUMBER"].forEach(answer => {
+            addEventButton(controls, answer, () => finishInteractiveEvent(overlay, answer === "TREAT" ? "Correct. Gustavo wanted a treat." : "Gustavo hung up.", answer === "TREAT"));
+        });
+    }, "event-choice accept-call");
+    addEventButton(controls, "DECLINE", () => finishInteractiveEvent(overlay, "Gustavo will remember this.", false), "event-choice decline-call");
+}
+
+function galaxyShieldEvent() {
+    const overlay = createImageGame("Raise the correct shield", "galaxy-cat.png", "galaxy-event", 18000);
+    playEventSound(overlay, "laser-charge.mp3", 0.45);
+    const directions = ["LEFT", "UP", "RIGHT"];
+    let round = 0;
+    let expected = directions[Math.floor(Math.random() * directions.length)];
+    const controls = document.createElement("div");
+    controls.className = "event-choices shield-controls";
+    overlay.appendChild(controls);
+    const updatePrompt = () => overlay.querySelector(".event-message").textContent = `LASER: ${expected} · ${round}/5`;
+    directions.forEach(direction => addEventButton(controls, direction, () => {
+        if (direction !== expected) {
+            playSound("laser-hit.mp3", 0.65);
+            return finishInteractiveEvent(overlay, "Shield missed.", false);
+        }
+        round++;
+        playSound("laser-block.mp3", 0.55);
+        if (round === 5) return finishInteractiveEvent(overlay, "All lasers blocked.");
+        expected = directions[Math.floor(Math.random() * directions.length)];
+        playSound("laser-charge.mp3", 0.4);
+        updatePrompt();
+    }));
+    updatePrompt();
+}
+
+function findTheCircleEvent() {
+    const overlay = createEventOverlay("interactive-event circle-event", 15000);
+    addEventText(overlay, "Click the red face");
+    const stage = document.createElement("div");
+    stage.className = "hotspot-stage";
+    stage.innerHTML = '<img src="assets/circle-bunny.png" alt="Bunny with a marked face">';
+    const hotspot = document.createElement("button");
+    hotspot.className = "image-hotspot";
+    hotspot.setAttribute("aria-label", "Red face");
+    hotspot.addEventListener("click", () => {
+        playSound("target-found.mp3", 0.6);
+        finishInteractiveEvent(overlay, "Found it.");
+    });
+    stage.appendChild(hotspot);
+    overlay.appendChild(stage);
+}
+
+function saveTheCatEvent() {
+    const overlay = createImageGame("Click CAT four times", "bomb-vs-cat.png", "bomb-cat-event");
+    playEventSound(overlay, "bomb-ticking.mp3", 0.4, true);
+    const controls = document.createElement("div");
+    controls.className = "event-choices swapping-controls";
+    overlay.appendChild(controls);
+    let saves = 0;
+    const render = () => {
+        controls.innerHTML = "";
+        const options = Math.random() < 0.5 ? ["BOMB", "CAT"] : ["CAT", "BOMB"];
+        options.forEach(option => addEventButton(controls, option, () => {
+            if (option === "BOMB") {
+                playSound("explosion.mp3", 0.7);
+                return finishInteractiveEvent(overlay, "Wrong one.", false);
+            }
+            saves++;
+            playSound("cat-meow.mp3", 0.5);
+            if (saves === 4) return finishInteractiveEvent(overlay, "Cat saved.");
+            overlay.querySelector(".event-message").textContent = `Click CAT four times · ${saves}/4`;
+            render();
+        }));
+    };
+    render();
+}
+
+function meditationEvent() {
+    const overlay = createImageGame("Breathe in...", "never-goon.png", "meditation-event", 18000);
+    playEventSound(overlay, "meditation-hum.mp3", 0.35, true);
+    playSound("inhale.mp3", 0.5);
+    const breathe = addEventButton(overlay, "WAIT", () => {
+        if (breathe.textContent !== "EXHALE") return finishInteractiveEvent(overlay, "Broke focus.", false);
+        playSound("exhale.mp3", 0.5);
+        rounds++;
+        if (rounds === 3) return finishInteractiveEvent(overlay, "Focus complete.");
+        breathe.textContent = "WAIT";
+        overlay.querySelector(".event-message").textContent = "Breathe in...";
+        playSound("inhale.mp3", 0.5);
+    });
+    let rounds = 0;
+    const breathing = setInterval(() => {
+        if (!overlay.isConnected || rounds === 3) return clearInterval(breathing);
+        breathe.textContent = "EXHALE";
+        overlay.querySelector(".event-message").textContent = "Breathe out — click EXHALE";
+        setTimeout(() => {
+            if (!overlay.isConnected || breathe.textContent !== "EXHALE") return;
+            finishInteractiveEvent(overlay, "Missed the breath.", false);
+        }, 1100);
+    }, 2800);
+}
+
+function hashBrownEvent() {
+    const overlay = createImageGame("Build: HASH BROWN HASH BROWN", "hash-brown-cat.png", "hash-event");
+    const sequence = ["HASH", "BROWN", "HASH", "BROWN"];
+    let position = 0;
+    const controls = document.createElement("div");
+    controls.className = "event-choices";
+    overlay.appendChild(controls);
+    ["BROWN", "HASH"].forEach(word => addEventButton(controls, word, () => {
+        if (sequence[position] !== word) return finishInteractiveEvent(overlay, "Order ruined.", false);
+        position++;
+        playSound("pop.mp3", 0.4);
+        overlay.querySelector(".event-message").textContent = `${sequence.slice(0, position).join(" ")} _`;
+        if (position === sequence.length) {
+            playSound("service-bell.mp3", 0.65);
+            finishInteractiveEvent(overlay, "Order complete.");
+        }
+    }));
+}
+
+function staticDischargeEvent() {
+    const overlay = createImageGame("Discharge the nodes — 0/5", "lightning-dog.png", "static-event", 16000);
+    let cleared = 0;
+    const spawnNode = () => {
+        playSound("laser-charge.mp3", 0.25);
+        const node = document.createElement("button");
+        node.className = "electric-node";
+        node.textContent = "⚡";
+        node.style.left = `${12 + Math.random() * 76}%`;
+        node.style.top = `${18 + Math.random() * 65}%`;
+        node.addEventListener("click", () => {
+            node.remove();
+            cleared++;
+            playSound("laser-hit.mp3", 0.5);
+            overlay.querySelector(".event-message").textContent = `Discharge the nodes — ${cleared}/5`;
+            if (cleared === 5) finishInteractiveEvent(overlay, "Static cleared.");
+            else spawnNode();
+        });
+        overlay.appendChild(node);
+    };
+    spawnNode();
+}
+
+function sansFightEvent() {
+    const overlay = createEventOverlay("sans-fight-event", 600000);
+    const iframe = document.createElement("iframe");
+    iframe.className = "sans-fight-frame";
+    iframe.src = "assets/sans-fight/index.html";
+    iframe.title = "Sans fight";
+
+    const controls = document.createElement("div");
+    controls.className = "sans-fight-controls";
+    controls.textContent = "ARROWS: MOVE  ·  Z: SELECT  ·  X: CANCEL";
+    const exit = document.createElement("button");
+    exit.type = "button";
+    exit.textContent = "EXIT FIGHT";
+    exit.addEventListener("click", () => overlay.remove());
+    controls.appendChild(exit);
+
+    overlay.append(iframe, controls);
+    iframe.addEventListener("load", () => iframe.contentWindow.focus());
 }
