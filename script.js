@@ -1,8 +1,101 @@
 const button = document.getElementById("button");
 const clicksText = document.getElementById("clicks");
-let clicks = 0;
+const levelText = document.getElementById("level-text");
+const comboText = document.getElementById("combo-text");
+const xpFill = document.getElementById("xp-fill");
+const rankText = document.getElementById("rank-text");
+const nextUnlockText = document.getElementById("next-unlock");
+const indexButton = document.getElementById("index-button");
+const savedProgress = JSON.parse(localStorage.getItem("buttonGameProgress") || "{}");
+let clicks = Number(savedProgress.clicks) || 0;
+let totalXP = Number(savedProgress.totalXP) || 0;
+let achievements = Array.isArray(savedProgress.achievements) ? savedProgress.achievements : [];
+let combo = 0;
+let lastClickTime = 0;
+let comboTimer;
 let randomEventTriggered = false;
 let lastRandomEvent = null;
+
+function getLevelProgress(xp = totalXP) {
+    let level = 1;
+    let remaining = xp;
+    let needed = 30;
+
+    while (remaining >= needed) {
+        remaining -= needed;
+        level++;
+        needed = 20 + level * 10;
+    }
+
+    return { level, currentXP: remaining, neededXP: needed };
+}
+
+function saveProgress() {
+    localStorage.setItem("buttonGameProgress", JSON.stringify({ clicks, totalXP, achievements }));
+}
+
+function showToast(message) {
+    const toast = document.createElement("div");
+    toast.className = "game-toast";
+    toast.textContent = message;
+    toast.style.bottom = `${24 + document.querySelectorAll(".game-toast").length * 58}px`;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add("visible"));
+    setTimeout(() => {
+        toast.classList.remove("visible");
+        setTimeout(() => toast.remove(), 250);
+    }, 2200);
+}
+
+function awardXP(amount) {
+    const oldLevel = getLevelProgress().level;
+    totalXP += amount;
+    const newLevel = getLevelProgress().level;
+
+    if (newLevel > oldLevel) {
+        playSound("success.mp3", 0.6);
+        const unlocked = getEventDefinitions().filter(definition => definition.level === newLevel).length;
+        showToast(unlocked ? `level ${newLevel} · ${unlocked} new event${unlocked === 1 ? "" : "s"}` : `level ${newLevel}`);
+    }
+
+    saveProgress();
+    updateProgressUI();
+}
+
+function checkClickAchievements() {
+    const milestones = [
+        { clicks: 10, name: "Warm-up", reward: 10 },
+        { clicks: 50, name: "Still pressing", reward: 20 },
+        { clicks: 100, name: "Triple digits", reward: 30 },
+        { clicks: 250, name: "Button problem", reward: 50 },
+        { clicks: 500, name: "No self-control", reward: 75 },
+        { clicks: 1000, name: "Button legend", reward: 150 }
+    ];
+
+    milestones.forEach(milestone => {
+        if (clicks >= milestone.clicks && !achievements.includes(milestone.name)) {
+            achievements.push(milestone.name);
+            showToast(`${milestone.name} — +${milestone.reward} XP`);
+            awardXP(milestone.reward);
+        }
+    });
+}
+
+function updateProgressUI() {
+    const progress = getLevelProgress();
+    const definitions = getEventDefinitions();
+    const nextUnlock = definitions.find(definition => definition.level > progress.level);
+    const unlockedCount = definitions.filter(definition => definition.level <= progress.level).length;
+
+    clicksText.textContent = clicks;
+    levelText.textContent = `LV ${String(progress.level).padStart(2, "0")}`;
+    comboText.textContent = `x${Math.max(1, combo)}`;
+    xpFill.style.width = `${(progress.currentXP / progress.neededXP) * 100}%`;
+    rankText.textContent = `${unlockedCount}/${definitions.length} events`;
+    nextUnlockText.textContent = nextUnlock
+        ? `${progress.currentXP}/${progress.neededXP} xp · next: ${nextUnlock.name}`
+        : `${progress.currentXP}/${progress.neededXP} xp · all unlocked`;
+}
 
 function playClickSound() {
     playSound("click.mp3", 0.7);
@@ -33,14 +126,26 @@ function playEventSound(overlay, fileName, volume = 1, loop = false) {
 }
 
 button.addEventListener("click", () => {
+    const now = performance.now();
+    combo = now - lastClickTime < 1100 ? Math.min(combo + 1, 20) : 1;
+    lastClickTime = now;
+    clearTimeout(comboTimer);
+    comboTimer = setTimeout(() => {
+        combo = 0;
+        updateProgressUI();
+    }, 1400);
+
     clicks++;
-    clicksText.textContent = clicks;
     playClickSound();
+    awardXP(1 + Math.floor((combo - 1) / 5));
+    checkClickAchievements();
 
     randomEventTriggered = false;
 
     tryRandomEvent(5, runRandomEvent);
 });
+
+updateProgressUI();
 
 
 
@@ -67,29 +172,76 @@ function tryRandomEvent(chancePercent, event) {
     return false;
 }
 
-function runRandomEvent() {
-    const events = [
-        darkScreenEvent,
-        containmentBreachEvent,
-        chickenEvent,
-        emoglobinEvent,
-        toothpasteBattleEvent,
-        hydrationInspectionEvent,
-        breakfastQuizEvent,
-        flushThePigEvent,
-        darknessHuntEvent,
-        greenCreatureEvent,
-        phoneCallEvent,
-        sparkleCollectorEvent,
-        birdExamEvent,
-        reactionDuelEvent
+function getEventDefinitions() {
+    return [
+        { event: darkScreenEvent, level: 1, name: "Darkness", image: "dark-figure.png", description: "Something slowly appears in the dark." },
+        { event: breakfastQuizEvent, level: 1, name: "Breakfast quiz", image: "breakfast-bird.png", description: "Answer one very important breakfast question." },
+        { event: flushThePigEvent, level: 1, name: "Emergency flush", image: "toilet-pig.png", description: "Click fast and deal with the bathroom situation." },
+        { event: containmentBreachEvent, level: 2, name: "Containment breach", image: "containment-cat.gif", description: "The contained cat is no longer contained." },
+        { event: chickenEvent, level: 2, name: "Chicken charge", image: "toothy-chicken.png", description: "A deeply upsetting chicken approaches." },
+        { event: hydrationInspectionEvent, level: 3, name: "Hydration inspection", image: "bottle-cat.png", description: "The bottle cat checks your water intake." },
+        { event: greenCreatureEvent, level: 3, name: "Creature chase", image: "green-creature.png", description: "Catch and bonk the moving creature." },
+        { event: phoneCallEvent, level: 4, name: "Incoming call", image: "phone-creature.png", description: "Answer the call or try to decline it." },
+        { event: sparkleCollectorEvent, level: 4, name: "Sparkle collector", image: "sparkle-mask.png", description: "Collect every sparkle before time runs out." },
+        { event: darknessHuntEvent, level: 4, name: "Escape the void", image: "pure-darkness.png", description: "Find the escape button three times." },
+        { event: birdExamEvent, level: 5, name: "Bird exam", image: "strange-bird.png", description: "Pass an advanced bird identification test." },
+        { event: reactionDuelEvent, level: 5, name: "Reaction duel", image: "parking-lot-person.png", description: "Wait for GO and test your reaction time." },
+        { event: emoglobinEvent, level: 6, name: "Emoglobin", image: "emoglobin.png", description: "Blood levels become extremely emo." },
+        { event: toothpasteBattleEvent, level: 6, name: "Toothpaste battle", image: "lacalut-dog.png", description: "Two dental champions fight for dominance." },
+        { event: powerChargeEvent, level: 7, name: "Power charge", image: "electric-chair.png", description: "Mash Charge until the meter hits 100%." },
+        { event: whatsappSwipeEvent, level: 7, name: "Wizard call", image: "whatsapp-wizard.png", description: "Slide across the screen to answer." },
+        { event: cosmicMemoryEvent, level: 8, name: "Cosmic memory", image: "cosmic-king.png", description: "Watch and repeat the symbol sequence." },
+        { event: bikeEscapeEvent, level: 8, name: "Bike escape", image: "apocalypse-bike.png", description: "Remember the safe lane and escape." },
+        { event: bossDefenseEvent, level: 9, name: "Boss defense", image: "boss-duo.png", description: "Chase the block button through five attacks." },
+        { event: characterSelectEvent, level: 9, name: "Choose a fighter", image: "mr-aura.png", description: "Pick a fighter and reveal their power." },
+        { event: pancakeBalanceEvent, level: 10, name: "Pancake balance", image: "pancake-bunny.png", description: "Hold steady without letting go." }
     ];
+}
 
-    const availableEvents = events.filter(event => event !== lastRandomEvent);
-    const chosenEvent = availableEvents[Math.floor(Math.random() * availableEvents.length)];
+function openEventIndex() {
+    const level = getLevelProgress().level;
+    const index = document.createElement("div");
+    index.className = "event-index";
 
-    lastRandomEvent = chosenEvent;
-    chosenEvent();
+    const header = document.createElement("header");
+    header.className = "event-index-header";
+    header.innerHTML = `<div><h2>EVENT INDEX</h2><span>${getEventDefinitions().filter(item => item.level <= level).length}/${getEventDefinitions().length} unlocked</span></div>`;
+    const close = document.createElement("button");
+    close.type = "button";
+    close.textContent = "CLOSE";
+    close.addEventListener("click", () => index.remove());
+    header.appendChild(close);
+    index.appendChild(header);
+
+    const grid = document.createElement("div");
+    grid.className = "event-index-grid";
+    getEventDefinitions().forEach((definition, position) => {
+        const unlocked = definition.level <= level;
+        const card = document.createElement("article");
+        card.className = `event-index-card${unlocked ? "" : " locked"}`;
+        card.innerHTML = `
+            <div class="event-index-number">${String(position + 1).padStart(2, "0")}</div>
+            <img src="assets/${definition.image}" alt="${unlocked ? definition.name : "Locked event"}">
+            <div class="event-index-copy">
+                <h3>${unlocked ? definition.name : "???"}</h3>
+                <p>${unlocked ? definition.description : "???"}</p>
+            </div>`;
+        grid.appendChild(card);
+    });
+    index.appendChild(grid);
+    document.body.appendChild(index);
+}
+
+indexButton.addEventListener("click", openEventIndex);
+
+function runRandomEvent() {
+    const level = getLevelProgress().level;
+    const availableEvents = getEventDefinitions()
+        .filter(definition => definition.level <= level && definition.event !== lastRandomEvent);
+    const chosen = availableEvents[Math.floor(Math.random() * availableEvents.length)];
+
+    lastRandomEvent = chosen.event;
+    chosen.event();
 }
 
 function hideButtonTemporarily(durationMilliseconds) {
@@ -217,6 +369,11 @@ function addEventButton(overlay, text, onClick, className = "event-choice") {
 }
 
 function finishInteractiveEvent(overlay, message) {
+    if (!overlay.progressRewarded) {
+        overlay.progressRewarded = true;
+        awardXP(15);
+        showToast("Event completed — +15 XP");
+    }
     overlay.eventAudio?.forEach(audio => audio.pause());
     overlay.innerHTML = "";
     addEventText(overlay, message);
@@ -381,4 +538,209 @@ function reactionDuelEvent() {
         duelButton.textContent = "Click";
         duelButton.classList.add("ready");
     }, startedAt - performance.now());
+}
+
+function powerChargeEvent() {
+    const overlay = createEventOverlay("interactive-event power-event", 14000);
+    addEventText(overlay, "Charge the chair — 0%");
+    addEventImage(overlay, "assets/electric-chair.png", "Electric chair", "challenge-image");
+    const meter = document.createElement("div");
+    meter.className = "charge-meter";
+    meter.innerHTML = "<div></div>";
+    overlay.appendChild(meter);
+    let charge = 0;
+    addEventButton(overlay, "Charge", () => {
+        charge = Math.min(100, charge + 10);
+        playSound("punch.mp3", 0.35);
+        meter.firstElementChild.style.width = `${charge}%`;
+        overlay.querySelector(".event-message").textContent = `Charge the chair — ${charge}%`;
+        if (charge === 100) {
+            playSound("success.mp3", 0.65);
+            finishInteractiveEvent(overlay, "Fully charged.");
+        }
+    });
+}
+
+function whatsappSwipeEvent() {
+    const overlay = createEventOverlay("interactive-event whatsapp-event", 14000);
+    addEventText(overlay, "Slide to answer");
+    addEventImage(overlay, "assets/whatsapp-wizard.png", "WhatsApp wizard", "challenge-image");
+    const slider = document.createElement("input");
+    slider.type = "range";
+    slider.min = "0";
+    slider.max = "100";
+    slider.value = "0";
+    slider.className = "answer-slider";
+    overlay.appendChild(slider);
+    addEventText(overlay, "Drag all the way right", "event-submessage");
+    slider.addEventListener("input", () => {
+        if (Number(slider.value) >= 98) {
+            playSound("monkey.mp3", 0.65);
+            finishInteractiveEvent(overlay, "The wizard answered.");
+        }
+    });
+}
+
+function cosmicMemoryEvent() {
+    const overlay = createEventOverlay("interactive-event cosmic-event", 16000);
+    addEventText(overlay, "Remember the sequence");
+    addEventImage(overlay, "assets/cosmic-king.png", "Cosmic king", "cosmic-background");
+    const symbols = ["☀", "★", "☾", "◆"];
+    const sequence = Array.from({ length: 4 }, () => Math.floor(Math.random() * symbols.length));
+    const controls = document.createElement("div");
+    controls.className = "memory-controls";
+    overlay.appendChild(controls);
+    let position = 0;
+    const memoryButtons = symbols.map((symbol, index) => {
+        const memoryButton = addEventButton(controls, symbol, () => {
+            if (memoryButton.disabled) return;
+            playSound("pop.mp3", 0.4);
+            if (sequence[position] !== index) {
+                playSound("fail.mp3", 0.65);
+                finishInteractiveEvent(overlay, "Wrong sequence.");
+                return;
+            }
+            position++;
+            if (position === sequence.length) {
+                playSound("success.mp3", 0.65);
+                finishInteractiveEvent(overlay, "Sequence complete.");
+            }
+        }, "event-choice memory-button");
+        memoryButton.disabled = true;
+        return memoryButton;
+    });
+
+    sequence.forEach((buttonIndex, sequenceIndex) => {
+        setTimeout(() => {
+            if (!overlay.isConnected) return;
+            const memoryButton = memoryButtons[buttonIndex];
+            memoryButton.classList.add("memory-flash");
+            playSound("pop.mp3", 0.3);
+            setTimeout(() => memoryButton.classList.remove("memory-flash"), 450);
+        }, 900 + sequenceIndex * 750);
+    });
+
+    setTimeout(() => {
+        if (!overlay.isConnected) return;
+        overlay.querySelector(".event-message").textContent = "Repeat it";
+        memoryButtons.forEach(memoryButton => memoryButton.disabled = false);
+    }, 900 + sequence.length * 750);
+}
+
+function bikeEscapeEvent() {
+    const overlay = createEventOverlay("interactive-event bike-event", 15000);
+    addEventText(overlay, "Watch the safe lane — round 1/3");
+    addEventImage(overlay, "assets/apocalypse-bike.png", "Bicycle escaping an explosion", "challenge-image");
+    const lanes = document.createElement("div");
+    lanes.className = "event-choices";
+    overlay.appendChild(lanes);
+    let round = 1;
+    let safeLane = Math.floor(Math.random() * 3);
+    const laneButtons = ["Left", "Middle", "Right"].map((label, index) => {
+        return addEventButton(lanes, label, () => {
+            if (index !== safeLane) {
+                playSound("fail.mp3", 0.65);
+                finishInteractiveEvent(overlay, "Meteor. Wrong lane.");
+                return;
+            }
+            playSound("whoosh.mp3", 0.55);
+            if (round === 3) {
+                finishInteractiveEvent(overlay, "You made it out.");
+                return;
+            }
+            round++;
+            safeLane = Math.floor(Math.random() * 3);
+            overlay.querySelector(".event-message").textContent = `Watch the safe lane — round ${round}/3`;
+            showSafeLane();
+        });
+    });
+
+    function showSafeLane() {
+        laneButtons.forEach(laneButton => laneButton.disabled = true);
+        laneButtons[safeLane].classList.add("safe-lane");
+        setTimeout(() => {
+            if (!overlay.isConnected) return;
+            laneButtons[safeLane].classList.remove("safe-lane");
+            laneButtons.forEach(laneButton => laneButton.disabled = false);
+            overlay.querySelector(".event-message").textContent = `Pick the safe lane — round ${round}/3`;
+        }, 700);
+    }
+
+    showSafeLane();
+}
+
+function bossDefenseEvent() {
+    const overlay = createEventOverlay("interactive-event boss-event", 14000);
+    addEventText(overlay, "Block 5 attacks — 0/5");
+    addEventImage(overlay, "assets/boss-duo.png", "Two giant bosses", "boss-background");
+    let blocks = 0;
+    const block = addEventButton(overlay, "Block", () => {
+        blocks++;
+        playSound("punch.mp3", 0.55);
+        if (blocks === 5) {
+            finishInteractiveEvent(overlay, "Perfect defense.");
+            return;
+        }
+        overlay.querySelector(".event-message").textContent = `Block 5 attacks — ${blocks}/5`;
+        moveTarget(block);
+    }, "event-choice boss-block");
+    moveTarget(block);
+}
+
+function characterSelectEvent() {
+    const overlay = createEventOverlay("interactive-event select-event", 15000);
+    addEventText(overlay, "Choose your fighter");
+    const roster = document.createElement("div");
+    roster.className = "fighter-roster";
+    overlay.appendChild(roster);
+    const fighters = [
+        ["assets/mr-penis.png", "Mr. Penis", 72],
+        ["assets/mr-aura.png", "Mr. Aura", 98],
+        ["assets/mrs-boobs.png", "Mrs. Boobs", 84]
+    ];
+    fighters.forEach(([source, name, power]) => {
+        const card = document.createElement("button");
+        card.className = "fighter-card";
+        card.innerHTML = `<img src="${source}" alt="${name}"><span>${name}</span>`;
+        card.addEventListener("click", () => {
+            playSound("fight-bell.mp3", 0.6);
+            finishInteractiveEvent(overlay, `${name} selected — power ${power}`);
+        });
+        roster.appendChild(card);
+    });
+}
+
+function pancakeBalanceEvent() {
+    const overlay = createEventOverlay("interactive-event pancake-event", 15000);
+    addEventText(overlay, "Hold steady for 3 seconds");
+    addEventImage(overlay, "assets/pancake-bunny.png", "Bunny balancing a pancake", "challenge-image pancake-image");
+    const hold = addEventButton(overlay, "Hold", () => {}, "event-choice hold-button");
+    let holdTimer;
+    let progressTimer;
+    let elapsed = 0;
+    let completed = false;
+    const stopHolding = () => {
+        if (!overlay.isConnected || completed) return;
+        clearTimeout(holdTimer);
+        clearInterval(progressTimer);
+        elapsed = 0;
+        hold.textContent = "Hold";
+        const message = overlay.querySelector(".event-message");
+        if (message) message.textContent = "Hold steady for 3 seconds";
+    };
+    hold.addEventListener("pointerdown", () => {
+        elapsed = 0;
+        progressTimer = setInterval(() => {
+            elapsed += 100;
+            hold.textContent = `${(elapsed / 1000).toFixed(1)}s`;
+        }, 100);
+        holdTimer = setTimeout(() => {
+            completed = true;
+            clearInterval(progressTimer);
+            playSound("success.mp3", 0.6);
+            finishInteractiveEvent(overlay, "Perfectly balanced.");
+        }, 3000);
+    });
+    hold.addEventListener("pointerup", stopHolding);
+    hold.addEventListener("pointerleave", stopHolding);
 }

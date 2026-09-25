@@ -7,7 +7,19 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <p>Clicks: <span id="clicks">0</span></p>
+    <section class="progress-hud" aria-label="Game progress">
+        <div class="progress-row">
+            <span id="level-text">LV 01</span>
+            <span><strong id="clicks">0</strong> clicks</span>
+            <span id="combo-text">x1</span>
+            <button id="index-button" type="button">INDEX</button>
+        </div>
+        <div class="xp-track"><div id="xp-fill"></div></div>
+        <div class="progress-details">
+            <span id="rank-text">3/21 events</span>
+            <span id="next-unlock">next: level 2</span>
+        </div>
+    </section>
 
     <button id="button"><span>Press me!</span></button>
     <script src="script.js"></script>

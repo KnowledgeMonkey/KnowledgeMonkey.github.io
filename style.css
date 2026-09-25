@@ -4,12 +4,217 @@ body {
     min-height: 100vh;
 }
 
-p {
-    margin: 0;
+.progress-hud {
     position: absolute;
-    top: 10px;
+    top: 16px;
     left: 50%;
     transform: translateX(-50%);
+    box-sizing: border-box;
+    width: min(480px, calc(100vw - 24px));
+    padding: 10px 12px 9px;
+    border: 2px solid #17262d;
+    border-radius: 2px;
+    color: #eaf8ff;
+    background: #263d48;
+    box-shadow: 4px 4px 0 rgba(23, 38, 45, 0.3);
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.progress-row,
+.progress-details {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.progress-row {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+#index-button {
+    padding: 3px 7px;
+    border: 1px solid #a9c2cd;
+    border-radius: 0;
+    color: #eaf8ff;
+    background: transparent;
+    font: 700 11px Consolas, "Courier New", monospace;
+    cursor: pointer;
+}
+
+#index-button:hover {
+    color: #263d48;
+    background: #eaf8ff;
+}
+
+.progress-details {
+    margin-top: 7px;
+    color: #bad3df;
+    font-size: 11px;
+}
+
+.xp-track {
+    height: 6px;
+    margin-top: 8px;
+    overflow: hidden;
+    border: 1px solid #142229;
+    border-radius: 0;
+    background: #142229;
+}
+
+#xp-fill {
+    width: 0;
+    height: 100%;
+    background: #f0444f;
+    transition: width 120ms linear;
+}
+
+.game-toast {
+    position: fixed;
+    z-index: 10000;
+    left: 18px;
+    padding: 9px 12px;
+    border: 2px solid #0e1518;
+    border-radius: 2px;
+    color: #effbff;
+    background: #263d48;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+    font: 700 12px Consolas, "Courier New", monospace;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 200ms, transform 200ms;
+}
+
+.game-toast.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.event-index {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    box-sizing: border-box;
+    overflow-y: auto;
+    padding: 28px;
+    color: #edf5f8;
+    background: #11161a;
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.event-index-header {
+    position: sticky;
+    top: -28px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    max-width: 1100px;
+    margin: 0 auto 22px;
+    padding: 22px 0 14px;
+    border-bottom: 2px solid #40515a;
+    background: #11161a;
+}
+
+.event-index-header h2 {
+    margin: 0 0 4px;
+    font-size: clamp(22px, 4vw, 34px);
+    letter-spacing: 2px;
+}
+
+.event-index-header span {
+    color: #9fb2bc;
+    font-size: 12px;
+}
+
+.event-index-header button {
+    padding: 8px 12px;
+    border: 2px solid #8699a2;
+    border-radius: 0;
+    color: white;
+    background: #283139;
+    font: 700 12px Consolas, "Courier New", monospace;
+    cursor: pointer;
+}
+
+.event-index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 14px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.event-index-card {
+    position: relative;
+    display: grid;
+    grid-template-rows: 180px auto;
+    min-width: 0;
+    overflow: hidden;
+    border: 2px solid #40515a;
+    background: #1c2328;
+    box-shadow: 4px 4px 0 #090c0e;
+}
+
+.event-index-card img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #090c0e;
+}
+
+.event-index-copy {
+    min-height: 86px;
+    padding: 12px;
+    border-top: 2px solid #40515a;
+}
+
+.event-index-copy h3 {
+    margin: 0 0 7px;
+    font-size: 16px;
+}
+
+.event-index-copy p {
+    margin: 0;
+    color: #aebdc4;
+    font: 12px/1.45 Arial, sans-serif;
+}
+
+.event-index-number {
+    position: absolute;
+    z-index: 1;
+    top: 8px;
+    left: 8px;
+    padding: 3px 5px;
+    color: #dce8ed;
+    background: rgba(10, 13, 15, 0.82);
+    font-size: 11px;
+}
+
+.event-index-card.locked img {
+    filter: grayscale(1) brightness(0);
+    opacity: 0.9;
+}
+
+.event-index-card.locked {
+    border-color: #293238;
+}
+
+.event-index-card.locked .event-index-copy {
+    border-color: #293238;
+}
+
+@media (max-width: 560px) {
+    .event-index { padding: 16px; }
+    .event-index-header { top: -16px; padding-top: 14px; }
+    .event-index-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+    .event-index-card { grid-template-rows: 130px auto; }
+    .event-index-copy { min-height: 78px; padding: 9px; }
+    .event-index-copy h3 { font-size: 13px; }
+    .event-index-copy p { font-size: 10px; }
 }
 
 #button {
@@ -82,6 +287,8 @@ p {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    box-sizing: border-box;
+    padding: 24px;
     color: white;
     font-family: Arial, sans-serif;
     text-align: center;
@@ -214,14 +421,14 @@ p {
 }
 
 @keyframes cat-zoom {
-    from { transform: scale(0.5); }
-    to { transform: scale(1.25); }
+    from { transform: scale(0.65); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
 @keyframes chicken-charge {
     0% { transform: translateY(100vh) scale(0.2) rotate(-12deg); }
     35% { transform: translateY(0) scale(1) rotate(6deg); }
-    100% { transform: scale(1.45) rotate(-3deg); }
+    100% { transform: scale(1) rotate(-3deg); }
 }
 
 @keyframes blood-pulse {
@@ -232,7 +439,7 @@ p {
 @keyframes emo-spin {
     0% { transform: scale(0) rotate(-15deg); filter: grayscale(1); }
     35% { transform: scale(1) rotate(3deg); filter: grayscale(0); }
-    100% { transform: scale(1.1) rotate(-3deg); }
+    100% { transform: scale(1) rotate(-3deg); }
 }
 
 @keyframes fight-left { to { transform: translateX(15px) rotate(2deg); } }
@@ -249,34 +456,47 @@ p {
 }
 
 .interactive-event {
-    box-sizing: border-box;
-    padding: 32px 20px;
-    background: #17191d;
+    gap: 12px;
+    padding: 28px 20px;
+    background-color: #15191e;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 28px 28px;
 }
 
 .interactive-event .event-message {
-    margin: 0 0 18px;
+    flex: 0 0 auto;
+    margin: 0 0 6px;
     max-width: 760px;
-    font-size: clamp(26px, 4vw, 48px);
-    line-height: 1.05;
+    padding: 8px 12px;
+    border-left: 4px solid #f0444f;
+    color: #f4f7f8;
+    background: #20262c;
+    font: 700 clamp(19px, 3vw, 32px)/1.1 Consolas, "Courier New", monospace;
     text-shadow: none;
     text-transform: none;
 }
 
 .interactive-event .event-submessage {
-    margin: 16px 0 4px;
-    font-size: clamp(17px, 2vw, 23px);
-    font-weight: 600;
+    margin: 4px 0;
+    color: #bdc7cc;
+    font: 600 clamp(14px, 2vw, 18px) Consolas, "Courier New", monospace;
     letter-spacing: 0;
 }
 
 .challenge-image {
-    max-width: min(70vw, 520px);
-    max-height: 55vh;
+    display: block;
+    flex: 0 1 auto;
+    width: auto;
+    height: auto;
+    max-width: min(680px, 86vw);
+    max-height: 52vh;
     object-fit: contain;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 14px;
-    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+    border: 2px solid #65717a;
+    border-radius: 2px;
+    background: #0d1013;
+    box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.28);
 }
 
 .event-choices {
@@ -285,7 +505,7 @@ p {
     flex-wrap: wrap;
     gap: 16px;
     justify-content: center;
-    margin-top: 12px;
+    margin-top: 4px;
 }
 
 .event-choice {
@@ -294,14 +514,24 @@ p {
     width: auto;
     height: auto;
     padding: 12px 22px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 9px;
+    border: 2px solid #11161a;
+    border-radius: 2px;
     color: white;
-    background: #343840;
-    box-shadow: 0 4px 0 #111317;
-    font: 700 clamp(15px, 2vw, 20px) Arial, sans-serif;
+    background: #39434b;
+    box-shadow: 3px 3px 0 #0c0f12;
+    font: 700 clamp(14px, 2vw, 18px) Consolas, "Courier New", monospace;
     cursor: pointer;
     transform: none;
+}
+
+.event-choice:hover:not(:disabled) {
+    border-color: #bfcbd1;
+    background: #46545e;
+}
+
+.event-choice:focus-visible {
+    outline: 3px solid #f0d84a;
+    outline-offset: 3px;
 }
 
 .event-choice:not(.loose-target):active {
@@ -349,14 +579,25 @@ p {
 
 .sparkle-background,
 .duel-background {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: min(680px, 86vw);
+    max-height: 58vh;
+    object-fit: contain;
+    border: 2px solid #65717a;
+    background: #0d1013;
+    box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.28);
 }
 
-.sparkle-background { filter: brightness(0.65); }
+.sparkle-background {
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    z-index: 0;
+    filter: brightness(0.5);
+    transform: translate(-50%, -50%);
+}
 
 .sparkle-button {
     position: absolute;
@@ -373,7 +614,9 @@ p {
 .bird-exam { background: #293c25; }
 
 .duel-event { background: #111; }
-.duel-background { filter: brightness(0.45); }
+.duel-background { filter: brightness(0.68); }
+
+.duel-event .event-message { order: -1; }
 
 .duel-button {
     position: relative;
@@ -398,4 +641,153 @@ p {
 
 @keyframes duel-flash {
     to { transform: scale(1.12); }
+}
+
+.power-event { background: #10223c; }
+
+.charge-meter {
+    z-index: 3;
+    width: min(520px, 80vw);
+    height: 18px;
+    margin: 18px 0;
+    overflow: hidden;
+    border: 1px solid #6887ad;
+    border-radius: 9px;
+    background: #0a1422;
+}
+
+.charge-meter div {
+    width: 0;
+    height: 100%;
+    background: #4ba3ff;
+    transition: width 100ms;
+}
+
+.whatsapp-event { background: #102c23; }
+
+.answer-slider {
+    z-index: 4;
+    width: min(520px, 80vw);
+    margin-top: 22px;
+    accent-color: #2cba66;
+    cursor: grab;
+}
+
+.cosmic-event { background: #10101c; }
+
+.cosmic-background,
+.boss-background {
+    display: block;
+    position: relative;
+    width: auto;
+    height: auto;
+    max-width: min(680px, 86vw);
+    max-height: 52vh;
+    object-fit: contain;
+    border: 2px solid #65717a;
+    background: #0d1013;
+    box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.28);
+    filter: brightness(0.72);
+}
+
+.memory-controls {
+    z-index: 4;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(58px, 90px));
+    gap: 12px;
+}
+
+.memory-button {
+    aspect-ratio: 1;
+    padding: 0;
+    font-size: 34px;
+    transition: background 100ms, transform 100ms;
+}
+
+.memory-button:disabled { opacity: 0.8; }
+
+.memory-button.memory-flash {
+    color: #141414;
+    background: #fff2a6;
+    transform: scale(1.16);
+}
+
+.bike-event { background: #332017; }
+
+.safe-lane {
+    color: #102417;
+    background: #63d98b;
+    box-shadow: 0 0 22px rgba(99, 217, 139, 0.8);
+}
+
+.boss-event { background: #17151b; }
+
+.boss-block {
+    min-width: 100px;
+    background: #6e4db4;
+}
+
+.select-event { background: #211a2a; }
+
+.fighter-roster {
+    z-index: 3;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 230px));
+    gap: 18px;
+    width: min(760px, 92vw);
+}
+
+.fighter-card {
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    color: white;
+    background: #303039;
+    cursor: pointer;
+    transition: transform 130ms, border-color 130ms;
+}
+
+.fighter-card:hover {
+    border-color: white;
+    transform: translateY(-5px);
+}
+
+.fighter-card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    background: #17191e;
+}
+
+.fighter-card span {
+    display: block;
+    padding: 12px 8px;
+    font: 700 17px Arial, sans-serif;
+}
+
+.pancake-event { background: #3b2e20; }
+.pancake-image { image-rendering: auto; }
+
+.hold-button {
+    min-width: 150px;
+    margin-top: 18px;
+    touch-action: none;
+}
+
+@media (max-width: 620px) {
+    .fighter-roster { gap: 8px; }
+    .fighter-card span { font-size: 12px; }
+    .memory-controls { grid-template-columns: repeat(4, 58px); }
+}
+
+@media (max-height: 700px) {
+    .interactive-event { padding: 14px 18px; gap: 7px; }
+    .interactive-event .event-message { font-size: clamp(17px, 3vw, 25px); }
+    .challenge-image,
+    .cosmic-background,
+    .boss-background,
+    .duel-background { max-height: 43vh; }
+    .sparkle-background { max-height: 62vh; }
 }
